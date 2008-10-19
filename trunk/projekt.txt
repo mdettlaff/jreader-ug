@@ -1,0 +1,56 @@
+Projekt zespo³owy
+Nazwa projektu: JReader
+
+
+I. Za³o¿enia projektowe
+
+Celem projektu jest stworzenie konfigurowalnego, przyjaznego dla u¿ytkownika czytnika kana³ów RSS, obs³uguj¹cego najczêœciej stosowane standardy RSS:
+ - Really Simple Syndication (RSS 2.0)
+ - Rich Site Summary (RSS 0.91/RSS 0.92/RSS 0.93)
+ - RDF Site Summary (RSS 1.x, RSS 0.90)
+
+GUI programu jest podzielony na trzy zasadnicze czêœci: listê subskrypcji do kana³ów RSS po lewej stronie, listê elementów* z prawej strony na górze, oraz podgl¹d aktualnie przegl¹danego elementu z prawej strony na dole. Rozmieszczenie czêœci jest zrealizowanie analogicznie jak np. w wiêkszoœci programów do obs³ugi poczty elektronicznej, przyk³adowo Mozilla Thunderbird (gdzie z lewej mamy foldery Inbox, Outbox etc., z prawej na górze listê wiadomoœci, a z prawej na dole treœæ wiadomoœci).
+
+U¿ytkownik mo¿e dodaæ swoje subskrypcje poprzez podanie adresu URL interesuj¹cej go strony (wpisuj¹c np. "http://slashdot.org"). Nastêpnie program znajdzie na podstawie jej Ÿród³a odnoœnik do pliku XML z treœci¹ kana³u i na jego podstawie stworzy now¹ subskrypcjê. Jeœli strona bêdzie niedostêpna lub parsowanie pliku XML nie powiedzie siê, u¿ytkownik otrzyma komunikat o b³êdzie. Jest mo¿liwoœæ organizowania subskrypcji za pomoc¹ tagów, podobnie jak ma to miejsce na wielu stronach internetowych.
+
+U¿ytkownik mo¿e wyœwietliæ listê wszystkich elementów posortowan¹ od najnowszego do najstarszego lub odwrotnie. Elementy przeczytane zawsze s¹ wizualnie odró¿nione od nieprzeczytanych. Mo¿na te¿ wyœwietliæ elementy ograniczone do jednego kana³u, lub grupy kana³ów oznaczonych wspólnym tagiem (np. zobaczyæ tylko nowoœci, które pojawi³y siê na kana³ach oznaczonych jako "blog"). Listê elementów mo¿na zaktualizowaæ przez wciœniêcie przycisku Odœwie¿/Synchronizuj.
+
+W treœci elementów mog¹ znajdowaæ siê znaczniki HTML, dlatego istotne jest odpowiednie obs³ugiwanie ich w podgl¹dzie elementów. W szczególnoœci, zapewnienie ¿eby odnoœniki by³y wyró¿nione wizualnie i po klikniêciu ich, wskazywana przez nie strona zosta³a wyœwietlona w domyœlnej dla danego u¿ytkownika przegl¹darce internetowej.
+
+Inne istotne funkcje programu:
+ - Import/eksport listy subskrypcji za poœrednictwem pliku zapisanego w standardzie OPML
+ - Wyszukiwanie wiadomoœci wed³ug s³ów kluczowych
+ - Mo¿liwoœæ aktualizowania listy elementów przy uruchomieniu programu, oraz w regularnych wybranych przez u¿ytkownika odstêpach czasu
+ - Usuwanie starych wiadomoœci, w zakresie wybranym przez u¿ytkownika
+
+
+* Element kana³u definiujemy jako czêœæ opisan¹ miêdzy znacznikami <item> oraz </item>
+
+
+II. Technologie potrzebne do realizacji projektu
+
+ - Jêzyk programowania Java, z u¿yciem Java API w wersji 1.6
+ - Zintegrowane œrodowisko programistyczne Eclipse 3.4 Ganymede
+ - Biblioteka Standard Widget Toolkit 3.4 (do wykonania GUI)
+ - System kontroli wersji Subversion
+
+
+III. Podzia³ pracy
+
+Micha³ Dettlaff:
+	Zarz¹dzanie subskrypcjami, wyœwietlanie zawartoœci elementów
+Karol Domaga³a:
+	Graficzny interfejs u¿ytkownika
+£ukasz Draba:
+	Parsowanie XML, baza danych w XML
+
+
+IV. Platformy docelowe
+
+Program przeznaczony jest dla systemów z rodziny Windows i GNU/Linux, ze Œrodowiskiem Uruchomieniowym Javy (JRE) w wersji 1.5 lub nowszej. Planowane s¹ te¿ wersje skompilowane natywnie dla systemów Windows i GNU/Linux, nie wymagaj¹ce JRE.
+
+
+V. Uwagi koñcowe
+
+Program jest dostêpny na licencji GNU General Public License v3
+Udostêpniona zostanie dokumentacja programu wygenerowana za pomoc¹ programu Javadoc
