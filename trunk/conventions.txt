@@ -1,0 +1,8 @@
+Bardzo proszę o stosowanie się do poniższych zaleceń:
+
+  * w kodzie używamy kodowania ASCII (tzn. nie używamy polskich znaków)
+  * szerokość wcięcia to 2 spacje
+  * wszystkie nazwy zmiennych, klas etc. piszemy po angielsku
+  * komentarze do kodu piszemy po polsku, ale bez polskich znaków (patrz wyżej)
+  * komentarze piszemy w formacie javadoc, tam gdzie to możliwe
+  * piszemy kod tak, żeby inni mogli go łatwo przeczytać
