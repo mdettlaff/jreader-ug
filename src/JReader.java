@@ -10,6 +10,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.DefaultHandler;
 
 
+/**
+ * Glowna klasa programu, przechowujaca obiekty przeznaczone do wyswietlania
+ * w Graficznym Interfejsie Uzytkownika.
+ */
 class JReader {
   /** Lista subskrypcji do wyswietlenia w GUI. */
   static ArrayList<Channel> channels = new ArrayList<Channel>();
@@ -19,6 +23,11 @@ class JReader {
   static Item itemPreview;
 
   public static void main(String[] args) throws Exception {
+    System.out.println("Tworzenie domyslnego kanalu "
+	+ "(http://inf.univ.gda.pl:8001/rss/jp2.xml)");
+    channels.add(ChannelFactory.getChannel(
+	  "http://inf.univ.gda.pl:8001/rss/jp2.xml"));
+
     textUI();
   }
 
@@ -30,29 +39,31 @@ class JReader {
     String command = new String();
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-    // TODO
-    System.out.println("Tworzenie domyslnego kanalu (http://inf.univ.gda.pl:8001/rss/jp2.xml)");
-    Channel ch = new Channel("http://inf.univ.gda.pl:8001/rss/jp2.xml");
-    ch.update();
-    channels.add(ch);
-
     System.out.println("Dostepne komendy:");
     System.out.println("show channels");
     System.out.println("show items");
     System.out.println("show preview");
+    //System.out.println("add channel <URL>");
+    System.out.println("update channel");
+    //System.out.println("remove channel");
+    //System.out.println("select channel");
+    //System.out.println("select item");
+    //System.out.println("select unread");
+    //System.out.println("select all");
     System.out.println("quit\n");
 
     while (!(command.equals("quit"))) {
       command = in.readLine();
-      /*if (command.equals("show channel source")) {
-	channels.get(0).printSource();
-      } else */if (command.equals("show channels")) {
+      if (command.equals("show channels")) {
 	if (channels.size() == 0) {
 	  System.out.println("Lista subskrypcji jest pusta.");
 	} else {
-	  for (Channel chan : channels) {
-	    System.out.println("Tytul: " + chan.title);
-	    System.out.println(chan.description);
+	  Channel ch;
+	  for (int i=0; i < channels.size(); i++) {
+	    ch = channels.get(i);
+	    System.out.println("Kanal " + (i+1) + ": " + ch.title);
+	    System.out.println("Link: " + ch.link);
+	    System.out.println("Opis: " + ch.description);
 	  }
 	}
       } else if (command.equals("show items")) {
@@ -63,6 +74,12 @@ class JReader {
 	if (itemPreview == null) {
 	  System.out.println("Nie wybrano zadnej wiadomosci.");
 	}
+      } else if (command.equals("update channel")) {
+	System.out.print("Podaj numer kanalu: ");
+	Integer nr = new Integer(in.readLine()) - 1;
+	channels.get(nr).update();
+      } else if (!command.equals("") && !command.equals("quit")) {
+	System.out.println("Nieznane polecenie.");
       }
     }
   }
@@ -70,31 +87,24 @@ class JReader {
 
 
 class Channel {
-  int unreadItems;
   String URLString;
-  // deprecated
-  //String source = new String();
+  /** Liczba nieprzeczytanych elementow. */
+  int unreadItems;
 
   String title;
   String link;
   String description;
+  /* Zawartosc elementu image (obrazek bedacy czescia opisu kanalu) */
+  String imageURL;
+  String imageTitle;
+  String imageLink;
+  /* Lista elementow (wiadomosci) kanalu */
   ArrayList<Item> items = new ArrayList<Item>();
 
   Channel(String URLString) throws Exception {
     this.URLString = URLString;
-    //this.updateSource();
   }
 
-  // deprecated
-  /*void updateSource() throws Exception {
-    BufferedReader in = new BufferedReader(
-			    new InputStreamReader(
-			    new URL(URLString).openStream()));
-    String inputLine;
-    while ((inputLine = in.readLine()) != null)
-      this.source += inputLine + '\n';
-    in.close();
-  }*/
 
   /**
    * Parsuje zrodlo XML kanalu i uzupelnia informacje ogolne o kanale oraz
@@ -103,31 +113,49 @@ class Channel {
   void update() throws Exception {
     Channel ch = ChannelFactory.getChannel(URLString);
     this.title = ch.title;
+    this.link = ch.link;
     this.description = ch.description;
+    this.imageURL = ch.imageURL;
+    this.imageTitle = ch.imageTitle;
+    this.imageLink = ch.imageLink;
+    // TODO: dodawanie nowych elementow
   }
-
-  /*void printSource() {
-    System.out.println(source);
-  }*/
 }
 
 
 class Item {
+  /** Czy dany element jest juz przeczytany. */
   boolean isRead;
   String title;
   String link;
   String description;
+  /** Data publikacji elementu. */
   String pubDate;
+  /** Unikalny identyfikator elementu. */
+  String guid;
 
   /**
    * Porownuje dwa elementy (do sprawdzania, czy dany element jest nowy).
    */
-  boolean equals() {
+  public boolean equals(Object obj) {
+    Item it = (Item) obj;
+    if (this.guid != null && it.guid != null) {
+      if (this.guid.equals(it.guid)) {
+	return true;
+      }
+    }
+    if (this.title.equals(it.title) && this.pubDate.equals(it.pubDate)
+	&& this.description.equals(it.description)) {
+      return true;
+      }
     return false;
   }
 }
 
 
+/**
+ * Stad za pomoca metody getChannel mozna pobierac aktualny kanal.
+ */
 class ChannelFactory extends DefaultHandler {
   /** Zmienna, ktora zostanie zwrocona przez metode getChannel(). */
   static Channel channel;
@@ -135,11 +163,18 @@ class ChannelFactory extends DefaultHandler {
   static Item item = new Item();
 
   boolean insideItem;
+  boolean insideImage;
   String currentTag = "";
 
 
+  public ChannelFactory() {
+    super();
+  }
+
+  /** Zwraca aktualna postac kanalu o podanym adresie URL. */
   public static Channel getChannel(String URLString) throws Exception {
     channel = new Channel(URLString);
+
     XMLReader xr = XMLReaderFactory.createXMLReader();
     ChannelFactory handler = new ChannelFactory();
     xr.setContentHandler(handler);
@@ -150,10 +185,6 @@ class ChannelFactory extends DefaultHandler {
     return channel;
   }
 
-  public ChannelFactory () {
-    super();
-  }
-
 
   /*
    * Metody oblugujace zdarzenia zwiazane z parsowaniem XML.
@@ -162,50 +193,58 @@ class ChannelFactory extends DefaultHandler {
   public void startDocument() {
     System.out.println("Start document");
     insideItem = false;
+    insideImage = false;
   }
 
   public void endDocument() {
     System.out.println("End document\n");
+    insideItem = false;
+    insideImage = false;
   }
 
   public void startElement(String uri, String name,
 			    String qName, Attributes atts) {
-    if ("".equals (uri)) {
+    if ("".equals(uri)) {
       //System.out.println("Start element: " + qName);
       currentTag = qName;
-      if (currentTag.equals("item")) {
-	insideItem = true;
-      }
     } else {
       //System.out.println("Start element: {" + uri + "}" + name);
       currentTag = name;
-      if (currentTag.equals("item")) {
-	insideItem = true;
-      }
+    }
+    if (currentTag.equals("item")) {
+      insideItem = true;
+    } else if (currentTag.equals("image")) {
+      insideImage = true;
     }
   }
 
+  public void endElement(String uri, String name, String qName) {
+    String closingTag;
 
-  public void endElement(String uri, String name, String qName)
-  {
-    if ("".equals (uri)) {
+    if ("".equals(uri)) {
       //System.out.println("End element: " + qName);
-      if (currentTag.equals(qName)) {
-	currentTag = "";
-      }
+      closingTag = qName;
     } else {
       //System.out.println("End element:   {" + uri + "}" + name);
-      if (currentTag.equals(name)) {
-	currentTag = "";
-      }
+      closingTag = name;
+    }
+    if (currentTag.equals(closingTag)) {
+      currentTag = "";
+    }
+    if (closingTag.equals("item")) {
+      insideItem = false;
+    } else if (closingTag.equals("image")) {
+      insideImage = false;
     }
   }
 
 
+  /**
+   * Analiza tresci znacznika.
+   */
   public void characters(char ch[], int start, int length) {
     String chars = "";
 
-    //System.out.print("Characters:    \"");
     for (int i = start; i < start + length; i++) {
       switch (ch[i]) {
       case '\\':
@@ -214,26 +253,26 @@ class ChannelFactory extends DefaultHandler {
       case '"':
 	chars += "\\\"";
 	break;
-      case '\n':
-	chars += "\\n";
-	break;
-      case '\r':
-	chars += "\\r";
-	break;
-      case '\t':
-	chars += "\\t";
-	break;
       default:
 	chars += ch[i];
 	break;
       }
     }
-    //System.out.print(chars);
-    //System.out.print("\"\n");
+    //System.out.println("Characters: " + chars);
 
-    if (!insideItem) {
+    if (insideImage) {
+      if (currentTag.equals("url")) {
+	channel.imageURL = chars;
+      } else if (currentTag.equals("title")) {
+	channel.imageTitle = chars;
+      } else if (currentTag.equals("link")) {
+	channel.imageLink = chars;
+      }
+    } else if (!insideItem) {
       if (currentTag.equals("title")) {
 	channel.title = chars;
+      } else if (currentTag.equals("link")) {
+	channel.link = chars;
       } else if (currentTag.equals("description")) {
 	channel.description = chars;
       }
