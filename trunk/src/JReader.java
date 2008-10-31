@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -16,38 +17,31 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class JReader {
   /** Lista subskrypcji do wyswietlenia w GUI. */
-  static ArrayList<Channel> channels = new ArrayList<Channel>();
+  static List<Channel> channels = new ArrayList<Channel>();
   /** Lista wiadomosci do wyswietlenia w GUI. */
-  static ArrayList<Item> items = new ArrayList<Item>();
-  /** Tresc wiadomosci do wyswietlenia w GUI. */
-  static Item itemPreview;
+  static List<Item> items = new ArrayList<Item>();
+  /** Tresc wiadomosci lub informacje o kanale do wyswietlenia w GUI. */
+  static Item preview;
+  // TODO: Obiekt preview powinien miec wlasna klase, a nie Item, bo moga w nim
+  // byc rowniez przechowywane szczegoly kanalu, a nie tylko elementow kanalu
 
   public static void main(String[] args) throws Exception {
-    System.out.println("Tworzenie domyslnego kanalu "
-	+ "(http://inf.univ.gda.pl:8001/rss/jp2.xml)");
-    channels.add(ChannelFactory.getChannel(
-	  "http://inf.univ.gda.pl:8001/rss/jp2.xml"));
 
-    textUI();
-  }
-
-  /**
-   * Interakcja z uzytkownikiem za pomoca komend tekstowych, w celach
-   * testowych.
-   */
-  static void textUI() throws Exception {
+    /*
+     * Tekstowy interfejs uzytkownika, w celach testowych.
+     */
     String command = new String();
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
     System.out.println("Dostepne komendy:");
-    System.out.println("show channels");
-    System.out.println("show items");
+    System.out.print("show channels\t");
+    System.out.print("show items\t");
     System.out.println("show preview");
-    //System.out.println("add channel <URL>");
-    System.out.println("update channel");
-    //System.out.println("remove channel");
-    //System.out.println("select channel");
-    //System.out.println("select item");
+    System.out.print("add channel\t");
+    System.out.print("update channel\t");
+    System.out.println("remove channel");
+    System.out.print("select channel\t");
+    System.out.println("select item");
     //System.out.println("select unread");
     //System.out.println("select all");
     System.out.println("quit\n");
@@ -62,30 +56,66 @@ class JReader {
 	  for (int i=0; i < channels.size(); i++) {
 	    ch = channels.get(i);
 	    System.out.println("Kanal " + (i+1) + ": " + ch.title);
-	    System.out.println("Link: " + ch.link);
-	    System.out.println("Opis: " + ch.description);
 	  }
 	}
       } else if (command.equals("show items")) {
 	if (items.size() == 0) {
 	  System.out.println("Lista wiadomosci jest pusta.");
+	} else {
+	  for (int i=0; i < items.size(); i++) {
+	    Item item = items.get(i);
+	    System.out.println("Element " + (i+1) + ": " + item.title);
+	    if (item.pubDate != null) {
+	      System.out.println("Data publikacji: " + item.pubDate);
+	    }
+	  }
 	}
       } else if (command.equals("show preview")) {
-	if (itemPreview == null) {
+	if (preview == null) {
 	  System.out.println("Nie wybrano zadnej wiadomosci.");
+	} else {
+	  System.out.println(preview.title);
+	  if (preview.pubDate != null) {
+	    System.out.println("Data publikacji: " + preview.pubDate);
+	  }
+	  System.out.println("Link: " + preview.link);
+	  System.out.println("Opis: " + preview.description);
 	}
+      } else if (command.equals("add channel")) {
+	System.out.print("Podaj adres URL kanalu: ");
+	channels.add(ChannelFactory.getChannel(in.readLine()));
+	System.out.println("Kanal zostal dodany");
       } else if (command.equals("update channel")) {
 	System.out.print("Podaj numer kanalu: ");
-	Integer nr = new Integer(in.readLine()) - 1;
+	int nr = new Integer(in.readLine()) - 1;
 	channels.get(nr).update();
+      } else if (command.equals("remove channel")) {
+	System.out.print("Podaj numer kanalu: ");
+	int nr = new Integer(in.readLine()) - 1;
+	channels.remove(nr);
+      } else if (command.equals("select channel")) {
+	System.out.print("Podaj numer kanalu: ");
+	int nr = new Integer(in.readLine()) - 1;
+	items = channels.get(nr).getItems();
+	preview = new Item(channels.get(nr));
+      } else if (command.equals("select item")) {
+	System.out.print("Podaj numer elementu: ");
+	int nr = new Integer(in.readLine()) - 1;
+	preview = items.get(nr);
       } else if (!command.equals("") && !command.equals("quit")) {
 	System.out.println("Nieznane polecenie.");
       }
     }
+    /*
+     * Koniec tekstowego UI.
+     */
   }
 }
 
 
+/**
+ * Kanal RSS.
+ */
 class Channel {
   String URLString;
   /** Liczba nieprzeczytanych elementow. */
@@ -94,17 +124,16 @@ class Channel {
   String title;
   String link;
   String description;
-  /* Zawartosc elementu image (obrazek bedacy czescia opisu kanalu) */
+  /** Zawartosc elementu image (obrazek bedacy czescia opisu kanalu). */
   String imageURL;
   String imageTitle;
   String imageLink;
-  /* Lista elementow (wiadomosci) kanalu */
-  ArrayList<Item> items = new ArrayList<Item>();
+  /** Lista elementow (wiadomosci) kanalu. */
+  List<Item> items = new ArrayList<Item>();
 
   Channel(String URLString) throws Exception {
     this.URLString = URLString;
   }
-
 
   /**
    * Parsuje zrodlo XML kanalu i uzupelnia informacje ogolne o kanale oraz
@@ -118,8 +147,29 @@ class Channel {
     this.imageURL = ch.imageURL;
     this.imageTitle = ch.imageTitle;
     this.imageLink = ch.imageLink;
-    // TODO: dodawanie nowych elementow
+    // dodawanie nowych elementow do kanalu
+    for (Item updatedItem : ch.getItems()) {
+      boolean itemAlreadyExists = false;
+      for (Item item : items) {
+	if (updatedItem.equals(item)) {
+	  itemAlreadyExists = true;
+	}
+      }
+      if (!itemAlreadyExists) {
+	items.add(updatedItem);
+      }
+    }
   }
+
+  void addItem(Item item) { items.add(item); }
+
+  String getTitle() { return title; }
+
+  String getLink() { return link; }
+
+  String getDescription() { return description; }
+
+  List<Item> getItems() { return items; }
 }
 
 
@@ -133,6 +183,15 @@ class Item {
   String pubDate;
   /** Unikalny identyfikator elementu. */
   String guid;
+
+  Item() { }
+
+  // TODO: po stworzeniu klasy Preview trzeba sie tego pozbyc
+  Item(Channel ch) {
+    this.title = ch.getTitle();
+    this.link = ch.getLink();
+    this.description = ch.getDescription();
+  }
 
   /**
    * Porownuje dwa elementy (do sprawdzania, czy dany element jest nowy).
@@ -166,7 +225,6 @@ class ChannelFactory extends DefaultHandler {
   boolean insideImage;
   String currentTag = "";
 
-
   public ChannelFactory() {
     super();
   }
@@ -174,13 +232,14 @@ class ChannelFactory extends DefaultHandler {
   /** Zwraca aktualna postac kanalu o podanym adresie URL. */
   public static Channel getChannel(String URLString) throws Exception {
     channel = new Channel(URLString);
+    URL url = new URL(URLString);
 
     XMLReader xr = XMLReaderFactory.createXMLReader();
     ChannelFactory handler = new ChannelFactory();
     xr.setContentHandler(handler);
     xr.setErrorHandler(handler);
 
-    xr.parse(new InputSource(new URL(URLString).openStream()));
+    xr.parse(new InputSource(url.openStream()));
 
     return channel;
   }
@@ -191,13 +250,13 @@ class ChannelFactory extends DefaultHandler {
    */
 
   public void startDocument() {
-    System.out.println("Start document");
+    //System.out.println("Start document");
     insideItem = false;
     insideImage = false;
   }
 
   public void endDocument() {
-    System.out.println("End document\n");
+    //System.out.println("End document\n");
     insideItem = false;
     insideImage = false;
   }
@@ -213,6 +272,7 @@ class ChannelFactory extends DefaultHandler {
     }
     if (currentTag.equals("item")) {
       insideItem = true;
+      item = new Item();
     } else if (currentTag.equals("image")) {
       insideImage = true;
     }
@@ -233,6 +293,7 @@ class ChannelFactory extends DefaultHandler {
     }
     if (closingTag.equals("item")) {
       insideItem = false;
+      channel.addItem(item);
     } else if (closingTag.equals("image")) {
       insideImage = false;
     }
@@ -240,7 +301,7 @@ class ChannelFactory extends DefaultHandler {
 
 
   /**
-   * Analiza tresci znacznika.
+   * Analiza tresci (body) znacznika.
    */
   public void characters(char ch[], int start, int length) {
     String chars = "";
@@ -277,7 +338,17 @@ class ChannelFactory extends DefaultHandler {
 	channel.description = chars;
       }
     } else {
-      // TODO: parsowanie elementow
+      if (currentTag.equals("title")) {
+	item.title = chars;
+      } else if (currentTag.equals("link")) {
+	item.link = chars;
+      } else if (currentTag.equals("description")) {
+	item.description = chars;
+      } else if (currentTag.equals("pubDate")) {
+	item.pubDate = chars;
+      } else if (currentTag.equals("guid")) {
+	item.guid = chars;
+      }
     }
   }
 }
