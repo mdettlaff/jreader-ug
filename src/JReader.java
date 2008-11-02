@@ -33,22 +33,28 @@ class JReader {
     String command = new String();
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-    System.out.println("Dostepne komendy:");
-    System.out.print("show channels\t");
-    System.out.print("show items\t");
-    System.out.println("show preview");
-    System.out.print("add channel\t");
-    System.out.print("update channel\t");
-    System.out.println("remove channel");
-    System.out.print("select channel\t");
-    System.out.println("select item");
-    //System.out.println("select unread");
-    //System.out.println("select all");
-    System.out.println("quit\n");
-
+    boolean justStarted = true;
     while (!(command.equals("quit"))) {
-      command = in.readLine();
-      if (command.equals("show channels")) {
+      if (justStarted) {
+	command = "help";
+	justStarted = false;
+      } else {
+	command = in.readLine();
+      }
+      if (command.equals("help")) {
+	System.out.println("Dostepne komendy:");
+	System.out.print("show channels\t");
+	System.out.print("show items\t");
+	System.out.println("show preview");
+	System.out.print("add channel\t");
+	System.out.print("update channel\t");
+	System.out.println("remove channel");
+	System.out.print("select channel\t");
+	System.out.println("select item");
+	//System.out.println("select unread");
+	//System.out.println("select all");
+	System.out.println("quit\n");
+      } else if (command.equals("show channels")) {
 	if (channels.size() == 0) {
 	  System.out.println("Lista subskrypcji jest pusta.");
 	} else {
@@ -249,6 +255,9 @@ class ChannelFactory extends DefaultHandler {
    * Metody oblugujace zdarzenia zwiazane z parsowaniem XML.
    */
 
+  /** Tresc (body) aktualnie parsowanego znacznika. */
+  String chars;
+
   public void startDocument() {
     //System.out.println("Start document");
     insideItem = false;
@@ -263,6 +272,8 @@ class ChannelFactory extends DefaultHandler {
 
   public void startElement(String uri, String name,
 			    String qName, Attributes atts) {
+    chars = "";
+
     if ("".equals(uri)) {
       //System.out.println("Start element: " + qName);
       currentTag = qName;
@@ -281,46 +292,10 @@ class ChannelFactory extends DefaultHandler {
   public void endElement(String uri, String name, String qName) {
     String closingTag;
 
-    if ("".equals(uri)) {
-      //System.out.println("End element: " + qName);
-      closingTag = qName;
-    } else {
-      //System.out.println("End element:   {" + uri + "}" + name);
-      closingTag = name;
-    }
-    if (currentTag.equals(closingTag)) {
-      currentTag = "";
-    }
-    if (closingTag.equals("item")) {
-      insideItem = false;
-      channel.addItem(item);
-    } else if (closingTag.equals("image")) {
-      insideImage = false;
-    }
-  }
-
-
-  /**
-   * Analiza tresci (body) znacznika.
-   */
-  public void characters(char ch[], int start, int length) {
-    String chars = "";
-
-    for (int i = start; i < start + length; i++) {
-      switch (ch[i]) {
-      case '\\':
-	chars += "\\\\";
-	break;
-      case '"':
-	chars += "\\\"";
-	break;
-      default:
-	chars += ch[i];
-	break;
-      }
-    }
-    //System.out.println("Characters: " + chars);
-
+    /*
+     * Tutaj "wyciagamy" wlasciwa tresc ze znacznikow i wpisujemy w struktury
+     */
+    chars = chars.trim();
     if (insideImage) {
       if (currentTag.equals("url")) {
 	channel.imageURL = chars;
@@ -350,6 +325,47 @@ class ChannelFactory extends DefaultHandler {
 	item.guid = chars;
       }
     }
+
+    if ("".equals(uri)) {
+      //System.out.println("End element: " + qName);
+      closingTag = qName;
+    } else {
+      //System.out.println("End element:   {" + uri + "}" + name);
+      closingTag = name;
+    }
+    if (currentTag.equals(closingTag)) {
+      currentTag = "";
+    }
+    if (closingTag.equals("item")) {
+      insideItem = false;
+      channel.addItem(item);
+    } else if (closingTag.equals("image")) {
+      insideImage = false;
+    }
+  }
+
+
+  /**
+   * Analiza tresci (body) znacznika.
+   * UWAGA: Cala tresc danego znacznika moze byc podzielona na kilka zdarzen
+   * 'characters' - w szczegolnosci, kazda linia jest innym zdarzeniem.
+   */
+  public void characters(char ch[], int start, int length) {
+    for (int i = start; i < start + length; i++) {
+      chars += ch[i];
+      /*switch (ch[i]) {
+      case '\\':
+	chars += "\\\\";
+	break;
+      case '"':
+	chars += "\\\"";
+	break;
+      default:
+	chars += ch[i];
+	break;
+      }*/
+    }
+    //System.out.println("Characters: " + chars);
   }
 }
 
