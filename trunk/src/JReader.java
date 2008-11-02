@@ -2,13 +2,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URL;
-
-import org.xml.sax.XMLReader;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.helpers.XMLReaderFactory;
-import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
@@ -21,9 +14,7 @@ class JReader {
   /** Lista wiadomosci do wyswietlenia w GUI. */
   static List<Item> items = new ArrayList<Item>();
   /** Tresc wiadomosci lub informacje o kanale do wyswietlenia w GUI. */
-  static Item preview;
-  // TODO: Obiekt preview powinien miec wlasna klase, a nie Item, bo moga w nim
-  // byc rowniez przechowywane szczegoly kanalu, a nie tylko elementow kanalu
+  static Preview preview;
 
   public static void main(String[] args) throws Exception {
 
@@ -80,16 +71,31 @@ class JReader {
 	if (preview == null) {
 	  System.out.println("Nie wybrano zadnej wiadomosci.");
 	} else {
-	  System.out.println(preview.title);
-	  if (preview.pubDate != null) {
-	    System.out.println("Data publikacji: " + preview.pubDate);
+	  if (preview.showingItem()) { // podglad elementu
+	    System.out.println(preview.getTitle());
+	    if (preview.getPubDate() != null) {
+	      System.out.println("Data publikacji: " + preview.getPubDate());
+	    }
+	    System.out.println("Link: " + preview.getLink());
+	    System.out.println("Opis: " + preview.getDescription());
+	  } else { // podglad kanalu
+	    System.out.println(preview.getTitle());
+	    System.out.println("Link: " + preview.getLink());
+	    System.out.println("Opis: " + preview.getDescription());
+	    if (preview.getImageTitle() != null) {
+	      System.out.println("Obrazek: " + preview.getImageTitle());
+	    }
+	    if (preview.getImageURL() != null) {
+	      System.out.println("    URL: " + preview.getImageURL());
+	    }
+	    if (preview.getImageLink() != null) {
+	      System.out.println("   link: " + preview.getImageLink());
+	    }
 	  }
-	  System.out.println("Link: " + preview.link);
-	  System.out.println("Opis: " + preview.description);
 	}
       } else if (command.equals("add channel")) {
-	System.out.print("Podaj adres URL kanalu: ");
-	channels.add(ChannelFactory.getChannel(in.readLine()));
+	System.out.print("Podaj adres URL: ");
+	channels.add(ChannelFactory.getChannelFromSite(in.readLine()));
 	System.out.println("Kanal zostal dodany");
       } else if (command.equals("update channel")) {
 	System.out.print("Podaj numer kanalu: ");
@@ -103,11 +109,11 @@ class JReader {
 	System.out.print("Podaj numer kanalu: ");
 	int nr = new Integer(in.readLine()) - 1;
 	items = channels.get(nr).getItems();
-	preview = new Item(channels.get(nr));
+	preview = new Preview(channels.get(nr));
       } else if (command.equals("select item")) {
 	System.out.print("Podaj numer elementu: ");
 	int nr = new Integer(in.readLine()) - 1;
-	preview = items.get(nr);
+	preview = new Preview(items.get(nr));
       } else if (!command.equals("") && !command.equals("quit")) {
 	System.out.println("Nieznane polecenie.");
       }
@@ -115,257 +121,6 @@ class JReader {
     /*
      * Koniec tekstowego UI.
      */
-  }
-}
-
-
-/**
- * Kanal RSS.
- */
-class Channel {
-  String URLString;
-  /** Liczba nieprzeczytanych elementow. */
-  int unreadItems;
-
-  String title;
-  String link;
-  String description;
-  /** Zawartosc elementu image (obrazek bedacy czescia opisu kanalu). */
-  String imageURL;
-  String imageTitle;
-  String imageLink;
-  /** Lista elementow (wiadomosci) kanalu. */
-  List<Item> items = new ArrayList<Item>();
-
-  Channel(String URLString) throws Exception {
-    this.URLString = URLString;
-  }
-
-  /**
-   * Parsuje zrodlo XML kanalu i uzupelnia informacje ogolne o kanale oraz
-   * jego elementy.
-   */
-  void update() throws Exception {
-    Channel ch = ChannelFactory.getChannel(URLString);
-    this.title = ch.title;
-    this.link = ch.link;
-    this.description = ch.description;
-    this.imageURL = ch.imageURL;
-    this.imageTitle = ch.imageTitle;
-    this.imageLink = ch.imageLink;
-    // dodawanie nowych elementow do kanalu
-    for (Item updatedItem : ch.getItems()) {
-      boolean itemAlreadyExists = false;
-      for (Item item : items) {
-	if (updatedItem.equals(item)) {
-	  itemAlreadyExists = true;
-	}
-      }
-      if (!itemAlreadyExists) {
-	items.add(updatedItem);
-      }
-    }
-  }
-
-  void addItem(Item item) { items.add(item); }
-
-  String getTitle() { return title; }
-
-  String getLink() { return link; }
-
-  String getDescription() { return description; }
-
-  List<Item> getItems() { return items; }
-}
-
-
-class Item {
-  /** Czy dany element jest juz przeczytany. */
-  boolean isRead;
-  String title;
-  String link;
-  String description;
-  /** Data publikacji elementu. */
-  String pubDate;
-  /** Unikalny identyfikator elementu. */
-  String guid;
-
-  Item() { }
-
-  // TODO: po stworzeniu klasy Preview trzeba sie tego pozbyc
-  Item(Channel ch) {
-    this.title = ch.getTitle();
-    this.link = ch.getLink();
-    this.description = ch.getDescription();
-  }
-
-  /**
-   * Porownuje dwa elementy (do sprawdzania, czy dany element jest nowy).
-   */
-  public boolean equals(Object obj) {
-    Item it = (Item) obj;
-    if (this.guid != null && it.guid != null) {
-      if (this.guid.equals(it.guid)) {
-	return true;
-      }
-    }
-    if (this.title.equals(it.title) && this.pubDate.equals(it.pubDate)
-	&& this.description.equals(it.description)) {
-      return true;
-      }
-    return false;
-  }
-}
-
-
-/**
- * Stad za pomoca metody getChannel mozna pobierac aktualny kanal.
- */
-class ChannelFactory extends DefaultHandler {
-  /** Zmienna, ktora zostanie zwrocona przez metode getChannel(). */
-  static Channel channel;
-  /** Tymczasowy element dla celow parsowania. */
-  static Item item = new Item();
-
-  boolean insideItem;
-  boolean insideImage;
-  String currentTag = "";
-
-  public ChannelFactory() {
-    super();
-  }
-
-  /** Zwraca aktualna postac kanalu o podanym adresie URL. */
-  public static Channel getChannel(String URLString) throws Exception {
-    channel = new Channel(URLString);
-    URL url = new URL(URLString);
-
-    XMLReader xr = XMLReaderFactory.createXMLReader();
-    ChannelFactory handler = new ChannelFactory();
-    xr.setContentHandler(handler);
-    xr.setErrorHandler(handler);
-
-    xr.parse(new InputSource(url.openStream()));
-
-    return channel;
-  }
-
-
-  /*
-   * Metody oblugujace zdarzenia zwiazane z parsowaniem XML.
-   */
-
-  /** Tresc (body) aktualnie parsowanego znacznika. */
-  String chars;
-
-  public void startDocument() {
-    //System.out.println("Start document");
-    insideItem = false;
-    insideImage = false;
-  }
-
-  public void endDocument() {
-    //System.out.println("End document\n");
-    insideItem = false;
-    insideImage = false;
-  }
-
-  public void startElement(String uri, String name,
-			    String qName, Attributes atts) {
-    chars = "";
-
-    if ("".equals(uri)) {
-      //System.out.println("Start element: " + qName);
-      currentTag = qName;
-    } else {
-      //System.out.println("Start element: {" + uri + "}" + name);
-      currentTag = name;
-    }
-    if (currentTag.equals("item")) {
-      insideItem = true;
-      item = new Item();
-    } else if (currentTag.equals("image")) {
-      insideImage = true;
-    }
-  }
-
-  public void endElement(String uri, String name, String qName) {
-    String closingTag;
-
-    /*
-     * Tutaj "wyciagamy" wlasciwa tresc ze znacznikow i wpisujemy w struktury
-     */
-    chars = chars.trim();
-    if (insideImage) {
-      if (currentTag.equals("url")) {
-	channel.imageURL = chars;
-      } else if (currentTag.equals("title")) {
-	channel.imageTitle = chars;
-      } else if (currentTag.equals("link")) {
-	channel.imageLink = chars;
-      }
-    } else if (!insideItem) {
-      if (currentTag.equals("title")) {
-	channel.title = chars;
-      } else if (currentTag.equals("link")) {
-	channel.link = chars;
-      } else if (currentTag.equals("description")) {
-	channel.description = chars;
-      }
-    } else {
-      if (currentTag.equals("title")) {
-	item.title = chars;
-      } else if (currentTag.equals("link")) {
-	item.link = chars;
-      } else if (currentTag.equals("description")) {
-	item.description = chars;
-      } else if (currentTag.equals("pubDate")) {
-	item.pubDate = chars;
-      } else if (currentTag.equals("guid")) {
-	item.guid = chars;
-      }
-    }
-
-    if ("".equals(uri)) {
-      //System.out.println("End element: " + qName);
-      closingTag = qName;
-    } else {
-      //System.out.println("End element:   {" + uri + "}" + name);
-      closingTag = name;
-    }
-    if (currentTag.equals(closingTag)) {
-      currentTag = "";
-    }
-    if (closingTag.equals("item")) {
-      insideItem = false;
-      channel.addItem(item);
-    } else if (closingTag.equals("image")) {
-      insideImage = false;
-    }
-  }
-
-
-  /**
-   * Analiza tresci (body) znacznika.
-   * UWAGA: Cala tresc danego znacznika moze byc podzielona na kilka zdarzen
-   * 'characters' - w szczegolnosci, kazda linia jest innym zdarzeniem.
-   */
-  public void characters(char ch[], int start, int length) {
-    for (int i = start; i < start + length; i++) {
-      chars += ch[i];
-      /*switch (ch[i]) {
-      case '\\':
-	chars += "\\\\";
-	break;
-      case '"':
-	chars += "\\\"";
-	break;
-      default:
-	chars += ch[i];
-	break;
-      }*/
-    }
-    //System.out.println("Characters: " + chars);
   }
 }
 
