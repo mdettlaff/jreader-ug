@@ -1,37 +1,52 @@
+import java.util.Date;
+
 /**
  * Element kanalu.
  */
 class Item {
   /** Czy dany element jest juz przeczytany. */
-  boolean isRead;
-  String title;
-  String link;
-  String description;
+  private boolean isRead;
+  private String title;
+  private String link;
+  private String description;
   /** Data publikacji elementu. */
-  String pubDate;
+  private Date date;
   /** Unikalny identyfikator elementu. */
-  String guid;
+  private String guid;
 
   /**
    * Porownuje dwa elementy (do sprawdzania, czy dany element jest nowy).
    */
   public boolean equals(Object obj) {
-    Item it = (Item) obj;
-    if (this.guid != null && it.guid != null) {
-      if (this.guid.equals(it.guid)) {
+    Item item = (Item) obj;
+    if (this.guid != null && item.guid != null) {
+      if (this.guid.equals(item.guid)) {
 	return true;
       }
-    }
-    if (this.title.equals(it.title) && this.pubDate.equals(it.pubDate)
-	&& this.description.equals(it.description)) {
+    } else if (this.title.equals(item.title)
+	&& this.description.equals(item.description)) {
       return true;
-      }
+    }
     return false;
+  }
+
+  void markAsRead() {
+    isRead = true;
+  }
+
+  void markAsUnread() {
+    isRead = false;
   }
 
   String getTitle() { return title; }
   String getLink() { return link; }
   String getDescription() { return description; }
-  String getPubDate() { return pubDate; }
+  Date getDate() { return date; }
+
+  void setTitle(String title) { this.title = title; }
+  void setLink(String link) { this.link = link; }
+  void setDescription(String description) { this.description = description; }
+  void setDate(Date date) { this.date = date; }
+  void setGuid(String guid) { this.guid = guid; }
 }
 

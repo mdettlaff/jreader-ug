@@ -7,21 +7,21 @@ import java.util.List;
  */
 class Channel {
   /** URL strony HTML zawierajacej kanal. */
-  String siteURL;
+  private String siteURL;
   /** URL pliku XML z trescia kanalu. */
-  String channelURL;
+  private String channelURL;
   /** Liczba nieprzeczytanych elementow. */
-  int unreadItems;
+  private int unreadItems;
 
-  String title;
-  String link;
-  String description;
+  private String title;
+  private String link;
+  private String description;
   /** Zawartosc elementu image (obrazek bedacy czescia opisu kanalu). */
-  String imageURL;
-  String imageTitle;
-  String imageLink;
+  private String imageURL;
+  private String imageTitle;
+  private String imageLink;
   /** Lista elementow (wiadomosci) kanalu. */
-  List<Item> items = new ArrayList<Item>();
+  private List<Item> items = new ArrayList<Item>();
 
   Channel(String channelURL) throws Exception {
     this.channelURL = channelURL;
@@ -45,6 +45,7 @@ class Channel {
       for (Item item : items) {
 	if (updatedItem.equals(item)) {
 	  itemAlreadyExists = true;
+	  break;
 	}
       }
       if (!itemAlreadyExists) {
@@ -55,14 +56,34 @@ class Channel {
 
   void addItem(Item item) { items.add(item); }
 
+  void markAllAsRead() {
+    for (Item item : items) {
+      item.markAsRead();
+    }
+    unreadItems = 0;
+  }
+
+  void markAllAsUnread() {
+    for (Item item : items) {
+      item.markAsUnread();
+    }
+    unreadItems = items.size();
+  }
+
   String getTitle() { return title; }
   String getLink() { return link; }
   String getDescription() { return description; }
+  List<Item> getItems() { return items; }
 
   String getImageURL() { return imageURL; }
   String getImageTitle() { return imageTitle; }
   String getImageLink() { return imageLink; }
 
-  List<Item> getItems() { return items; }
+  void setTitle(String title) { this.title = title; }
+  void setLink(String link) { this.link = link; }
+  void setDescription(String description) { this.description = description; }
+  void setImageURL(String imageURL) { this.imageURL = imageURL; }
+  void setImageTitle(String imageTitle) { this.imageTitle = imageTitle; }
+  void setImageLink(String imageLink) { this.imageLink = imageLink; }
 }
 

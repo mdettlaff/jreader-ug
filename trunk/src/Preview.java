@@ -1,17 +1,19 @@
+import java.util.Date;
+
 /**
  * Dane potrzebne do wyswietlenia podgladu elementu lub kanalu w GUI.
  */
 class Preview {
   /** Czy pokazuje element, w przeciwnym wypadku informacje o kanale. */
-  boolean showingItem;
-  String title;
-  String link;
-  String description;
-  String pubDate;
+  private boolean showingItem;
+  private String title;
+  private String link;
+  private String description;
+  private Date date;
   /** Obrazek bedacy czescia opisu kanalu. */
-  String imageURL;
-  String imageTitle;
-  String imageLink;
+  private String imageURL;
+  private String imageTitle;
+  private String imageLink;
 
   Preview(Channel ch) {
     showingItem = false;
@@ -28,18 +30,18 @@ class Preview {
     this.title = item.getTitle();
     this.link = item.getLink();
     this.description = item.getDescription();
-    this.pubDate = item.getPubDate();
+    this.date = item.getDate();
   }
 
   String getTitle() { return title; }
   String getLink() { return link; }
   String getDescription() { return description; }
-  String getPubDate() { return pubDate; }
+  Date getDate() { return date; }
 
   String getImageURL() { return imageURL; }
   String getImageTitle() { return imageTitle; }
   String getImageLink() { return imageLink; }
 
-  boolean showingItem() { return showingItem; }
+  boolean isShowingItem() { return showingItem; }
 }
 
