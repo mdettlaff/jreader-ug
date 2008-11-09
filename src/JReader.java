@@ -1,3 +1,5 @@
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.BufferedReader;
@@ -21,6 +23,7 @@ class JReader {
     /*
      * Tekstowy interfejs uzytkownika, w celach testowych.
      */
+    DateFormat shortDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
     String command = new String();
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -37,14 +40,26 @@ class JReader {
 	System.out.print("show channels\t");
 	System.out.print("show items\t");
 	System.out.println("show preview");
+
 	System.out.print("add channel\t");
-	System.out.print("update channel\t");
-	System.out.println("remove channel");
-	System.out.print("select channel\t");
-	System.out.println("select item");
+	//System.out.println("previous item");
+	//System.out.println("next item");
+	//System.out.println("update all");
+	//System.out.println("next unread");
+
+	System.out.print("select item\t");
+	System.out.println("select channel");
 	//System.out.println("select unread");
 	//System.out.println("select all");
-	System.out.println("quit\n");
+
+	//System.out.println("mark channel");
+	System.out.print("update channel\t");
+	System.out.println("remove channel");
+
+	//System.out.print("set sort new\t");
+	//System.out.print("set sort old\t");
+	System.out.print("help\t\t");
+	System.out.println("quit");
       } else if (command.equals("show channels")) {
 	if (channels.size() == 0) {
 	  System.out.println("Lista subskrypcji jest pusta.");
@@ -52,7 +67,7 @@ class JReader {
 	  Channel ch;
 	  for (int i=0; i < channels.size(); i++) {
 	    ch = channels.get(i);
-	    System.out.println("Kanal " + (i+1) + ": " + ch.title);
+	    System.out.println("Kanal " + (i+1) + ": " + ch.getTitle());
 	  }
 	}
       } else if (command.equals("show items")) {
@@ -61,20 +76,22 @@ class JReader {
 	} else {
 	  for (int i=0; i < items.size(); i++) {
 	    Item item = items.get(i);
-	    System.out.println("Element " + (i+1) + ": " + item.title);
-	    if (item.pubDate != null) {
-	      System.out.println("Data publikacji: " + item.pubDate);
+	    System.out.print((i+1) + ": ");
+	    if (item.getDate() != null) {
+	      System.out.print(shortDateFormat.format(item.getDate()) + " ");
 	    }
+	    System.out.println(item.getTitle());
 	  }
 	}
       } else if (command.equals("show preview")) {
 	if (preview == null) {
 	  System.out.println("Nie wybrano zadnej wiadomosci.");
 	} else {
-	  if (preview.showingItem()) { // podglad elementu
+	  if (preview.isShowingItem()) { // podglad elementu
 	    System.out.println(preview.getTitle());
-	    if (preview.getPubDate() != null) {
-	      System.out.println("Data publikacji: " + preview.getPubDate());
+	    if (preview.getDate() != null) {
+	      System.out.println("Data publikacji: " +
+		  shortDateFormat.format(preview.getDate()));
 	    }
 	    System.out.println("Link: " + preview.getLink());
 	    System.out.println("Opis: " + preview.getDescription());
@@ -113,6 +130,7 @@ class JReader {
       } else if (command.equals("select item")) {
 	System.out.print("Podaj numer elementu: ");
 	int nr = new Integer(in.readLine()) - 1;
+	items.get(nr).markAsRead();
 	preview = new Preview(items.get(nr));
       } else if (!command.equals("") && !command.equals("quit")) {
 	System.out.println("Nieznane polecenie.");
