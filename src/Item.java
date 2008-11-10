@@ -38,6 +38,10 @@ class Item {
     isRead = false;
   }
 
+  boolean isUnread() {
+    return !isRead;
+  }
+
   String getTitle() { return title; }
   String getLink() { return link; }
   String getDescription() { return description; }
