@@ -1,6 +1,8 @@
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,15 +10,17 @@ import java.io.InputStreamReader;
 
 /**
  * Glowna klasa programu, przechowujaca obiekty przeznaczone do wyswietlania
- * w Graficznym Interfejsie Uzytkownika.
+ * w Graficznym Interfejsie Uzytkownika i posiadajaca metody obslugujace
+ * podstawowe funkcjonalnosci programu, uzywane za pomoca interfejsu
+ * uzytkownika. 
  */
 class JReader {
   /** Lista subskrypcji do wyswietlenia w GUI. */
-  static List<Channel> channels = new ArrayList<Channel>();
+  private static List<Channel> channels = new ArrayList<Channel>();
   /** Lista wiadomosci do wyswietlenia w GUI. */
-  static List<Item> items = new ArrayList<Item>();
+  private static List<Item> items = new ArrayList<Item>();
   /** Tresc wiadomosci lub informacje o kanale do wyswietlenia w GUI. */
-  static Preview preview;
+  private static Preview preview;
 
   public static void main(String[] args) throws Exception {
 
@@ -33,7 +37,7 @@ class JReader {
 	command = "help";
 	justStarted = false;
       } else {
-	command = in.readLine();
+	command = in.readLine().trim();
       }
       if (command.equals("help")) {
 	System.out.println("Dostepne komendy:");
@@ -42,22 +46,21 @@ class JReader {
 	System.out.println("show preview");
 
 	System.out.print("add channel\t");
-	//System.out.println("previous item");
-	//System.out.println("next item");
-	//System.out.println("update all");
-	//System.out.println("next unread");
+	//System.out.print("previous item\t");
+	//System.out.print("next item\t");
+	System.out.print("update all\t");
+	System.out.println("next unread");
 
 	System.out.print("select item\t");
-	System.out.println("select channel");
-	//System.out.println("select unread");
-	//System.out.println("select all");
+	System.out.print("select channel\t");
+	System.out.print("select all\t");
+	System.out.println("select unread");
 
-	//System.out.println("mark channel");
+	System.out.print("mark channel\t");
 	System.out.print("update channel\t");
 	System.out.println("remove channel");
 
-	//System.out.print("set sort new\t");
-	//System.out.print("set sort old\t");
+	System.out.print("set sort\t");
 	System.out.print("help\t\t");
 	System.out.println("quit");
       } else if (command.equals("show channels")) {
@@ -67,7 +70,12 @@ class JReader {
 	  Channel ch;
 	  for (int i=0; i < channels.size(); i++) {
 	    ch = channels.get(i);
-	    System.out.println("Kanal " + (i+1) + ": " + ch.getTitle());
+	    System.out.print("Kanal " + (i+1) + ": " + ch.getTitle());
+	    if (ch.getUnreadItemsCount() > 0) {
+	      System.out.println(" (" + ch.getUnreadItemsCount() + ")");
+	    } else {
+	      System.out.println("");
+	    }
 	  }
 	}
       } else if (command.equals("show items")) {
@@ -80,6 +88,9 @@ class JReader {
 	    if (item.getDate() != null) {
 	      System.out.print(shortDateFormat.format(item.getDate()) + " ");
 	    }
+	    if (item.isUnread()) {
+	      System.out.print("N ");
+	    }
 	    System.out.println(item.getTitle());
 	  }
 	}
@@ -87,33 +98,39 @@ class JReader {
 	if (preview == null) {
 	  System.out.println("Nie wybrano zadnej wiadomosci.");
 	} else {
-	  if (preview.isShowingItem()) { // podglad elementu
-	    System.out.println(preview.getTitle());
-	    if (preview.getDate() != null) {
-	      System.out.println("Data publikacji: " +
-		  shortDateFormat.format(preview.getDate()));
-	    }
-	    System.out.println("Link: " + preview.getLink());
-	    System.out.println("Opis: " + preview.getDescription());
-	  } else { // podglad kanalu
-	    System.out.println(preview.getTitle());
-	    System.out.println("Link: " + preview.getLink());
-	    System.out.println("Opis: " + preview.getDescription());
-	    if (preview.getImageTitle() != null) {
-	      System.out.println("Obrazek: " + preview.getImageTitle());
-	    }
-	    if (preview.getImageURL() != null) {
-	      System.out.println("    URL: " + preview.getImageURL());
-	    }
-	    if (preview.getImageLink() != null) {
-	      System.out.println("   link: " + preview.getImageLink());
-	    }
+	  System.out.println(preview.getTitle());
+	  System.out.println("Link: " + preview.getLink());
+	  if (preview.getDate() != null) {
+	    System.out.println("Data publikacji: " +
+		shortDateFormat.format(preview.getDate()));
 	  }
+	  System.out.println("Opis: " + preview.getHTML());
 	}
+
       } else if (command.equals("add channel")) {
 	System.out.print("Podaj adres URL: ");
-	channels.add(ChannelFactory.getChannelFromSite(in.readLine()));
+	addChannel(in.readLine());
 	System.out.println("Kanal zostal dodany");
+      } else if (command.equals("update all")) {
+	updateAll();
+      } else if (command.equals("next unread")) {
+	nextUnread();
+      } else if (command.equals("select item")) {
+	System.out.print("Podaj numer elementu: ");
+	int nr = new Integer(in.readLine()) - 1;
+	selectItem(items.get(nr));
+      } else if (command.equals("select channel")) {
+	System.out.print("Podaj numer kanalu: ");
+	int nr = new Integer(in.readLine()) - 1;
+	selectChannel(nr);
+      } else if (command.equals("select all")) {
+	selectAll();
+      } else if (command.equals("select unread")) {
+	selectUnread();
+      } else if (command.equals("mark channel")) {
+	System.out.print("Podaj numer kanalu: ");
+	int nr = new Integer(in.readLine()) - 1;
+	channels.get(nr).markAllAsRead();
       } else if (command.equals("update channel")) {
 	System.out.print("Podaj numer kanalu: ");
 	int nr = new Integer(in.readLine()) - 1;
@@ -121,17 +138,17 @@ class JReader {
       } else if (command.equals("remove channel")) {
 	System.out.print("Podaj numer kanalu: ");
 	int nr = new Integer(in.readLine()) - 1;
-	channels.remove(nr);
-      } else if (command.equals("select channel")) {
-	System.out.print("Podaj numer kanalu: ");
-	int nr = new Integer(in.readLine()) - 1;
-	items = channels.get(nr).getItems();
-	preview = new Preview(channels.get(nr));
-      } else if (command.equals("select item")) {
-	System.out.print("Podaj numer elementu: ");
-	int nr = new Integer(in.readLine()) - 1;
-	items.get(nr).markAsRead();
-	preview = new Preview(items.get(nr));
+	removeChannel(nr);
+      } else if (command.equals("set sort")) {
+	System.out.print("Sortuj wedlug (new/old): ");
+	String choice = in.readLine().trim();
+	if (choice.equals("old")) {
+	  ItemComparator.setSortByNewest(false);
+	} else if (choice.equals("new")) {
+	  ItemComparator.setSortByNewest(true);
+	} else {
+	  System.out.println("Nieprawidlowy wybor.");
+	}
       } else if (!command.equals("") && !command.equals("quit")) {
 	System.out.println("Nieznane polecenie.");
       }
@@ -139,6 +156,125 @@ class JReader {
     /*
      * Koniec tekstowego UI.
      */
+  }
+
+  /*
+   * Metody obslugujace glowne funkcjonalnosci programu, wywolywane przy
+   * pomocy interfejsu uzytkownika.
+   */
+
+  /**
+   * Dodaje nowy kanal na podstawie URLa podanego przez uzytkownika
+   */
+  static void addChannel(String siteURL) throws Exception {
+    channels.add(ChannelFactory.getChannelFromSite(siteURL));
+  }
+
+  static void updateAll() throws Exception {
+    for (Channel channel : channels) {
+      channel.update();
+    }
+  }
+
+  static void nextUnread() {
+    Item newestItem = new Item();
+    newestItem.setDate(new Date(0)); // 1 stycznia 1970
+    for (Channel channel : channels) {
+      for (Item item : channel.getItems()) {
+	if (item.isUnread()) {
+	  if (item.getDate().after(newestItem.getDate())) {
+	    newestItem = item;
+	  }
+	}
+      }
+    }
+    if (newestItem.getDate().equals(new Date(0))) {
+      System.out.println("Nie ma nieprzeczytanych wiadomosci.");
+    } else {
+      // szukamy najnowszego elementu znowu, zeby go oznaczyc jako przeczytany
+      boolean foundAgain = false;
+      for (Channel channel : channels) {
+	for (Item item : channel.getItems()) {
+	  if (item.isUnread()) {
+	    if (item.getDate().equals(newestItem.getDate())) {
+	      item.markAsRead();
+	      foundAgain = true;
+	      break;
+	    }
+	  }
+	}
+	if (foundAgain) {
+	  channel.updateUnreadItemsCount();
+	  break;
+       	}
+      }
+      preview = new Preview(newestItem);
+    }
+  }
+
+  /**
+   * Efekt klikniecia na wybrany element.
+   */
+  static void selectItem(Item item) {
+    item.markAsRead();
+    preview = new Preview(item);
+    // aktualizujemy ilosc nieprzeczytanych elementow kanalu (przerywamy petle
+    // po znalezieniu odpowiedniego kanalu i zaktualizowaniu go)
+    for (Channel channel : channels) {
+      if (channel.updateUnreadItemsCount() != 0) {
+	break;
+      }
+    }
+  }
+
+  /**
+   * Efekt klikniecia na wybrany kanal.
+   */
+  static void selectChannel(int index) {
+    items = channels.get(index).getItems();
+    Collections.sort(items, new ItemComparator());
+    preview = new Preview(channels.get(index));
+  }
+
+  static void selectAll() {
+    items = new ArrayList<Item>(); // nie uzywac items.clear()
+    for (Channel channel : channels) {
+      for (Item item : channel.getItems()) {
+	items.add(item);
+      }
+    }
+    Collections.sort(items, new ItemComparator());
+  }
+
+  static void selectUnread() {
+    items = new ArrayList<Item>(); // nie uzywac items.clear()
+    for (Channel channel : channels) {
+      for (Item item : channel.getItems()) {
+	if (item.isUnread()) {
+	  items.add(item);
+	}
+      }
+    }
+    Collections.sort(items, new ItemComparator());
+  }
+
+  static void removeChannel(int index) {
+    // najpierw usuwamy z listy elementow te pochadzace z usuwanego kanalu
+    List<Integer> indToRemove = new ArrayList<Integer>();
+    for (int i=0; i < items.size(); i++) {
+      for (Item channelItem : channels.get(index).getItems()) {
+	if (items.get(i).equals(channelItem)) {
+	  indToRemove.add(i);
+	}
+      }
+    }
+    for (int i=0; i < indToRemove.size(); i++) {
+      items.remove((int)indToRemove.get(i));
+      for (int j=i; j < indToRemove.size(); j++) {
+	indToRemove.set(j, indToRemove.get(j)-1);
+      }
+    }
+    channels.remove(index);
   }
 }
 

@@ -6,12 +6,10 @@ import java.util.List;
  * Kanal RSS.
  */
 class Channel {
-  /** URL strony HTML zawierajacej kanal. */
-  private String siteURL;
   /** URL pliku XML z trescia kanalu. */
   private String channelURL;
   /** Liczba nieprzeczytanych elementow. */
-  private int unreadItems;
+  private int unreadItemsCount;
 
   private String title;
   private String link;
@@ -52,6 +50,28 @@ class Channel {
 	items.add(updatedItem);
       }
     }
+    this.updateUnreadItemsCount();
+  }
+
+  /**
+   * Liczy na nowo i aktualizuje ilosc nieprzeczytanych elementow kanalu.
+   *
+   * @return	1, jesli ilosc nieprzeczytanych elementow sie zmienila;
+		w przeciwnym przypadku 0
+   */
+  int updateUnreadItemsCount() {
+    int oldCount = unreadItemsCount;
+    unreadItemsCount = 0;
+    for (Item item : items) {
+      if (item.isUnread()) {
+	unreadItemsCount++;
+      }
+    }
+    if (oldCount == unreadItemsCount) {
+      return 0;
+    } else {
+      return 1;
+    }
   }
 
   void addItem(Item item) { items.add(item); }
@@ -60,14 +80,14 @@ class Channel {
     for (Item item : items) {
       item.markAsRead();
     }
-    unreadItems = 0;
+    this.updateUnreadItemsCount();
   }
 
   void markAllAsUnread() {
     for (Item item : items) {
       item.markAsUnread();
     }
-    unreadItems = items.size();
+    this.updateUnreadItemsCount();
   }
 
   String getTitle() { return title; }
@@ -78,6 +98,11 @@ class Channel {
   String getImageURL() { return imageURL; }
   String getImageTitle() { return imageTitle; }
   String getImageLink() { return imageLink; }
+
+  /** Zwraca liczbe nieprzeczytanych elementow */
+  int getUnreadItemsCount() {
+    return unreadItemsCount;
+  }
 
   void setTitle(String title) { this.title = title; }
   void setLink(String link) { this.link = link; }

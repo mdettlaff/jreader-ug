@@ -28,6 +28,11 @@ class ChannelFactory extends DefaultHandler {
    */
   DateFormat RSSDateFormat =
     new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+  /**
+   * Format daty ze strefa czasowa niezgodna ze standardem RFC 822, bez sekund
+   */
+  DateFormat OtherDateFormat =
+    new SimpleDateFormat("E, dd MMM yyyy HH:mm z", Locale.ENGLISH);
   boolean insideItem;
   boolean insideImage;
   String currentTag = "";
@@ -171,7 +176,16 @@ class ChannelFactory extends DefaultHandler {
 	try {
 	  Date parsedDate = RSSDateFormat.parse(chars);
 	  item.setDate(parsedDate);
-	} catch (ParseException pe) { }
+	} catch (ParseException pe) {
+	  // jak sie nie uda ze standardowa data RFC 822, to probujemy
+	  // alternatyw
+	  try {
+	    Date parsedDate = OtherDateFormat.parse(chars);
+	    item.setDate(parsedDate);
+	  } catch (ParseException pe2) {
+	    // pozniej bedzie wpisana domyslnie biezaca data
+	  }
+       	}
       } else if (currentTag.equals("guid")) {
 	item.setGuid(chars);
       }

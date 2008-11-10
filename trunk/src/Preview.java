@@ -8,8 +8,8 @@ class Preview {
   private boolean showingItem;
   private String title;
   private String link;
-  private String description;
   private Date date;
+  private String description;
   /** Obrazek bedacy czescia opisu kanalu. */
   private String imageURL;
   private String imageTitle;
@@ -29,19 +29,33 @@ class Preview {
     showingItem = true;
     this.title = item.getTitle();
     this.link = item.getLink();
-    this.description = item.getDescription();
     this.date = item.getDate();
+    this.description = item.getDescription();
   }
 
   String getTitle() { return title; }
   String getLink() { return link; }
-  String getDescription() { return description; }
   Date getDate() { return date; }
 
-  String getImageURL() { return imageURL; }
-  String getImageTitle() { return imageTitle; }
-  String getImageLink() { return imageLink; }
-
-  boolean isShowingItem() { return showingItem; }
+  String getHTML() {
+    if (showingItem) {
+      return description;
+    } else { // konstruujemy opis kanalu, z obrazkiem jesli istnieje
+      String HTML = "";
+      if (imageURL != null) {
+	if (imageTitle != null) {
+	  HTML += "<img alt=\"" + imageTitle + "\" align=\"right\"" +
+	    " src=\"" + imageURL + "\">\n";
+	} else {
+	  HTML += "<img align=\"right\"" + " src=\"" + imageURL + "\">\n";
+	}
+	if (imageLink != null) {
+	  HTML = "<a href=\"" + imageLink + "\">\n" + HTML + "</a>\n";
+	}
+      }
+      HTML += description;
+      return HTML;
+    }
+  }
 }
 
