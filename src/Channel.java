@@ -57,7 +57,7 @@ class Channel {
    * Liczy na nowo i aktualizuje ilosc nieprzeczytanych elementow kanalu.
    *
    * @return	1, jesli ilosc nieprzeczytanych elementow sie zmienila;
-		w przeciwnym przypadku 0
+   *		w przeciwnym przypadku 0
    */
   int updateUnreadItemsCount() {
     int oldCount = unreadItemsCount;
@@ -74,7 +74,9 @@ class Channel {
     }
   }
 
-  void addItem(Item item) { items.add(item); }
+  void addItem(Item item) {
+    items.add(item);
+  }
 
   void markAllAsRead() {
     for (Item item : items) {
@@ -99,7 +101,7 @@ class Channel {
   String getImageTitle() { return imageTitle; }
   String getImageLink() { return imageLink; }
 
-  /** Zwraca liczbe nieprzeczytanych elementow */
+  /** Zwraca liczbe nieprzeczytanych elementow. */
   int getUnreadItemsCount() {
     return unreadItemsCount;
   }
