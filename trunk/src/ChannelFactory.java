@@ -19,23 +19,28 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class ChannelFactory extends DefaultHandler {
   /** Zmienna, ktora zostanie zwrocona przez metode getChannelFromXML(). */
-  static Channel channel;
+  private static Channel channel;
   /** Tymczasowy element dla celow parsowania. */
-  static Item item = new Item();
+  private static Item item = new Item();
 
   /**
-   * Definicja formatu daty stosowanego w kanalach RSS (standard RFC 822)
+   * Definicja standardowego formatu daty stosowanego w kanalach RSS (RFC 822)
    */
-  DateFormat RSSDateFormat =
+  private DateFormat RSSDateFormat =
     new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-  /**
-   * Format daty ze strefa czasowa niezgodna ze standardem RFC 822, bez sekund
+  /*
+   * Inne formaty daty.
    */
-  DateFormat OtherDateFormat =
+  /** Format daty uzywany w userfriendly.org. */
+  private DateFormat DateFormat1 =
     new SimpleDateFormat("E, dd MMM yyyy HH:mm z", Locale.ENGLISH);
-  boolean insideItem;
-  boolean insideImage;
-  String currentTag = "";
+  /** Format daty uzywany w slashdot.org. */
+  private DateFormat DateFormat2 =
+    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+
+  private boolean insideItem;
+  private boolean insideImage;
+  private String currentTag = "";
 
   public ChannelFactory() {
     super();
@@ -58,8 +63,8 @@ class ChannelFactory extends DefaultHandler {
     }
     URL url = new URL(siteURL);
     BufferedReader in = new BufferedReader(
-			    new InputStreamReader(
-			    url.openStream()));
+	new InputStreamReader(
+	  url.openStream()));
     // najpierw sprawdzamy czy podany adres jest adresem do pliku XML
     if (in.readLine().contains("xml version")
        	&& in.readLine().contains("rss")) {
@@ -113,7 +118,7 @@ class ChannelFactory extends DefaultHandler {
    */
 
   /** Tresc (body) aktualnie parsowanego znacznika. */
-  String chars;
+  private String chars;
 
   public void startDocument() {
     insideItem = false;
@@ -180,10 +185,15 @@ class ChannelFactory extends DefaultHandler {
 	  // jak sie nie uda ze standardowa data RFC 822, to probujemy
 	  // alternatyw
 	  try {
-	    Date parsedDate = OtherDateFormat.parse(chars);
+	    Date parsedDate = DateFormat1.parse(chars);
 	    item.setDate(parsedDate);
-	  } catch (ParseException pe2) {
-	    // pozniej bedzie wpisana domyslnie biezaca data
+	  } catch (ParseException pe1) {
+	    try {
+	      Date parsedDate = DateFormat2.parse(chars);
+	      item.setDate(parsedDate);
+	    } catch (ParseException pe2) {
+	      // pozniej bedzie wpisana domyslnie biezaca data
+	    }
 	  }
        	}
       } else if (currentTag.equals("guid")) {

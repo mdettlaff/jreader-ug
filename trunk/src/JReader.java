@@ -19,8 +19,11 @@ class JReader {
   private static List<Channel> channels = new ArrayList<Channel>();
   /** Lista wiadomosci do wyswietlenia w GUI. */
   private static List<Item> items = new ArrayList<Item>();
-  /** Tresc wiadomosci lub informacje o kanale do wyswietlenia w GUI. */
-  private static Preview preview;
+  /**
+   * Lista tresci wiadomosci lub informacji o kanale do wyswietlenia w GUI.
+   * Przy pomocy przyciskow Wstecz i Dalej mozna nawigowac po liscie.
+   */
+  private static HistoryList<Preview> preview = new HistoryList<Preview>(10);
 
   public static void main(String[] args) throws Exception {
 
@@ -46,8 +49,8 @@ class JReader {
 	System.out.println("show preview");
 
 	System.out.print("add channel\t");
-	//System.out.print("previous item\t");
-	//System.out.print("next item\t");
+	System.out.print("previous item\t");
+	System.out.print("next item\t");
 	System.out.print("update all\t");
 	System.out.println("next unread");
 
@@ -95,22 +98,30 @@ class JReader {
 	  }
 	}
       } else if (command.equals("show preview")) {
-	if (preview == null) {
+	if (preview.getCurrent() == null) {
 	  System.out.println("Nie wybrano zadnej wiadomosci.");
 	} else {
-	  System.out.println(preview.getTitle());
-	  System.out.println("Link: " + preview.getLink());
-	  if (preview.getDate() != null) {
+	  System.out.println(preview.getCurrent().getTitle());
+	  System.out.println("Link: " + preview.getCurrent().getLink());
+	  if (preview.getCurrent().getDate() != null) {
 	    System.out.println("Data publikacji: " +
-		shortDateFormat.format(preview.getDate()));
+		shortDateFormat.format(preview.getCurrent().getDate()));
 	  }
-	  System.out.println("Opis: " + preview.getHTML());
+	  System.out.println("Opis: " + preview.getCurrent().getHTML());
 	}
 
       } else if (command.equals("add channel")) {
 	System.out.print("Podaj adres URL: ");
 	addChannel(in.readLine());
 	System.out.println("Kanal zostal dodany");
+      } else if (command.equals("previous item")) {
+	if (previousItem() == null) {
+	  System.out.println("Nie mozna sie cofnac.");
+	}
+      } else if (command.equals("next item")) {
+	if (nextItem() == null) {
+	  System.out.println("Nie mozna przejsc dalej.");
+	}
       } else if (command.equals("update all")) {
 	updateAll();
       } else if (command.equals("next unread")) {
@@ -164,10 +175,19 @@ class JReader {
    */
 
   /**
-   * Dodaje nowy kanal na podstawie URLa podanego przez uzytkownika
+   * Dodaje nowy kanal na podstawie URLa podanego przez uzytkownika.
+   * Moze byc to URL strony lub konkretnego pliku XML z trescia kanalu.
    */
   static void addChannel(String siteURL) throws Exception {
     channels.add(ChannelFactory.getChannelFromSite(siteURL));
+  }
+
+  static Preview previousItem() {
+    return preview.previous();
+  }
+
+  static Preview nextItem() {
+    return preview.next();
   }
 
   static void updateAll() throws Exception {
@@ -208,7 +228,7 @@ class JReader {
 	  break;
        	}
       }
-      preview = new Preview(newestItem);
+      preview.setCurrent(new Preview(newestItem));
     }
   }
 
@@ -217,7 +237,7 @@ class JReader {
    */
   static void selectItem(Item item) {
     item.markAsRead();
-    preview = new Preview(item);
+    preview.setCurrent(new Preview(item));
     // aktualizujemy ilosc nieprzeczytanych elementow kanalu (przerywamy petle
     // po znalezieniu odpowiedniego kanalu i zaktualizowaniu go)
     for (Channel channel : channels) {
@@ -233,9 +253,12 @@ class JReader {
   static void selectChannel(int index) {
     items = channels.get(index).getItems();
     Collections.sort(items, new ItemComparator());
-    preview = new Preview(channels.get(index));
+    preview.setCurrent(new Preview(channels.get(index)));
   }
 
+  /**
+   * Wybiera wszystkie elementy z listy kanalow.
+   */
   static void selectAll() {
     items = new ArrayList<Item>(); // nie uzywac items.clear()
     for (Channel channel : channels) {
@@ -246,6 +269,9 @@ class JReader {
     Collections.sort(items, new ItemComparator());
   }
 
+  /**
+   * Wybiera nieprzeczytane elementy z listy kanalow.
+   */
   static void selectUnread() {
     items = new ArrayList<Item>(); // nie uzywac items.clear()
     for (Channel channel : channels) {

@@ -1,7 +1,8 @@
 import java.util.Date;
 
+
 /**
- * Element kanalu.
+ * Element (wiadomosc) kanalu.
  */
 class Item {
   /** Czy dany element jest juz przeczytany. */

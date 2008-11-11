@@ -1,5 +1,6 @@
 import java.util.Date;
 
+
 /**
  * Dane potrzebne do wyswietlenia podgladu elementu lub kanalu w GUI.
  */
