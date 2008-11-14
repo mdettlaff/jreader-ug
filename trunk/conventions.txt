@@ -1,7 +1,7 @@
 Bardzo proszę o stosowanie się do poniższych praktyk:
 
-  * nie piszemy linii dłuższych niż 80 znaków
   * szerokość wcięcia to 2 spacje
+  * unikamy linii dłuższych niż 80 znaków
   * nie używamy '*' przy importowaniu (wypisujemy wszystkie importowane klasy)
   * w źródle używamy kodowania ASCII (tzn. nie używamy polskich znaków)
   * wszystkie nazwy zmiennych, klas etc. piszemy po angielsku

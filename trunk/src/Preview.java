@@ -11,6 +11,7 @@ class Preview {
   private String link;
   private Date date;
   private String description;
+  private String author;
   /** Obrazek bedacy czescia opisu kanalu. */
   private String imageURL;
   private String imageTitle;
@@ -32,10 +33,12 @@ class Preview {
     this.link = item.getLink();
     this.date = item.getDate();
     this.description = item.getDescription();
+    this.author = item.getAuthor();
   }
 
   String getTitle() { return title; }
   String getLink() { return link; }
+  String getAuthor() { return author; }
   Date getDate() { return date; }
 
   String getHTML() {
