@@ -1,11 +1,14 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * Kanal RSS.
  */
-class Channel {
+class Channel implements Comparable<Channel> {
   /** URL pliku XML z trescia kanalu. */
   private String channelURL;
   /** Liczba nieprzeczytanych elementow. */
@@ -19,7 +22,8 @@ class Channel {
   private String imageTitle;
   private String imageLink;
   /** Lista elementow (wiadomosci) kanalu. */
-  private List<Item> items = new ArrayList<Item>();
+  //private List<Item> items = new ArrayList<Item>();
+  private Map<String, Item> items = new HashMap<String, Item>();
 
   Channel(String channelURL) throws Exception {
     this.channelURL = channelURL;
@@ -40,14 +44,14 @@ class Channel {
     // dodawanie nowych elementow do kanalu
     for (Item updatedItem : ch.getItems()) {
       boolean itemAlreadyExists = false;
-      for (Item item : items) {
+      for (Item item : items.values()) {
 	if (updatedItem.equals(item)) {
 	  itemAlreadyExists = true;
 	  break;
 	}
       }
       if (!itemAlreadyExists) {
-	items.add(updatedItem);
+	this.addItem(updatedItem);
       }
     }
     this.updateUnreadItemsCount();
@@ -62,7 +66,7 @@ class Channel {
   int updateUnreadItemsCount() {
     int oldCount = unreadItemsCount;
     unreadItemsCount = 0;
-    for (Item item : items) {
+    for (Item item : items.values()) {
       if (item.isUnread()) {
 	unreadItemsCount++;
       }
@@ -75,18 +79,18 @@ class Channel {
   }
 
   void addItem(Item item) {
-    items.add(item);
+    items.put(item.getKey(), item);
   }
 
   void markAllAsRead() {
-    for (Item item : items) {
+    for (Item item : items.values()) {
       item.markAsRead();
     }
     this.updateUnreadItemsCount();
   }
 
   void markAllAsUnread() {
-    for (Item item : items) {
+    for (Item item : items.values()) {
       item.markAsUnread();
     }
     this.updateUnreadItemsCount();
@@ -95,7 +99,9 @@ class Channel {
   String getTitle() { return title; }
   String getLink() { return link; }
   String getDescription() { return description; }
-  List<Item> getItems() { return items; }
+  List<Item> getItems() {
+    return new ArrayList<Item>(items.values());
+  }
 
   String getImageURL() { return imageURL; }
   String getImageTitle() { return imageTitle; }
@@ -112,5 +118,15 @@ class Channel {
   void setImageURL(String imageURL) { this.imageURL = imageURL; }
   void setImageTitle(String imageTitle) { this.imageTitle = imageTitle; }
   void setImageLink(String imageLink) { this.imageLink = imageLink; }
+
+  // porownywanie alfabetyczne kanalow wedlug ich tytulow
+  public int compareTo(Channel channel) {
+    return title.compareTo(channel.getTitle());
+  }
+
+  // Klucz do uzycia w HashMapie
+  String getKey() {
+    return channelURL;
+  }
 }
 

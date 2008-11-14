@@ -6,52 +6,52 @@ import java.util.LinkedList;
  * za pomoca przyciskow Wstecz i Dalej. Ilosc pamietanych elementow jest
  * ograniczona.
  */
-class HistoryList<Preview> {
+class HistoryList<T> {
   /** Ilosc pamietanych elementow. */
   private int size;
-  private LinkedList<Preview> history;
+  private int currentPosition;
+  private LinkedList<T> history;
 
   HistoryList(int size) {
     this.size = size;
-    history = new LinkedList<Preview>();
+    currentPosition = 0;
+    history = new LinkedList<T>();
     history.add(null);
   }
 
-  void setCurrent(Preview preview) {
-    if (history.size() > this.size) {
-      int i;
-      for (i=0; history.get(i) != null; i++) { }
-      if (i == 0) {
-	history.removeLast();
-      } else {
-	history.remove(i-1);
+  void setCurrent(T preview) {
+    if (currentPosition > 0) {
+      for (int i=0; i < currentPosition; i++) {
+	history.removeFirst();
       }
     }
     history.addFirst(preview);
-  }
-
-  Preview getCurrent() {
-    return history.getFirst();
-  }
-
-  Preview previous() {
-    if (history.size() > 1) {
-      if (history.get(1) != null) {
-	history.addLast(history.removeFirst());
-	return history.getFirst();
-      }
+    currentPosition = 0;
+    if (history.size() > size) {
+      history.removeLast();
     }
-    return null;
   }
 
-  Preview next() {
-    if (history.size() > 1) {
-      if (history.getLast() != null) {
-	history.addFirst(history.removeLast());
-	return history.getFirst();
-      }
+  T getCurrent() {
+    return history.get(currentPosition);
+  }
+
+  T previous() {
+    if (currentPosition < history.size()-1) {
+      currentPosition++;
+      return this.getCurrent();
+    } else {
+      return null;
     }
-    return null;
+  }
+
+  T next() {
+    if (currentPosition > 0) {
+      currentPosition--;
+      return this.getCurrent();
+    } else {
+      return null;
+    }
   }
 }
 

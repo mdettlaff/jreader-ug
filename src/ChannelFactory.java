@@ -162,7 +162,7 @@ class ChannelFactory extends DefaultHandler {
       } else if (currentTag.equals("link")) {
 	channel.setImageLink(chars);
       }
-    } else if (!insideItem) {
+    } else if (!insideItem) { // czytamy wlasciwosci kanalu
       if (currentTag.equals("title")) {
 	channel.setTitle(chars);
       } else if (currentTag.equals("link")) {
@@ -177,6 +177,8 @@ class ChannelFactory extends DefaultHandler {
 	item.setLink(chars);
       } else if (currentTag.equals("description")) {
 	item.setDescription(chars);
+      } else if (currentTag.equals("author")) {
+	item.setAuthor(chars);
       } else if (currentTag.equals("pubDate") || currentTag.equals("date")) {
 	try {
 	  Date parsedDate = RSSDateFormat.parse(chars);
@@ -221,6 +223,8 @@ class ChannelFactory extends DefaultHandler {
 	  item.setDate(RSSDateFormat.parse("Sun, 9 Nov 2008 19:30:00 +0100"));
        	} catch (ParseException pe) { }
       }
+      // data utworzenia, tj. sciagniecia
+      item.setCreationDate(new Date());
       channel.addItem(item);
     } else if (closingTag.equals("image")) {
       insideImage = false;

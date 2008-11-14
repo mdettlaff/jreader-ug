@@ -3,7 +3,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -15,6 +17,15 @@ import java.io.InputStreamReader;
  * uzytkownika. 
  */
 class JReader {
+  /**
+   * Lista wszystkich kanalow.
+   */
+  private static Map<String, Channel> allChannels =
+      new HashMap<String, Channel>();
+  /**
+   * Ustawienia programu wybrane przez uzytkownika.
+   */
+  private static Config config = new Config();
   /** Lista subskrypcji do wyswietlenia w GUI. */
   private static List<Channel> channels = new ArrayList<Channel>();
   /** Lista wiadomosci do wyswietlenia w GUI. */
@@ -70,12 +81,12 @@ class JReader {
 	if (channels.size() == 0) {
 	  System.out.println("Lista subskrypcji jest pusta.");
 	} else {
-	  Channel ch;
+	  Channel channel;
 	  for (int i=0; i < channels.size(); i++) {
-	    ch = channels.get(i);
-	    System.out.print("Kanal " + (i+1) + ": " + ch.getTitle());
-	    if (ch.getUnreadItemsCount() > 0) {
-	      System.out.println(" (" + ch.getUnreadItemsCount() + ")");
+	    channel = channels.get(i);
+	    System.out.print("Kanal " + (i+1) + ": " + channel.getTitle());
+	    if (channel.getUnreadItemsCount() > 0) {
+	      System.out.println(" (" + channel.getUnreadItemsCount() + ")");
 	    } else {
 	      System.out.println("");
 	    }
@@ -103,9 +114,8 @@ class JReader {
 	} else {
 	  System.out.println(preview.getCurrent().getTitle());
 	  System.out.println("Link: " + preview.getCurrent().getLink());
-	  if (preview.getCurrent().getDate() != null) {
-	    System.out.println("Data publikacji: " +
-		shortDateFormat.format(preview.getCurrent().getDate()));
+	  if (preview.getCurrent().getAuthor() != null) {
+	    System.out.println("Autor: " + preview.getCurrent().getAuthor());
 	  }
 	  System.out.println("Opis: " + preview.getCurrent().getHTML());
 	}
@@ -154,9 +164,9 @@ class JReader {
 	System.out.print("Sortuj wedlug (new/old): ");
 	String choice = in.readLine().trim();
 	if (choice.equals("old")) {
-	  ItemComparator.setSortByNewest(false);
+	  config.setSortByNewest(false);
 	} else if (choice.equals("new")) {
-	  ItemComparator.setSortByNewest(true);
+	  config.setSortByNewest(true);
 	} else {
 	  System.out.println("Nieprawidlowy wybor.");
 	}
@@ -179,7 +189,11 @@ class JReader {
    * Moze byc to URL strony lub konkretnego pliku XML z trescia kanalu.
    */
   static void addChannel(String siteURL) throws Exception {
-    channels.add(ChannelFactory.getChannelFromSite(siteURL));
+    Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
+    allChannels.put(newChannel.getKey(), newChannel);
+    channels.add(newChannel);
+    // Sortujemy liste kanalow alfabetycznie
+    Collections.sort(channels);
   }
 
   static Preview previousItem() {
@@ -200,10 +214,12 @@ class JReader {
     Item newestItem = new Item();
     newestItem.setDate(new Date(0)); // 1 stycznia 1970
     for (Channel channel : channels) {
-      for (Item item : channel.getItems()) {
-	if (item.isUnread()) {
-	  if (item.getDate().after(newestItem.getDate())) {
-	    newestItem = item;
+      if (channel.getUnreadItemsCount() > 0) {
+	for (Item item : channel.getItems()) {
+	  if (item.isUnread()) {
+	    if (item.getDate().after(newestItem.getDate())) {
+	      newestItem = item;
+	    }
 	  }
 	}
       }
@@ -214,12 +230,14 @@ class JReader {
       // szukamy najnowszego elementu znowu, zeby go oznaczyc jako przeczytany
       boolean foundAgain = false;
       for (Channel channel : channels) {
-	for (Item item : channel.getItems()) {
-	  if (item.isUnread()) {
-	    if (item.getDate().equals(newestItem.getDate())) {
-	      item.markAsRead();
-	      foundAgain = true;
-	      break;
+	if (channel.getUnreadItemsCount() > 0) {
+	  for (Item item : channel.getItems()) {
+	    if (item.isUnread()) {
+	      if (item.getDate().equals(newestItem.getDate())) {
+		item.markAsRead();
+		foundAgain = true;
+		break;
+	      }
 	    }
 	  }
 	}
@@ -240,7 +258,7 @@ class JReader {
     preview.setCurrent(new Preview(item));
     // aktualizujemy ilosc nieprzeczytanych elementow kanalu (przerywamy petle
     // po znalezieniu odpowiedniego kanalu i zaktualizowaniu go)
-    for (Channel channel : channels) {
+    for (Channel channel : allChannels.values()) {
       if (channel.updateUnreadItemsCount() != 0) {
 	break;
       }
@@ -275,9 +293,11 @@ class JReader {
   static void selectUnread() {
     items = new ArrayList<Item>(); // nie uzywac items.clear()
     for (Channel channel : channels) {
-      for (Item item : channel.getItems()) {
-	if (item.isUnread()) {
-	  items.add(item);
+      if (channel.getUnreadItemsCount() > 0) {
+	for (Item item : channel.getItems()) {
+	  if (item.isUnread()) {
+	    items.add(item);
+	  }
 	}
       }
     }
@@ -300,7 +320,12 @@ class JReader {
 	indToRemove.set(j, indToRemove.get(j)-1);
       }
     }
+    allChannels.remove(channels.get(index).getKey());
     channels.remove(index);
+  }
+
+  static Config getConfig() {
+    return config;
   }
 }
 
