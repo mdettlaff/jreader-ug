@@ -90,13 +90,16 @@ class ChannelFactory extends DefaultHandler {
     // plik HTML dopoki nie znajdziemy odnosnika do pliku XML kanalu
     if ("".equals(channelURL)) {
       while ((inputLine = in.readLine()) != null) {
-	if (inputLine.contains("type=\"application/rss+xml\"")) {
+	if (inputLine.contains("type=\"application/rss+xml\"")
+	    || inputLine.contains("type=\"application/atom+xml\"")) {
 	  // rozbijamy na mniejsze linie, mniej problematyczne
 	  inputLine = inputLine.replaceAll(">", ">\n");
 	  String[] smallLines = inputLine.split("\n");
 	  for (String smallLine : smallLines) {
-	    if (smallLine.contains("type=\"application/rss+xml\"")) {
+	    if (smallLine.contains("type=\"application/rss+xml\"")
+		|| smallLine.contains("type=\"application/rss+atom\"")) {
 	      inputLine = smallLine;
+	      break;
 	    }
 	  }
 	  channelURL = inputLine.replaceAll("^.*href=\"", "");
@@ -113,6 +116,9 @@ class ChannelFactory extends DefaultHandler {
 	}
       }
       in.close();
+      if ("".equals(channelURL)) { // jesli nie znaleziono odnosnika do kanalu
+	throw new LinkNotFoundException();
+      }
     }
 
     return getChannelFromXML(channelURL);
@@ -161,7 +167,7 @@ class ChannelFactory extends DefaultHandler {
     } else {
       currentTag = name;
     }
-    if (currentTag.equals("item") || currentTag.equals("entry") /* atom */) {
+    if (currentTag.equals("item") || currentTag.equals("entry") /* Atom */) {
       insideItem = true;
       item = new Item();
     } else if (currentTag.equals("image")) {
@@ -205,8 +211,8 @@ class ChannelFactory extends DefaultHandler {
 	if ("".equals(channel.getLink()) || channel.getLink() == null) {
 	  channel.setLink(chars);
 	}
-      } else if (currentTag.equals("description")
-	  || currentTag.equals("content")) { // atom
+      } else if (currentTag.equals("description") // nizej: Atom
+	  || currentTag.equals("content") || currentTag.equals("summary")) {
 	channel.setDescription(chars);
       }
     } else { // czytamy wlasciwosci elementu
@@ -217,8 +223,8 @@ class ChannelFactory extends DefaultHandler {
 	if ("".equals(item.getLink()) || item.getLink() == null) {
 	  item.setLink(chars);
 	}
-      } else if (currentTag.equals("description")
-	  || currentTag.equals("content")) { // atom
+      } else if (currentTag.equals("description") // nizej: Atom
+	  || currentTag.equals("content") || currentTag.equals("summary")) {
 	item.setDescription(chars);
       } else if (currentTag.equals("author") || currentTag.equals("name")) {
 	item.setAuthor(chars);
@@ -242,7 +248,7 @@ class ChannelFactory extends DefaultHandler {
 	    }
 	  }
        	}
-      } else if (currentTag.equals("guid") || currentTag.equals("id")) { //atom
+      } else if (currentTag.equals("guid") || currentTag.equals("id")) { //Atom
 	item.setGuid(chars);
       }
     }
@@ -255,7 +261,7 @@ class ChannelFactory extends DefaultHandler {
     if (currentTag.equals(closingTag)) {
       currentTag = "";
     }
-    if (closingTag.equals("item") || closingTag.equals("entry") /* atom */) {
+    if (closingTag.equals("item") || closingTag.equals("entry") /* Atom */) {
       insideItem = false;
       // jesli data nie byla okreslona lub parsowanie nie powiodlo sie,
       // stosujemy biezaca date
