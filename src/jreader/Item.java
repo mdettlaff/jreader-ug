@@ -1,3 +1,5 @@
+package jreader;
+
 import java.util.Date;
 
 
@@ -34,7 +36,7 @@ class Item {
 		} else if (this.title.equals(item.title)
 				&& this.description.equals(item.description)) {
 			return true;
-		}
+				}
 		return false;
 	}
 
