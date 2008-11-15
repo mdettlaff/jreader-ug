@@ -1,15 +1,19 @@
 package swt.JReader;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -18,10 +22,16 @@ public class OptionsShell {
 	private static Shell optionsShell;
 	
 	public OptionsShell(Shell shell) {
+		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\jreader.png");
 		optionsShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		optionsShell.setLocation(250, 300);
 		optionsShell.setText("Preferences");
 		optionsShell.setLayout(new GridLayout(1, false));
+		optionsShell.setImage(jreader);
+		//Wysrodkowanie shella
+		Rectangle bounds = shell.getBounds();
+	    int x = bounds.width - 200;
+	    int y = bounds.height - 150;
+	    optionsShell.setLocation(x, y);
 	
 	
 	//	Checkbox
@@ -60,9 +70,19 @@ public class OptionsShell {
 		remove.setText("10");
 		remove.setTextLimit(2);
 		new Label(comp2, SWT.NONE).setText(" days.");
-	
+		
+	//	Buttons ok cancel
+		Composite comp3 = new Composite(optionsShell, SWT.NONE);
+		comp3.setLayout(new RowLayout());
+		
+		Button okButton = new Button(comp3, SWT.PUSH);
+	    okButton.setText("&OK");
+	    Button cancelButton = new Button(comp3, SWT.PUSH);
+	    cancelButton.setText("&Cancel");
+	    okButton.setFocus();
 	
 	//	Action Listeners (do wypelnienia pozniej)
+	    //wsynchronizacja pszy starcie -checkbox
 		startupSync.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (!startupSync.getSelection()) {
@@ -73,7 +93,21 @@ public class OptionsShell {
             
 			}
 		});
-	
+		
+		// ok button - powinien zebrac wszystkie wartosc z widgetow i wyslac je do metod
+		okButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				System.out.println("Ok - get data to the method");           
+			}
+		});
+		
+		// cancel button
+		cancelButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				System.out.println("Cancel was pressed.\nDisposing...");
+				optionsShell.close();
+			}
+		});
 		optionsShell.pack();
 	}
 	
