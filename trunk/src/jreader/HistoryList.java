@@ -1,3 +1,5 @@
+package jreader;
+
 import java.util.LinkedList;
 
 
@@ -22,36 +24,36 @@ class HistoryList<T> {
   void setCurrent(T preview) {
     if (currentPosition > 0) {
       for (int i=0; i < currentPosition; i++) {
-	history.removeFirst();
-      }
-    }
-    history.addFirst(preview);
-    currentPosition = 0;
-    if (history.size() > size) {
-      history.removeLast();
-    }
-  }
+				history.removeFirst();
+			}
+		}
+		history.addFirst(preview);
+		currentPosition = 0;
+		if (history.size() > size) {
+			history.removeLast();
+		}
+	}
 
-  T getCurrent() {
-    return history.get(currentPosition);
-  }
+	T getCurrent() {
+		return history.get(currentPosition);
+	}
 
-  T previous() {
-    if (currentPosition < history.size()-1) {
-      currentPosition++;
-      return this.getCurrent();
-    } else {
-      return null;
-    }
-  }
+	T previous() {
+		if (currentPosition < history.size()-1) {
+			currentPosition++;
+			return this.getCurrent();
+		} else {
+			return null;
+		}
+	}
 
-  T next() {
-    if (currentPosition > 0) {
-      currentPosition--;
-      return this.getCurrent();
-    } else {
-      return null;
-    }
-  }
+	T next() {
+		if (currentPosition > 0) {
+			currentPosition--;
+			return this.getCurrent();
+		} else {
+			return null;
+		}
+	}
 }
 

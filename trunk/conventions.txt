@@ -1,7 +1,7 @@
 Bardzo proszę o stosowanie się do poniższych praktyk:
 
-  * szerokość wcięcia to 2 spacje
-  * unikamy linii dłuższych niż 80 znaków
+  * jedno wcięcie to jeden tabulator
+  * unikamy linii dłuższych niż 80 znaków przy szerokości tabulatora 2 spacje
   * nie używamy '*' przy importowaniu (wypisujemy wszystkie importowane klasy)
   * w źródle używamy kodowania ASCII (tzn. nie używamy polskich znaków)
   * wszystkie nazwy zmiennych, klas etc. piszemy po angielsku
