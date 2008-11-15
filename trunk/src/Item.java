@@ -5,80 +5,80 @@ import java.util.Date;
  * Element (wiadomosc) kanalu.
  */
 class Item {
-  /** Data sciagniecia elementu. */
-  private Date creationDate;
-  /** Tytul kanalu, z ktorego pochodzi element. */
-  private String channelTitle;
-  /** Klucz do HashMapy kanalu, z ktorego pochodzi element. */
-  private String channelKey;
-  /** Czy dany element jest juz przeczytany. */
-  private boolean isRead;
-  private String title;
-  private String link;
-  private String description;
-  private String author;
-  /** Data publikacji elementu. */
-  private Date date;
-  /** Unikalny identyfikator elementu. */
-  private String guid;
+	/** Data sciagniecia elementu. */
+	private Date creationDate;
+	/** Tytul kanalu, z ktorego pochodzi element. */
+	private String channelTitle;
+	/** Klucz do HashMapy kanalu, z ktorego pochodzi element. */
+	private String channelKey;
+	/** Czy dany element jest juz przeczytany. */
+	private boolean isRead;
+	private String title;
+	private String link;
+	private String description;
+	private String author;
+	/** Data publikacji elementu. */
+	private Date date;
+	/** Unikalny identyfikator elementu. */
+	private String guid;
 
-  /**
-   * Porownuje dwa elementy (do sprawdzania, czy dany element jest nowy).
-   */
-  public boolean equals(Object obj) {
-    Item item = (Item) obj;
-    if (this.guid != null && item.guid != null) {
-      if (this.guid.equals(item.guid)) {
-	return true;
-      }
-    } else if (this.title.equals(item.title)
-	&& this.description.equals(item.description)) {
-      return true;
-    }
-    return false;
-  }
+	/**
+	 * Porownuje dwa elementy (do sprawdzania, czy dany element jest nowy).
+	 */
+	public boolean equals(Object obj) {
+		Item item = (Item) obj;
+		if (this.guid != null && item.guid != null) {
+			if (this.guid.equals(item.guid)) {
+				return true;
+			}
+		} else if (this.title.equals(item.title)
+				&& this.description.equals(item.description)) {
+			return true;
+		}
+		return false;
+	}
 
-  void markAsRead() {
-    isRead = true;
-  }
+	void markAsRead() {
+		isRead = true;
+	}
 
-  void markAsUnread() {
-    isRead = false;
-  }
+	void markAsUnread() {
+		isRead = false;
+	}
 
-  boolean isUnread() {
-    return !isRead;
-  }
+	boolean isUnread() {
+		return !isRead;
+	}
 
-  String getTitle() { return title; }
-  String getLink() { return link; }
-  String getDescription() { return description; }
-  String getAuthor() { return author; }
-  Date getDate() { return date; }
-  Date getCreationDate() { return creationDate; }
-  String getChannelTitle() { return channelTitle; }
-  String getChannelKey() { return channelKey; }
+	String getTitle() { return title; }
+	String getLink() { return link; }
+	String getDescription() { return description; }
+	String getAuthor() { return author; }
+	Date getDate() { return date; }
+	Date getCreationDate() { return creationDate; }
+	String getChannelTitle() { return channelTitle; }
+	String getChannelKey() { return channelKey; }
 
-  void setTitle(String title) { this.title = title; }
-  void setLink(String link) { this.link = link; }
-  void setDescription(String description) { this.description = description; }
-  void setAuthor(String author) { this.author = author; }
-  void setDate(Date date) { this.date = date; }
-  void setCreationDate(Date date) { this.creationDate = date; }
-  void setGuid(String guid) { this.guid = guid; }
-  void setChannelTitle(String channelTitle) {
-    this.channelTitle = channelTitle;
-  }
-  void setChannelKey(String channelKey) { this.channelKey = channelKey; }
+	void setTitle(String title) { this.title = title; }
+	void setLink(String link) { this.link = link; }
+	void setDescription(String description) { this.description = description; }
+	void setAuthor(String author) { this.author = author; }
+	void setDate(Date date) { this.date = date; }
+	void setCreationDate(Date date) { this.creationDate = date; }
+	void setGuid(String guid) { this.guid = guid; }
+	void setChannelTitle(String channelTitle) {
+		this.channelTitle = channelTitle;
+	}
+	void setChannelKey(String channelKey) { this.channelKey = channelKey; }
 
-  // Klucz do uzycia w HashMapie
-  String key() {
-    if (guid != null) {
-      return guid;
-    } else {
-      // TODO: sam tytul nie jest zbyt dobry, trzeba wymyslic sprytniejszy hash
-      return title;
-    }
-  }
+	// Klucz do uzycia w HashMapie
+	String key() {
+		if (guid != null) {
+			return guid;
+		} else {
+			// TODO: sam tytul nie jest zbyt dobry, trzeba wymyslic sprytniejszy hash
+			return title;
+		}
+	}
 }
 

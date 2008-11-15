@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -6,8 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import org.xml.sax.SAXParseException;
 
 
 /**
@@ -105,7 +110,11 @@ class JReader {
 	    if (item.isUnread()) {
 	      System.out.print("N ");
 	    }
-	    System.out.print(item.getChannelTitle().substring(0, 12) + " ");
+	    if (item.getChannelTitle().length() > 12) {
+	      System.out.print(item.getChannelTitle().substring(0, 12)+" ");
+	    } else {
+	      System.out.print(item.getChannelTitle() + " ");
+	    }
 	    System.out.println(item.getTitle());
 	  }
 	}
@@ -122,9 +131,29 @@ class JReader {
 	}
 
       } else if (command.equals("add channel")) {
-	System.out.print("Podaj adres URL: ");
-	addChannel(in.readLine());
-	System.out.println("Kanal zostal dodany");
+	try {
+	  System.out.print("Podaj adres URL: ");
+	  String url = in.readLine();
+	  // sposob na podanie tyldy w adresie
+	  url = url.replaceAll("\\\\tld","~");
+	  addChannel(url);
+	  System.out.println("Kanal zostal dodany");
+	} catch (LinkNotFoundException lnfe) {
+	  System.out.println("Nie znaleziono kanalow RSS na tej stronie.");
+	} catch (MalformedURLException mue) {
+	  System.out.print("Nie mozna dodac kanalu.");
+	  System.out.println(" Podany URL jest nieprawidlowy.");
+	} catch (FileNotFoundException fnfe) {
+	  System.out.println("Podana strona nie istnieje.");
+	} catch (SocketException se) {
+	  System.out.println("Nie mozna dodac kanalu. Szczegoly:");
+	  System.out.println(se.getLocalizedMessage());
+	} catch (IOException ioe) {
+	  System.out.println("Podana strona nie istnieje.");
+	} catch (SAXParseException spe) {
+	  System.out.print("Nie mozna dodac kanalu.");
+	  System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+	}
       } else if (command.equals("previous item")) {
 	if (previousItem() == null) {
 	  System.out.println("Nie mozna sie cofnac.");
@@ -155,10 +184,24 @@ class JReader {
 	int nr = new Integer(in.readLine()) - 1;
 	channels.get(nr).markAllAsRead();
       } else if (command.equals("update channel")) {
-	System.out.print("Podaj numer kanalu: ");
-	int nr = new Integer(in.readLine()) - 1;
-	channels.get(nr).update();
-	System.out.println("Kanal zostal zaktualizowany.");
+	try {
+	  System.out.print("Podaj numer kanalu: ");
+	  int nr = new Integer(in.readLine()) - 1;
+	  updateChannel(channels.get(nr));
+	  System.out.println("Kanal zostal zaktualizowany.");
+	} catch (FileNotFoundException fnfe) {
+	  System.out.print("Nie mozna zaktualizowac kanalu.");
+	  System.out.println(" Brak polaczenia ze strona.");
+	} catch (SocketException se) {
+	  System.out.println("Nie mozna zaktualizowac kanalu. Szczegoly:");
+	  System.out.println(se.getLocalizedMessage());
+	} catch (IOException ioe) {
+	  System.out.print("Nie mozna zaktualizowac kanalu.");
+	  System.out.println(" Brak polaczenia ze strona.");
+	} catch (SAXParseException spe) {
+	  System.out.print("Nie mozna zaktualizowac kanalu.");
+	  System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+	}
       } else if (command.equals("remove channel")) {
 	System.out.print("Podaj numer kanalu: ");
 	int nr = new Integer(in.readLine()) - 1;
@@ -209,7 +252,25 @@ class JReader {
 
   static void updateAll() throws Exception {
     for (Channel channel : channels) {
-      channel.update();
+      try {
+	channel.update();
+      } catch (FileNotFoundException fnfe) {
+	System.out.print("Nie mozna zaktualizowac kanalu "
+	    + channel.getTitle() + ".");
+	System.out.println(" Brak polaczenia ze strona.");
+      } catch (SocketException se) {
+	System.out.print("Nie mozna zaktualizowac kanalu "
+	    + channel.getTitle() + ".");
+	System.out.println("Szczegoly: " + se.getLocalizedMessage());
+      } catch (IOException ioe) {
+	System.out.print("Nie mozna zaktualizowac kanalu "
+	    + channel.getTitle() + ".");
+	System.out.println(" Brak polaczenia ze strona.");
+      } catch (SAXParseException spe) {
+	System.out.print("Nie mozna zaktualizowac kanalu "
+	    + channel.getTitle() + ".");
+	System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+      }
     }
   }
 
@@ -301,6 +362,13 @@ class JReader {
       }
     }
     Collections.sort(items, new ItemComparator());
+  }
+
+  /**
+   * Sprawdza, czy w danym kanale nie pojawily sie nowe wiadomosci.
+   */
+  static void updateChannel(Channel channel) throws Exception {
+    channel.update();
   }
 
   static void removeChannel(int index) {
