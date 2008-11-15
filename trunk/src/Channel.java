@@ -79,7 +79,7 @@ class Channel implements Comparable<Channel> {
   }
 
   void addItem(Item item) {
-    items.put(item.getKey(), item);
+    items.put(item.key(), item);
   }
 
   void markAllAsRead() {
@@ -121,11 +121,11 @@ class Channel implements Comparable<Channel> {
 
   // porownywanie alfabetyczne kanalow wedlug ich tytulow
   public int compareTo(Channel channel) {
-    return title.compareTo(channel.getTitle());
+    return title.compareToIgnoreCase(channel.getTitle());
   }
 
   // Klucz do uzycia w HashMapie
-  String getKey() {
+  String key() {
     return channelURL;
   }
 }

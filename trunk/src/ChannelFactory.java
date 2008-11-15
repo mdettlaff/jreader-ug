@@ -65,18 +65,40 @@ class ChannelFactory extends DefaultHandler {
     BufferedReader in = new BufferedReader(
 	new InputStreamReader(
 	  url.openStream()));
-    // najpierw sprawdzamy czy podany adres jest adresem do pliku XML
-    if (in.readLine().contains("xml version")
-       	&& in.readLine().contains("rss")) {
-      channelURL = siteURL;
+    // najpierw sprawdzamy czy podany adres jest adresem do pliku XML,
+    // na podstawie 3 pierwszych linii
+    String line1 = in.readLine();
+    String line2 = in.readLine();
+    String line3 = in.readLine();
+    if (line1.contains("xml version")) {
+      // wykrywanie kanalow rss
+      if (line1.contains("rss") || line2.contains("rss")) {
+	channelURL = siteURL;
+      }
+      //wykrywanie kanalow Atom
+      if (line1.contains("Atom") || line2.contains("Atom")
+	  || line3.contains("Atom")) {
+	channelURL = siteURL;
+      }
     }
+    // czytamy z adresu od nowa, zeby nie pominac dwoch pierwszych linii
+    in.close();
+    in = new BufferedReader(new InputStreamReader(url.openStream()));
 
     String inputLine;
     // jesli nie podano adresu do pliku XML tylko do strony glownej, to czytamy
     // plik HTML dopoki nie znajdziemy odnosnika do pliku XML kanalu
     if ("".equals(channelURL)) {
       while ((inputLine = in.readLine()) != null) {
-	if (inputLine.matches(".*type=\"application/rss.xml\".*")) {
+	if (inputLine.contains("type=\"application/rss+xml\"")) {
+	  // rozbijamy na mniejsze linie, mniej problematyczne
+	  inputLine = inputLine.replaceAll(">", ">\n");
+	  String[] smallLines = inputLine.split("\n");
+	  for (String smallLine : smallLines) {
+	    if (smallLine.contains("type=\"application/rss+xml\"")) {
+	      inputLine = smallLine;
+	    }
+	  }
 	  channelURL = inputLine.replaceAll("^.*href=\"", "");
 	  channelURL = channelURL.replaceAll("\".*", "");
 	  // sklejemy link strony i kanalu w razie potrzeby
@@ -139,11 +161,22 @@ class ChannelFactory extends DefaultHandler {
     } else {
       currentTag = name;
     }
-    if (currentTag.equals("item")) {
+    if (currentTag.equals("item") || currentTag.equals("entry") /* atom */) {
       insideItem = true;
       item = new Item();
     } else if (currentTag.equals("image")) {
       insideImage = true;
+    }
+    if (currentTag.equals("link")) {
+      String hrefLink = "";
+      hrefLink = atts.getValue("href");
+      if (!"".equals(hrefLink) && !(hrefLink == null)) {
+	if (insideItem) {
+	  item.setLink(hrefLink);
+	} else {
+	  channel.setLink(hrefLink);
+	}
+      }
     }
   }
 
@@ -160,26 +193,37 @@ class ChannelFactory extends DefaultHandler {
       } else if (currentTag.equals("title")) {
 	channel.setImageTitle(chars);
       } else if (currentTag.equals("link")) {
-	channel.setImageLink(chars);
+	if ("".equals(channel.getImageLink())
+	    || channel.getImageLink() == null) {
+	  channel.setImageLink(chars);
+	}
       }
     } else if (!insideItem) { // czytamy wlasciwosci kanalu
       if (currentTag.equals("title")) {
 	channel.setTitle(chars);
       } else if (currentTag.equals("link")) {
-	channel.setLink(chars);
-      } else if (currentTag.equals("description")) {
+	if ("".equals(channel.getLink()) || channel.getLink() == null) {
+	  channel.setLink(chars);
+	}
+      } else if (currentTag.equals("description")
+	  || currentTag.equals("content")) { // atom
 	channel.setDescription(chars);
       }
-    } else {
+    } else { // czytamy wlasciwosci elementu
       if (currentTag.equals("title")) {
-	item.setTitle(chars);
+	// usuwamy niepotrzebne znaczniki z tytulu (Atom)
+	item.setTitle(chars.replaceAll("<.*?>", ""));
       } else if (currentTag.equals("link")) {
-	item.setLink(chars);
-      } else if (currentTag.equals("description")) {
+	if ("".equals(item.getLink()) || item.getLink() == null) {
+	  item.setLink(chars);
+	}
+      } else if (currentTag.equals("description")
+	  || currentTag.equals("content")) { // atom
 	item.setDescription(chars);
-      } else if (currentTag.equals("author")) {
+      } else if (currentTag.equals("author") || currentTag.equals("name")) {
 	item.setAuthor(chars);
-      } else if (currentTag.equals("pubDate") || currentTag.equals("date")) {
+      } else if (currentTag.equals("pubDate") || currentTag.equals("date")
+	  || currentTag.equals("updated")) {
 	try {
 	  Date parsedDate = RSSDateFormat.parse(chars);
 	  item.setDate(parsedDate);
@@ -198,7 +242,7 @@ class ChannelFactory extends DefaultHandler {
 	    }
 	  }
        	}
-      } else if (currentTag.equals("guid")) {
+      } else if (currentTag.equals("guid") || currentTag.equals("id")) { //atom
 	item.setGuid(chars);
       }
     }
@@ -211,7 +255,7 @@ class ChannelFactory extends DefaultHandler {
     if (currentTag.equals(closingTag)) {
       currentTag = "";
     }
-    if (closingTag.equals("item")) {
+    if (closingTag.equals("item") || closingTag.equals("entry") /* atom */) {
       insideItem = false;
       // jesli data nie byla okreslona lub parsowanie nie powiodlo sie,
       // stosujemy biezaca date
@@ -225,6 +269,8 @@ class ChannelFactory extends DefaultHandler {
       }
       // data utworzenia, tj. sciagniecia
       item.setCreationDate(new Date());
+      item.setChannelKey(channel.key());
+      item.setChannelTitle(channel.getTitle());
       channel.addItem(item);
     } else if (closingTag.equals("image")) {
       insideImage = false;

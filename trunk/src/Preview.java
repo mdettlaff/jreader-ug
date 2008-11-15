@@ -42,6 +42,9 @@ class Preview {
   Date getDate() { return date; }
 
   String getHTML() {
+    if (description == null) {
+      return "Brak opisu.";
+    }
     if (showingItem) {
       return description;
     } else { // konstruujemy opis kanalu, z obrazkiem jesli istnieje
