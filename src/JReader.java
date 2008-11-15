@@ -105,6 +105,7 @@ class JReader {
 	    if (item.isUnread()) {
 	      System.out.print("N ");
 	    }
+	    System.out.print(item.getChannelTitle().substring(0, 12) + " ");
 	    System.out.println(item.getTitle());
 	  }
 	}
@@ -134,6 +135,7 @@ class JReader {
 	}
       } else if (command.equals("update all")) {
 	updateAll();
+	System.out.println("Kanaly zostaly zaktualizowane.");
       } else if (command.equals("next unread")) {
 	nextUnread();
       } else if (command.equals("select item")) {
@@ -156,6 +158,7 @@ class JReader {
 	System.out.print("Podaj numer kanalu: ");
 	int nr = new Integer(in.readLine()) - 1;
 	channels.get(nr).update();
+	System.out.println("Kanal zostal zaktualizowany.");
       } else if (command.equals("remove channel")) {
 	System.out.print("Podaj numer kanalu: ");
 	int nr = new Integer(in.readLine()) - 1;
@@ -190,7 +193,7 @@ class JReader {
    */
   static void addChannel(String siteURL) throws Exception {
     Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
-    allChannels.put(newChannel.getKey(), newChannel);
+    allChannels.put(newChannel.key(), newChannel);
     channels.add(newChannel);
     // Sortujemy liste kanalow alfabetycznie
     Collections.sort(channels);
@@ -256,13 +259,9 @@ class JReader {
   static void selectItem(Item item) {
     item.markAsRead();
     preview.setCurrent(new Preview(item));
-    // aktualizujemy ilosc nieprzeczytanych elementow kanalu (przerywamy petle
-    // po znalezieniu odpowiedniego kanalu i zaktualizowaniu go)
-    for (Channel channel : allChannels.values()) {
-      if (channel.updateUnreadItemsCount() != 0) {
-	break;
-      }
-    }
+    // aktualizujemy ilosc nieprzeczytanych elementow kanalu, z ktorego
+    // pochodzi wybrany item
+    allChannels.get(item.getChannelKey()).updateUnreadItemsCount();
   }
 
   /**
@@ -320,7 +319,7 @@ class JReader {
 	indToRemove.set(j, indToRemove.get(j)-1);
       }
     }
-    allChannels.remove(channels.get(index).getKey());
+    allChannels.remove(channels.get(index).key());
     channels.remove(index);
   }
 
