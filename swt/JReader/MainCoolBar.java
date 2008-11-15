@@ -99,8 +99,9 @@ public class MainCoolBar {
         
         otherToolBar.pack();
         size = otherToolBar.getSize();
+        Point p = shell.getSize();
         otherCoolItem.setControl(otherToolBar);
-        otherCoolItem.setSize(otherCoolItem.computeSize(400, size.y));
+        otherCoolItem.setSize(otherCoolItem.computeSize(p.x, size.y));
         
         
    //	CollBar listeners (do wypelnienia pozniej)
@@ -154,5 +155,6 @@ public class MainCoolBar {
 		   		optionsShell.open();
             }
         });
+        
 	}
 }
