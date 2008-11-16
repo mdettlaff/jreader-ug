@@ -9,9 +9,7 @@ import java.util.Date;
 class Item {
 	/** Data sciagniecia elementu. */
 	private Date creationDate;
-	/** Tytul kanalu, z ktorego pochodzi element. */
-	private String channelTitle;
-	/** Klucz do HashMapy kanalu, z ktorego pochodzi element. */
+	/** Klucz (do HashMapy) kanalu, z ktorego pochodzi element. */
 	private String channelKey;
 	/** Czy dany element jest juz przeczytany. */
 	private boolean isRead;
@@ -58,7 +56,6 @@ class Item {
 	String getAuthor() { return author; }
 	Date getDate() { return date; }
 	Date getCreationDate() { return creationDate; }
-	String getChannelTitle() { return channelTitle; }
 	String getChannelKey() { return channelKey; }
 
 	void setTitle(String title) { this.title = title; }
@@ -68,9 +65,6 @@ class Item {
 	void setDate(Date date) { this.date = date; }
 	void setCreationDate(Date date) { this.creationDate = date; }
 	void setGuid(String guid) { this.guid = guid; }
-	void setChannelTitle(String channelTitle) {
-		this.channelTitle = channelTitle;
-	}
 	void setChannelKey(String channelKey) { this.channelKey = channelKey; }
 
 	// Klucz do uzycia w HashMapie

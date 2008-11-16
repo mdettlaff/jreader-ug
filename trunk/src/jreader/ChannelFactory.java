@@ -69,17 +69,21 @@ class ChannelFactory extends DefaultHandler {
 					url.openStream()));
 		// najpierw sprawdzamy czy podany adres jest adresem do pliku XML,
 		// na podstawie 3 pierwszych linii
-		String line1 = in.readLine();
-		String line2 = in.readLine();
-		String line3 = in.readLine();
-		if (line1.contains("xml version")) {
-			// wykrywanie kanalow rss
-			if (line1.contains("rss") || line2.contains("rss")) {
+		String[] lines = new String[3];
+		for (int i=0; i < lines.length; i++) {
+			if ((lines[i] = in.readLine()) == null) {
+				lines[i] = "";
+				break;
+			}
+		}
+		if (lines[0].contains("xml version")) {
+			// wykrywanie plikow zrodlowych rss
+			if (lines[0].contains("rss") || lines[1].contains("rss")) {
 				channelURL = siteURL;
 			}
-			//wykrywanie kanalow Atom
-			if (line1.contains("Atom") || line2.contains("Atom")
-					|| line3.contains("Atom")) {
+			//wykrywanie plikow zrodlowych Atom
+			if (lines[0].contains("Atom") || lines[1].contains("Atom")
+					|| lines[2].contains("Atom")) {
 				channelURL = siteURL;
 			}
 		}
@@ -208,7 +212,8 @@ class ChannelFactory extends DefaultHandler {
 			}
 		} else if (!insideItem) { // czytamy wlasciwosci kanalu
 			if (currentTag.equals("title")) {
-				channel.setTitle(chars);
+				channel.setTitle(chars.replaceAll("<.*?>", "").replaceAll("\n", " ").
+						replaceAll(" +", " "));
 			} else if (currentTag.equals("link")) {
 				if ("".equals(channel.getLink()) || channel.getLink() == null) {
 					channel.setLink(chars);
@@ -220,7 +225,8 @@ class ChannelFactory extends DefaultHandler {
 		} else { // czytamy wlasciwosci elementu
 			if (currentTag.equals("title")) {
 				// usuwamy niepotrzebne znaczniki z tytulu (Atom)
-				item.setTitle(chars.replaceAll("<.*?>", ""));
+				item.setTitle(chars.replaceAll("<.*?>", "").replaceAll("\n", " ").
+						replaceAll(" +", " "));
 			} else if (currentTag.equals("link")) {
 				if ("".equals(item.getLink()) || item.getLink() == null) {
 					item.setLink(chars);
@@ -228,7 +234,8 @@ class ChannelFactory extends DefaultHandler {
 			} else if (currentTag.equals("description") // nizej: Atom
 					|| currentTag.equals("content") || currentTag.equals("summary")) {
 				item.setDescription(chars);
-			} else if (currentTag.equals("author") || currentTag.equals("name")) {
+			} else if (currentTag.equals("author") || currentTag.equals("name")
+					|| currentTag.equals("creator")) {
 				item.setAuthor(chars);
 			} else if (currentTag.equals("pubDate") || currentTag.equals("date")
 					|| currentTag.equals("updated")) {
@@ -278,7 +285,6 @@ class ChannelFactory extends DefaultHandler {
 			// data utworzenia, tj. sciagniecia
 			item.setCreationDate(new Date());
 			item.setChannelKey(channel.key());
-			item.setChannelTitle(channel.getTitle());
 			channel.addItem(item);
 		} else if (closingTag.equals("image")) {
 			insideImage = false;
