@@ -101,6 +101,7 @@ class Channel implements Comparable<Channel> {
 	String getTitle() { return title; }
 	String getLink() { return link; }
 	String getDescription() { return description; }
+	String getChannelURL() { return channelURL; }
 	List<Item> getItems() {
 		return new ArrayList<Item>(items.values());
 	}

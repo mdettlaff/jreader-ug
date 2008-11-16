@@ -112,10 +112,12 @@ class JReader {
 						if (item.isUnread()) {
 							System.out.print("N ");
 						}
-						if (item.getChannelTitle().length() > 12) {
-							System.out.print(item.getChannelTitle().substring(0, 12)+" ");
+						if (allChannels.get(item.getChannelKey()).getTitle().length()>12) {
+							System.out.print(allChannels.get(item.getChannelKey()).
+									getTitle().substring(0, 12) + " ");
 						} else {
-							System.out.print(item.getChannelTitle() + " ");
+							System.out.print(allChannels.get(item.getChannelKey()).
+									getTitle() + " ");
 						}
 						System.out.println(item.getTitle());
 					}
@@ -128,6 +130,9 @@ class JReader {
 					System.out.println("Link: " + preview.getCurrent().getLink());
 					if (preview.getCurrent().getAuthor() != null) {
 						System.out.println("Autor: " + preview.getCurrent().getAuthor());
+					}
+					if (preview.getCurrent().getSource() != null) {
+						System.out.println("Zrodlo: " + preview.getCurrent().getSource());
 					}
 					System.out.println("Opis: " + preview.getCurrent().getHTML());
 				}
@@ -155,6 +160,9 @@ class JReader {
 				} catch (SAXParseException spe) {
 					System.out.print("Nie mozna dodac kanalu.");
 					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+				} catch (IllegalArgumentException iae) {
+					System.out.print("Nie mozna dodac kanalu.");
+					System.out.println(" Podany URL jest nieprawidlowy.");
 				}
 			} else if (command.equals("previous item")) {
 				if (previousItem() == null) {
