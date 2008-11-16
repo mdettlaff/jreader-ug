@@ -26,7 +26,7 @@ class ChannelFactory extends DefaultHandler {
 	private static Item item = new Item();
 
 	/**
-	 * Definicja standardowego formatu daty stosowanego w kanalach RSS (RFC 822)
+	 * Definicja standardowego formatu daty stosowanego w kanalach RSS (RFC 822).
 	 */
 	private DateFormat RSSDateFormat =
 		new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
@@ -43,14 +43,25 @@ class ChannelFactory extends DefaultHandler {
 	private boolean insideItem;
 	private boolean insideImage;
 	private String currentTag = "";
+	/**
+	 * Licznik, ktory pozwoli na rozroznienie dat elementow, dla ktorych data
+	 * nie jest podana w zrodle XML i w konsekwencji posortowanie ich wedlug
+	 * kolejnosci w jakiej wystepuja w zrodle.
+	 */
+	private int counter;
+	/**
+	 * Data parsowania danego kanalu.
+	 */
+	private long currentUnixTime;
 
 	public ChannelFactory() {
 		super();
 	}
 
 	/**
-	 * Szuka adresu pliku XML z trescia kanalu w zrodle strony HTML i zwraca
-	 * nowy kanal o tresci z tego pliku XML.
+	 * Szuka adresu pliku XML z trescia kanalu w zrodle podanej strony HTML.
+	 *
+	 * @return	Nowy kanal o tresci ze znalezionego pliku XML.
 	 */
 	public static Channel getChannelFromSite(String siteURL) throws Exception {
 		/**
@@ -87,7 +98,7 @@ class ChannelFactory extends DefaultHandler {
 				channelURL = siteURL;
 			}
 		}
-		// czytamy z adresu od nowa, zeby nie pominac dwoch pierwszych linii
+		// czytamy z adresu od nowa, zeby nie pominac poczatkowych linii
 		in.close();
 		in = new BufferedReader(new InputStreamReader(url.openStream()));
 
@@ -130,7 +141,11 @@ class ChannelFactory extends DefaultHandler {
 		return getChannelFromXML(channelURL);
 	}
 
-	/** Zwraca aktualna postac kanalu o podanym adresie URL. */
+	/**
+	 * Parsuje kanal o zrodle w podanym adresie.
+	 *
+	 * @return	Aktualna postac kanalu o podanym adresie URL.
+	 */
 	public static Channel getChannelFromXML(String channelURL) throws Exception {
 		channel = new Channel(channelURL);
 		URL url = new URL(channelURL);
@@ -151,17 +166,20 @@ class ChannelFactory extends DefaultHandler {
 	 * Metody oblugujace zdarzenia zwiazane z parsowaniem XML.
 	 */
 
-	/** Tresc (body) aktualnie parsowanego znacznika. */
+	/** Tresc aktualnie parsowanego znacznika. */
 	private String chars;
 
 	public void startDocument() {
 		insideItem = false;
 		insideImage = false;
+		counter = 0;
+		currentUnixTime = new Date().getTime();
 	}
 
 	public void endDocument() {
 		insideItem = false;
 		insideImage = false;
+		counter = 0;
 	}
 
 	public void startElement(String uri, String name,
@@ -176,6 +194,7 @@ class ChannelFactory extends DefaultHandler {
 		if (currentTag.equals("item") || currentTag.equals("entry") /* Atom */) {
 			insideItem = true;
 			item = new Item();
+			counter++;
 		} else if (currentTag.equals("image")) {
 			insideImage = true;
 		}
@@ -184,9 +203,15 @@ class ChannelFactory extends DefaultHandler {
 			hrefLink = atts.getValue("href");
 			if (!"".equals(hrefLink) && !(hrefLink == null)) {
 				if (insideItem) {
-					item.setLink(hrefLink);
+					if (item.getLink() == null || "".equals(item.getLink())) {
+						item.setLink(hrefLink);
+					}
 				} else {
-					channel.setLink(hrefLink);
+					if ("alternate".equals(atts.getValue("rel"))) {
+						if (channel.getLink() == null || "".equals(channel.getLink())) {
+							channel.setLink(hrefLink);
+						}
+					}
 				}
 			}
 		}
@@ -275,16 +300,16 @@ class ChannelFactory extends DefaultHandler {
 			// jesli data nie byla okreslona lub parsowanie nie powiodlo sie,
 			// stosujemy biezaca date
 			if (item.getDate() == null) {
-				// TODO: ponizsze 3 linijki ustawiaja przykladowa date zamiast
-				// biezacej, dla celow testowych. Docelowo zmienic na:
-				//item.setDate(new Date());
+				// TODO: ponizsze 3 linijki ustawiaja przykladowa date zamiast biezacej,
+				// dla celow testowych. Docelowo zmienic na ta linijke:
+				//item.setDate(new Date(currentUnixTime - counter));
 				try {
 					item.setDate(RSSDateFormat.parse("Sun, 9 Nov 2008 19:30:00 +0100"));
 				} catch (ParseException pe) { }
 			}
 			// data utworzenia, tj. sciagniecia
 			item.setCreationDate(new Date());
-			item.setChannelKey(channel.key());
+			item.setChannelKey(channel.hashCode());
 			channel.addItem(item);
 		} else if (closingTag.equals("image")) {
 			insideImage = false;

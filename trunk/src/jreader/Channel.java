@@ -24,8 +24,7 @@ class Channel implements Comparable<Channel> {
 	private String imageTitle;
 	private String imageLink;
 	/** Lista elementow (wiadomosci) kanalu. */
-	//private List<Item> items = new ArrayList<Item>();
-	private Map<String, Item> items = new HashMap<String, Item>();
+	private Map<Integer, Item> items = new HashMap<Integer, Item>();
 
 	Channel(String channelURL) throws Exception {
 		this.channelURL = channelURL;
@@ -63,7 +62,7 @@ class Channel implements Comparable<Channel> {
 	 * Liczy na nowo i aktualizuje ilosc nieprzeczytanych elementow kanalu.
 	 *
 	 * @return	1, jesli ilosc nieprzeczytanych elementow sie zmienila;
-	 *		w przeciwnym przypadku 0
+	 *          w przeciwnym przypadku 0.
 	 */
 	int updateUnreadItemsCount() {
 		int oldCount = unreadItemsCount;
@@ -81,7 +80,7 @@ class Channel implements Comparable<Channel> {
 	}
 
 	void addItem(Item item) {
-		items.put(item.key(), item);
+		items.put(item.hashCode(), item);
 	}
 
 	void markAllAsRead() {
@@ -91,6 +90,9 @@ class Channel implements Comparable<Channel> {
 		this.updateUnreadItemsCount();
 	}
 
+	/**
+	 * Oznacza wszystkie elementy kanalu jako przeczytane.
+	 */
 	void markAllAsUnread() {
 		for (Item item : items.values()) {
 			item.markAsUnread();
@@ -110,7 +112,9 @@ class Channel implements Comparable<Channel> {
 	String getImageTitle() { return imageTitle; }
 	String getImageLink() { return imageLink; }
 
-	/** Zwraca liczbe nieprzeczytanych elementow. */
+	/**
+	 * @return	Liczba nieprzeczytanych elementow.
+	 */
 	int getUnreadItemsCount() {
 		return unreadItemsCount;
 	}
@@ -122,14 +126,18 @@ class Channel implements Comparable<Channel> {
 	void setImageTitle(String imageTitle) { this.imageTitle = imageTitle; }
 	void setImageLink(String imageLink) { this.imageLink = imageLink; }
 
-	// porownywanie alfabetyczne kanalow wedlug ich tytulow
+	/**
+	 * Porownywanie alfabetyczne kanalow wedlug ich tytulow.
+	 */
 	public int compareTo(Channel channel) {
 		return title.compareToIgnoreCase(channel.getTitle());
 	}
 
-	// Klucz do uzycia w HashMapie
-	String key() {
-		return channelURL;
+	/**
+	 * Do uzycia jako klucz w HashMapie.
+	 */
+	public int hashCode() {
+		return channelURL.hashCode();
 	}
 }
 

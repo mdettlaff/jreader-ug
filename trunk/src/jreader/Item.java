@@ -10,7 +10,7 @@ class Item {
 	/** Data sciagniecia elementu. */
 	private Date creationDate;
 	/** Klucz (do HashMapy) kanalu, z ktorego pochodzi element. */
-	private String channelKey;
+	private Integer channelKey;
 	/** Czy dany element jest juz przeczytany. */
 	private boolean isRead;
 	private String title;
@@ -27,15 +27,11 @@ class Item {
 	 */
 	public boolean equals(Object obj) {
 		Item item = (Item) obj;
-		if (this.guid != null && item.guid != null) {
-			if (this.guid.equals(item.guid)) {
-				return true;
-			}
-		} else if (this.title.equals(item.title)
-				&& this.description.equals(item.description)) {
+		if (this.hashCode() == item.hashCode()) {
 			return true;
-				}
-		return false;
+		} else {
+			return false;
+		}
 	}
 
 	void markAsRead() {
@@ -56,7 +52,7 @@ class Item {
 	String getAuthor() { return author; }
 	Date getDate() { return date; }
 	Date getCreationDate() { return creationDate; }
-	String getChannelKey() { return channelKey; }
+	Integer getChannelKey() { return channelKey; }
 
 	void setTitle(String title) { this.title = title; }
 	void setLink(String link) { this.link = link; }
@@ -65,15 +61,17 @@ class Item {
 	void setDate(Date date) { this.date = date; }
 	void setCreationDate(Date date) { this.creationDate = date; }
 	void setGuid(String guid) { this.guid = guid; }
-	void setChannelKey(String channelKey) { this.channelKey = channelKey; }
+	void setChannelKey(Integer channelKey) { this.channelKey = channelKey; }
 
-	// Klucz do uzycia w HashMapie
-	String key() {
-		if (guid != null) {
-			return guid;
+	/**
+	 * Do wykorzystania jako klucz w HashMapie.
+	 */
+	public int hashCode() {
+		if (guid != null && !"".equals(guid)) {
+			return guid.hashCode();
 		} else {
-			// TODO: sam tytul nie jest zbyt dobry, trzeba wymyslic sprytniejszy hash
-			return title;
+			// nie wykorzystywac pola date, bo moze byc zmienne
+			return title.concat(description).hashCode();
 		}
 	}
 }
