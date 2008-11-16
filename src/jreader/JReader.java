@@ -19,7 +19,7 @@ import org.xml.sax.SAXParseException;
 
 /**
  * Glowna klasa programu, przechowujaca obiekty przeznaczone do wyswietlania
- * w Graficznym Interfejsie Uzytkownika i posiadajaca metody obslugujace
+ * w graficznym interfejsie uzytkownika i posiadajaca metody obslugujace
  * podstawowe funkcjonalnosci programu, uzywane za pomoca interfejsu
  * uzytkownika. 
  */
@@ -27,12 +27,13 @@ class JReader {
 	/**
 	 * Lista wszystkich kanalow.
 	 */
-	private static Map<String, Channel> allChannels =
-			new HashMap<String, Channel>();
+	private static Map<Integer, Channel> allChannels =
+			new HashMap<Integer, Channel>();
 	/**
 	 * Ustawienia programu wybrane przez uzytkownika.
 	 */
 	private static Config config = new Config();
+
 	/** Lista subskrypcji do wyswietlenia w GUI. */
 	private static List<Channel> channels = new ArrayList<Channel>();
 	/** Lista wiadomosci do wyswietlenia w GUI. */
@@ -42,6 +43,7 @@ class JReader {
 	 * Przy pomocy przyciskow Wstecz i Dalej mozna nawigowac po liscie.
 	 */
 	private static HistoryList<Preview> preview = new HistoryList<Preview>(10);
+
 
 	public static void main(String[] args) throws Exception {
 
@@ -192,7 +194,7 @@ class JReader {
 			} else if (command.equals("mark channel")) {
 				System.out.print("Podaj numer kanalu: ");
 				int nr = new Integer(in.readLine()) - 1;
-				channels.get(nr).markAllAsRead();
+				markChannelAsRead(channels.get(nr));
 			} else if (command.equals("update channel")) {
 				try {
 					System.out.print("Podaj numer kanalu: ");
@@ -235,6 +237,7 @@ class JReader {
 		 */
 	}
 
+
 	/*
 	 * Metody obslugujace glowne funkcjonalnosci programu, wywolywane przy
 	 * pomocy interfejsu uzytkownika.
@@ -246,16 +249,28 @@ class JReader {
 	 */
 	static void addChannel(String siteURL) throws Exception {
 		Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
-		allChannels.put(newChannel.key(), newChannel);
+		allChannels.put(newChannel.hashCode(), newChannel);
 		channels.add(newChannel);
 		// Sortujemy liste kanalow alfabetycznie
 		Collections.sort(channels);
 	}
 
+	/**
+	 * Ustawia poprzedni element z historii jako biezacy.
+	 *
+	 * @return	null, jesli nie mozna wrocic, w przeciwnym wypadku podglad
+	 *          elementu.
+	 */
 	static Preview previousItem() {
 		return preview.previous();
 	}
 
+	/**
+	 * Ustawia nastepny element z historii jako biezacy.
+	 *
+	 * @return	null, jesli nie mozna przejsc dalej, w przeciwnym wypadku
+	 *          podglad elementu.
+	 */
 	static Preview nextItem() {
 		return preview.next();
 	}
@@ -284,6 +299,9 @@ class JReader {
 		}
 	}
 
+	/**
+	 * Ustawia nastepny pod wzgledem daty nieprzeczytany element jako biezacy.
+	 */
 	static void nextUnread() {
 		Item newestItem = new Item();
 		newestItem.setDate(new Date(0)); // 1 stycznia 1970
@@ -345,6 +363,13 @@ class JReader {
 	}
 
 	/**
+	 * Oznacza wszystkie wiadomosci w kanale jako przeczytane.
+	 */
+	static void markChannelAsRead(Channel channel) {
+		channel.markAllAsRead();
+	}
+
+	/**
 	 * Wybiera wszystkie elementy z listy kanalow.
 	 */
 	static void selectAll() {
@@ -375,7 +400,8 @@ class JReader {
 	}
 
 	/**
-	 * Sprawdza, czy w danym kanale nie pojawily sie nowe wiadomosci.
+	 * Sprawdza, czy w danym kanale nie pojawily sie nowe wiadomosci i jesli
+	 * tak, to dodaje je do listy wiadomosci kanalu.
 	 */
 	static void updateChannel(Channel channel) throws Exception {
 		channel.update();
@@ -397,7 +423,7 @@ class JReader {
 				indToRemove.set(j, indToRemove.get(j)-1);
 			}
 		}
-		allChannels.remove(channels.get(index).key());
+		allChannels.remove(channels.get(index).hashCode());
 		channels.remove(index);
 	}
 
