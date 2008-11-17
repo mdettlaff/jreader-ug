@@ -2,7 +2,6 @@ package jreader;
 
 import java.util.Comparator;
 
-
 /**
  * Porownuje elementy ze wzgledu na date (od najnowszych lub od najstarszych).
  */

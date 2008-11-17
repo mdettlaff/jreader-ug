@@ -1,11 +1,9 @@
 package jreader;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Kanal RSS.
@@ -23,7 +21,7 @@ class Channel implements Comparable<Channel> {
 	private String imageURL;
 	private String imageTitle;
 	private String imageLink;
-	/** Lista elementow (wiadomosci) kanalu. */
+	/** Elementy (wiadomosci) kanalu. */
 	private Map<Integer, Item> items = new HashMap<Integer, Item>();
 
 	Channel(String channelURL) throws Exception {
@@ -31,8 +29,8 @@ class Channel implements Comparable<Channel> {
 	}
 
 	/**
-	 * Parsuje zrodlo XML kanalu i uzupelnia informacje ogolne o kanale oraz
-	 * jego elementy.
+	 * Pobiera i parsuje zrodlo XML kanalu i uzupelnia informacje ogolne
+	 * o kanale oraz jego elementy.
 	 */
 	void update() throws Exception {
 		Channel ch = ChannelFactory.getChannelFromXML(channelURL);
@@ -61,8 +59,8 @@ class Channel implements Comparable<Channel> {
 	/**
 	 * Liczy na nowo i aktualizuje ilosc nieprzeczytanych elementow kanalu.
 	 *
-	 * @return	1, jesli ilosc nieprzeczytanych elementow sie zmienila;
-	 *          w przeciwnym przypadku 0.
+	 * @return 1, jesli ilosc nieprzeczytanych elementow sie zmienila;
+	 *         w przeciwnym przypadku 0.
 	 */
 	int updateUnreadItemsCount() {
 		int oldCount = unreadItemsCount;
@@ -113,7 +111,7 @@ class Channel implements Comparable<Channel> {
 	String getImageLink() { return imageLink; }
 
 	/**
-	 * @return	Liczba nieprzeczytanych elementow.
+	 * @return Liczba nieprzeczytanych elementow.
 	 */
 	int getUnreadItemsCount() {
 		return unreadItemsCount;

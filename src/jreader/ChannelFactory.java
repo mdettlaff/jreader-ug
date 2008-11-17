@@ -14,7 +14,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * Stad za pomoca metod getChannelFromSite i getChannelFromXML mozna pobierac
  * nowo stworzony kanal lub aktualna tresc kanalu.
@@ -42,6 +41,7 @@ class ChannelFactory extends DefaultHandler {
 
 	private boolean insideItem;
 	private boolean insideImage;
+	private boolean insideTextinput;
 	private String currentTag = "";
 	/**
 	 * Licznik, ktory pozwoli na rozroznienie dat elementow, dla ktorych data
@@ -61,7 +61,7 @@ class ChannelFactory extends DefaultHandler {
 	/**
 	 * Szuka adresu pliku XML z trescia kanalu w zrodle podanej strony HTML.
 	 *
-	 * @return	Nowy kanal o tresci ze znalezionego pliku XML.
+	 * @return Nowy kanal o tresci ze znalezionego pliku XML.
 	 */
 	public static Channel getChannelFromSite(String siteURL) throws Exception {
 		/**
@@ -144,7 +144,7 @@ class ChannelFactory extends DefaultHandler {
 	/**
 	 * Parsuje kanal o zrodle w podanym adresie.
 	 *
-	 * @return	Aktualna postac kanalu o podanym adresie URL.
+	 * @return Aktualna postac kanalu o podanym adresie URL.
 	 */
 	public static Channel getChannelFromXML(String channelURL) throws Exception {
 		channel = new Channel(channelURL);
@@ -172,6 +172,7 @@ class ChannelFactory extends DefaultHandler {
 	public void startDocument() {
 		insideItem = false;
 		insideImage = false;
+		insideTextinput = false;
 		counter = 0;
 		currentUnixTime = new Date().getTime();
 	}
@@ -179,6 +180,7 @@ class ChannelFactory extends DefaultHandler {
 	public void endDocument() {
 		insideItem = false;
 		insideImage = false;
+		insideTextinput = false;
 		counter = 0;
 	}
 
@@ -197,14 +199,18 @@ class ChannelFactory extends DefaultHandler {
 			counter++;
 		} else if (currentTag.equals("image")) {
 			insideImage = true;
+		} else if (currentTag.equals("textinput")) {
+			insideTextinput = true;
 		}
 		if (currentTag.equals("link")) {
 			String hrefLink = "";
 			hrefLink = atts.getValue("href");
 			if (!"".equals(hrefLink) && !(hrefLink == null)) {
 				if (insideItem) {
-					if (item.getLink() == null || "".equals(item.getLink())) {
-						item.setLink(hrefLink);
+					if ("alternate".equals(atts.getValue("rel"))) {
+						if (item.getLink() == null || "".equals(item.getLink())) {
+							item.setLink(hrefLink);
+						}
 					}
 				} else {
 					if ("alternate".equals(atts.getValue("rel"))) {
@@ -221,7 +227,7 @@ class ChannelFactory extends DefaultHandler {
 		String closingTag;
 
 		/*
-		 * Tutaj "wyciagamy" wlasciwa tresc ze znacznikow i wpisujemy w struktury
+		 * Tutaj wyciagamy wlasciwa tresc ze znacznikow i wpisujemy w struktury.
 		 */
 		chars = chars.trim();
 		if (insideImage) {
@@ -235,6 +241,8 @@ class ChannelFactory extends DefaultHandler {
 					channel.setImageLink(chars);
 				}
 			}
+		} else if (insideTextinput) {
+			// wyszukiwarka albo cos podobnego, np. na slashdot.org
 		} else if (!insideItem) { // czytamy wlasciwosci kanalu
 			if (currentTag.equals("title")) {
 				channel.setTitle(chars.replaceAll("<.*?>", "").replaceAll("\n", " ").
@@ -246,9 +254,13 @@ class ChannelFactory extends DefaultHandler {
 			} else if (currentTag.equals("description") // nizej: Atom
 					|| currentTag.equals("content") || currentTag.equals("summary")) {
 				channel.setDescription(chars);
+			} else if (currentTag.equals("subtitle")) {
+				if (channel.getDescription() == null) {
+					channel.setDescription(chars);
+				}
 			}
 		} else { // czytamy wlasciwosci elementu
-			if (currentTag.equals("title")) {
+			if (currentTag.equals("title") && item.getTitle() == null) {
 				// usuwamy niepotrzebne znaczniki z tytulu (Atom)
 				item.setTitle(chars.replaceAll("<.*?>", "").replaceAll("\n", " ").
 						replaceAll(" +", " "));
@@ -262,6 +274,10 @@ class ChannelFactory extends DefaultHandler {
 			} else if (currentTag.equals("author") || currentTag.equals("name")
 					|| currentTag.equals("creator")) {
 				item.setAuthor(chars);
+			} else if (currentTag.equals("email")) { // Atom; email autora
+				if (insideItem && item.getAuthor() != null) {
+					item.setAuthor(item.getAuthor() + " (" + chars + ")");
+				}
 			} else if (currentTag.equals("pubDate") || currentTag.equals("date")
 					|| currentTag.equals("updated")) {
 				try {
@@ -313,6 +329,8 @@ class ChannelFactory extends DefaultHandler {
 			channel.addItem(item);
 		} else if (closingTag.equals("image")) {
 			insideImage = false;
+		} else if (closingTag.equals("textinput")) {
+			insideTextinput = false;
 		}
 	}
 

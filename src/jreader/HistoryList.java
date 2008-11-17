@@ -2,7 +2,6 @@ package jreader;
 
 import java.util.LinkedList;
 
-
 /**
  * Przechowuje historie przegladanych elementow, po ktorych mozna nawigowac
  * za pomoca przyciskow Wstecz i Dalej. Ilosc pamietanych elementow jest
@@ -18,7 +17,6 @@ class HistoryList<T> {
     this.size = size;
     currentPosition = 0;
     history = new LinkedList<T>();
-    history.add(null);
   }
 
   void setCurrent(T preview) {
