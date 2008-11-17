@@ -2,7 +2,6 @@ package jreader;
 
 import java.util.Date;
 
-
 /**
  * Element (wiadomosc) kanalu.
  */

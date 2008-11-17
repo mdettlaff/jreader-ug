@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.xml.sax.SAXParseException;
-
 
 /**
  * Glowna klasa programu, przechowujaca obiekty przeznaczone do wyswietlania
@@ -149,6 +149,9 @@ class JReader {
 					System.out.println("Kanal zostal dodany");
 				} catch (LinkNotFoundException lnfe) {
 					System.out.println("Nie znaleziono kanalow RSS na tej stronie.");
+				} catch (SAXParseException spe) {
+					System.out.print("Nie mozna dodac kanalu.");
+					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 				} catch (MalformedURLException mue) {
 					System.out.print("Nie mozna dodac kanalu.");
 					System.out.println(" Podany URL jest nieprawidlowy.");
@@ -159,9 +162,6 @@ class JReader {
 					System.out.println(se.getLocalizedMessage());
 				} catch (IOException ioe) {
 					System.out.println("Podana strona nie istnieje.");
-				} catch (SAXParseException spe) {
-					System.out.print("Nie mozna dodac kanalu.");
-					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 				} catch (IllegalArgumentException iae) {
 					System.out.print("Nie mozna dodac kanalu.");
 					System.out.println(" Podany URL jest nieprawidlowy.");
@@ -201,6 +201,9 @@ class JReader {
 					int nr = new Integer(in.readLine()) - 1;
 					updateChannel(channels.get(nr));
 					System.out.println("Kanal zostal zaktualizowany.");
+				} catch (SAXParseException spe) {
+					System.out.print("Nie mozna zaktualizowac kanalu.");
+					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 				} catch (FileNotFoundException fnfe) {
 					System.out.print("Nie mozna zaktualizowac kanalu.");
 					System.out.println(" Brak polaczenia ze strona.");
@@ -210,9 +213,6 @@ class JReader {
 				} catch (IOException ioe) {
 					System.out.print("Nie mozna zaktualizowac kanalu.");
 					System.out.println(" Brak polaczenia ze strona.");
-				} catch (SAXParseException spe) {
-					System.out.print("Nie mozna zaktualizowac kanalu.");
-					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 				}
 			} else if (command.equals("remove channel")) {
 				System.out.print("Podaj numer kanalu: ");
@@ -258,8 +258,8 @@ class JReader {
 	/**
 	 * Ustawia poprzedni element z historii jako biezacy.
 	 *
-	 * @return	null, jesli nie mozna wrocic, w przeciwnym wypadku podglad
-	 *          elementu.
+	 * @return null, jesli nie mozna wrocic, w przeciwnym wypadku podglad
+	 *         elementu.
 	 */
 	static Preview previousItem() {
 		return preview.previous();
@@ -268,8 +268,8 @@ class JReader {
 	/**
 	 * Ustawia nastepny element z historii jako biezacy.
 	 *
-	 * @return	null, jesli nie mozna przejsc dalej, w przeciwnym wypadku
-	 *          podglad elementu.
+	 * @return null, jesli nie mozna przejsc dalej, w przeciwnym wypadku
+	 *         podglad elementu.
 	 */
 	static Preview nextItem() {
 		return preview.next();
@@ -279,6 +279,10 @@ class JReader {
 		for (Channel channel : channels) {
 			try {
 				channel.update();
+			} catch (SAXParseException spe) {
+				System.out.print("Nie mozna zaktualizowac kanalu "
+						+ channel.getTitle() + ".");
+				System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 			} catch (FileNotFoundException fnfe) {
 				System.out.print("Nie mozna zaktualizowac kanalu "
 						+ channel.getTitle() + ".");
@@ -291,54 +295,55 @@ class JReader {
 				System.out.print("Nie mozna zaktualizowac kanalu "
 						+ channel.getTitle() + ".");
 				System.out.println(" Brak polaczenia ze strona.");
-			} catch (SAXParseException spe) {
-				System.out.print("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 			}
 		}
 	}
 
 	/**
 	 * Ustawia nastepny pod wzgledem daty nieprzeczytany element jako biezacy.
+	 * Jesli ustawione jest sortowanie od najnowszych, szuka najnowszego,
+	 * w przeciwnym wypadku najstarszego.
 	 */
 	static void nextUnread() {
-		Item newestItem = new Item();
-		newestItem.setDate(new Date(0)); // 1 stycznia 1970
-		for (Channel channel : channels) {
-			if (channel.getUnreadItemsCount() > 0) {
-				for (Item item : channel.getItems()) {
-					if (item.isUnread()) {
-						if (item.getDate().after(newestItem.getDate())) {
-							newestItem = item;
+		Item nextItem = new Item(); // nastepny nieprzeczytany
+		Date beginningOfTime = new Date(0); // 1 stycznia 1970
+		Date endOfTime = new Date();
+		try { endOfTime = new SimpleDateFormat("yyyy").parse("9999");
+		} catch (ParseException pe) { }
+		if (config.getSortByNewest()) { // szukamy najnowszego nieprzeczytanego
+			nextItem.setDate(beginningOfTime);
+			for (Channel channel : channels) {
+				if (channel.getUnreadItemsCount() > 0) {
+					for (Item item : channel.getItems()) {
+						if (item.isUnread()) {
+							if (item.getDate().after(nextItem.getDate())) {
+								nextItem = item;
+							}
+						}
+					}
+				}
+			}
+		} else { // szukamy najstarszego nieprzeczytanego
+			nextItem.setDate(endOfTime);
+			for (Channel channel : channels) {
+				if (channel.getUnreadItemsCount() > 0) {
+					for (Item item : channel.getItems()) {
+						if (item.isUnread()) {
+							if (item.getDate().before(nextItem.getDate())) {
+								nextItem = item;
+							}
 						}
 					}
 				}
 			}
 		}
-		if (newestItem.getDate().equals(new Date(0))) {
+		if (nextItem.getDate().equals(beginningOfTime)
+				|| nextItem.getDate().equals(endOfTime)) {
 			System.out.println("Nie ma nieprzeczytanych wiadomosci.");
 		} else {
-			// szukamy najnowszego elementu znowu, zeby go oznaczyc jako przeczytany
-			boolean foundAgain = false;
-			for (Channel channel : channels) {
-				if (channel.getUnreadItemsCount() > 0) {
-					for (Item item : channel.getItems()) {
-						if (item.isUnread()) {
-							if (item.getDate().equals(newestItem.getDate())) {
-								item.markAsRead();
-								foundAgain = true;
-								break;
-							}
-						}
-					}
-				}
-				if (foundAgain) {
-					channel.updateUnreadItemsCount();
-					break;
-				}
-			}
-			preview.setCurrent(new Preview(newestItem));
+			nextItem.markAsRead();
+			allChannels.get(nextItem.getChannelKey()).updateUnreadItemsCount();
+			preview.setCurrent(new Preview(nextItem));
 		}
 	}
 
