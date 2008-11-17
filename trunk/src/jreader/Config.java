@@ -12,7 +12,7 @@ public class Config implements Serializable {
 	/**
 	 * Sciezka do katalogu konfiguracyjnego
 	 */
-	private static File configDir = new File(System.getenv("HOME") + File.separator + ".jreader");
+	private static File configDir = new File(System.getProperty("user.home") + File.separator + ".jreader");
 	/**
 	 * Sciezka do pliku zawierajacego ustawienia programu
 	 */
@@ -89,7 +89,6 @@ public class Config implements Serializable {
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(Config.cd);
 		} catch (Exception e) {
-			System.err.println(e);
 			return false;
 		} finally {
 			try {
@@ -97,9 +96,7 @@ public class Config implements Serializable {
 					oos.close();
 				if(fos != null)
 					fos.close();
-			} catch(Exception e) {
-				System.err.println(e);
-			}
+			} catch(Exception e) {}
 		}
 		return true;
 	}
@@ -115,7 +112,6 @@ public class Config implements Serializable {
 			ois = new ObjectInputStream(fis);
 			Config.cd = (ConfigData) ois.readObject();
 		} catch (Exception e) {
-			System.err.println(e);
 			return false;
 		} finally {
 			try {
@@ -123,9 +119,7 @@ public class Config implements Serializable {
 					ois.close();
 				if(fis != null)
 					fis.close();
-			} catch(Exception e) {
-				System.err.println(e);
-			}
+			} catch(Exception e) {}
 		}
 		return true;
 	}
