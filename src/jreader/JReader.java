@@ -143,23 +143,23 @@ class JReader {
 				try {
 					System.out.print("Podaj adres URL: ");
 					String url = in.readLine();
-					// sposob na podanie tyldy w adresie
+					// sposob na podanie tyldy w adresie: \tld
 					url = url.replaceAll("\\\\tld","~");
 					addChannel(url);
 					System.out.println("Kanal zostal dodany");
 				} catch (LinkNotFoundException lnfe) {
 					System.out.println("Nie znaleziono kanalow RSS na tej stronie.");
-				} catch (SAXParseException spe) {
-					System.out.print("Nie mozna dodac kanalu.");
-					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 				} catch (MalformedURLException mue) {
 					System.out.print("Nie mozna dodac kanalu.");
 					System.out.println(" Podany URL jest nieprawidlowy.");
-				} catch (FileNotFoundException fnfe) {
-					System.out.println("Podana strona nie istnieje.");
+				} catch (SAXParseException spe) {
+					System.out.print("Nie mozna dodac kanalu.");
+					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 				} catch (SocketException se) {
 					System.out.println("Nie mozna dodac kanalu. Szczegoly:");
 					System.out.println(se.getLocalizedMessage());
+				} catch (FileNotFoundException fnfe) {
+					System.out.println("Podana strona nie istnieje.");
 				} catch (IOException ioe) {
 					System.out.println("Podana strona nie istnieje.");
 				} catch (IllegalArgumentException iae) {
@@ -175,10 +175,32 @@ class JReader {
 					System.out.println("Nie mozna przejsc dalej.");
 				}
 			} else if (command.equals("update all")) {
-				updateAll();
+				for (Channel channel : channels) {
+					try {
+						updateChannel(channel);
+					} catch (SAXParseException spe) {
+						System.out.println("Nie mozna zaktualizowac kanalu "
+								+ channel.getTitle() + ".");
+						System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
+					} catch (SocketException se) {
+						System.out.println("Nie mozna zaktualizowac kanalu "
+								+ channel.getTitle() + ".");
+						System.out.println("Szczegoly: " + se.getLocalizedMessage());
+					} catch (FileNotFoundException fnfe) {
+						System.out.println("Nie mozna zaktualizowac kanalu "
+								+ channel.getTitle() + ".");
+						System.out.println("Brak polaczenia ze strona.");
+					} catch (IOException ioe) {
+						System.out.println("Nie mozna zaktualizowac kanalu "
+								+ channel.getTitle() + ".");
+						System.out.println("Brak polaczenia ze strona.");
+					}
+				}
 				System.out.println("Kanaly zostaly zaktualizowane.");
 			} else if (command.equals("next unread")) {
-				nextUnread();
+				if (!nextUnread()) {
+					System.out.println("Nie ma nieprzeczytanych wiadomosci.");
+				}
 			} else if (command.equals("select item")) {
 				System.out.print("Podaj numer elementu: ");
 				int nr = new Integer(in.readLine()) - 1;
@@ -204,12 +226,12 @@ class JReader {
 				} catch (SAXParseException spe) {
 					System.out.print("Nie mozna zaktualizowac kanalu.");
 					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
-				} catch (FileNotFoundException fnfe) {
-					System.out.print("Nie mozna zaktualizowac kanalu.");
-					System.out.println(" Brak polaczenia ze strona.");
 				} catch (SocketException se) {
 					System.out.println("Nie mozna zaktualizowac kanalu. Szczegoly:");
 					System.out.println(se.getLocalizedMessage());
+				} catch (FileNotFoundException fnfe) {
+					System.out.print("Nie mozna zaktualizowac kanalu.");
+					System.out.println(" Brak polaczenia ze strona.");
 				} catch (IOException ioe) {
 					System.out.print("Nie mozna zaktualizowac kanalu.");
 					System.out.println(" Brak polaczenia ze strona.");
@@ -223,8 +245,14 @@ class JReader {
 				String choice = in.readLine().trim();
 				if (choice.equals("old")) {
 					config.setSortByNewest(false);
+					if (!config.write()) {
+						System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
+					}
 				} else if (choice.equals("new")) {
 					config.setSortByNewest(true);
+					if (!config.write()) {
+						System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
+					}
 				} else {
 					System.out.println("Nieprawidlowy wybor.");
 				}
@@ -275,76 +303,55 @@ class JReader {
 		return preview.next();
 	}
 
-	static void updateAll() throws Exception {
-		for (Channel channel : channels) {
-			try {
-				channel.update();
-			} catch (SAXParseException spe) {
-				System.out.print("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
-			} catch (FileNotFoundException fnfe) {
-				System.out.print("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println(" Brak polaczenia ze strona.");
-			} catch (SocketException se) {
-				System.out.print("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println("Szczegoly: " + se.getLocalizedMessage());
-			} catch (IOException ioe) {
-				System.out.print("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println(" Brak polaczenia ze strona.");
-			}
-		}
-	}
-
 	/**
 	 * Ustawia nastepny pod wzgledem daty nieprzeczytany element jako biezacy.
 	 * Jesli ustawione jest sortowanie od najnowszych, szuka najnowszego,
 	 * w przeciwnym wypadku najstarszego.
+	 *
+	 * @return false, jesli nie ma wiecej nieprzeczytanych wiadomosci,
+	 *         true w przeciwnym wypadku
 	 */
-	static void nextUnread() {
-		Item nextItem = new Item(); // nastepny nieprzeczytany
+	static boolean nextUnread() {
+		Item nextUnreadItem = new Item();
 		Date beginningOfTime = new Date(0); // 1 stycznia 1970
 		Date endOfTime = new Date();
 		try { endOfTime = new SimpleDateFormat("yyyy").parse("9999");
 		} catch (ParseException pe) { }
 		if (config.getSortByNewest()) { // szukamy najnowszego nieprzeczytanego
-			nextItem.setDate(beginningOfTime);
+			nextUnreadItem.setDate(beginningOfTime);
 			for (Channel channel : channels) {
 				if (channel.getUnreadItemsCount() > 0) {
 					for (Item item : channel.getItems()) {
 						if (item.isUnread()) {
-							if (item.getDate().after(nextItem.getDate())) {
-								nextItem = item;
+							if (item.getDate().after(nextUnreadItem.getDate())) {
+								nextUnreadItem = item;
 							}
 						}
 					}
 				}
 			}
 		} else { // szukamy najstarszego nieprzeczytanego
-			nextItem.setDate(endOfTime);
+			nextUnreadItem.setDate(endOfTime);
 			for (Channel channel : channels) {
 				if (channel.getUnreadItemsCount() > 0) {
 					for (Item item : channel.getItems()) {
 						if (item.isUnread()) {
-							if (item.getDate().before(nextItem.getDate())) {
-								nextItem = item;
+							if (item.getDate().before(nextUnreadItem.getDate())) {
+								nextUnreadItem = item;
 							}
 						}
 					}
 				}
 			}
 		}
-		if (nextItem.getDate().equals(beginningOfTime)
-				|| nextItem.getDate().equals(endOfTime)) {
-			System.out.println("Nie ma nieprzeczytanych wiadomosci.");
-		} else {
-			nextItem.markAsRead();
-			allChannels.get(nextItem.getChannelKey()).updateUnreadItemsCount();
-			preview.setCurrent(new Preview(nextItem));
+		if (nextUnreadItem.getDate().equals(beginningOfTime)
+				|| nextUnreadItem.getDate().equals(endOfTime)) {
+			return false;
 		}
+		nextUnreadItem.markAsRead();
+		allChannels.get(nextUnreadItem.getChannelKey()).updateUnreadItemsCount();
+		preview.setCurrent(new Preview(nextUnreadItem));
+		return true;
 	}
 
 	/**
