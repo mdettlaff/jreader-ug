@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Element (wiadomosc) kanalu.
  */
-class Item {
+class Item implements Comparable<Item> {
 	/** Data sciagniecia elementu. */
 	private Date creationDate;
 	/** Klucz (do HashMapy) kanalu, z ktorego pochodzi element. */
@@ -20,30 +20,6 @@ class Item {
 	private Date date;
 	/** Unikalny identyfikator elementu. */
 	private String guid;
-
-	/**
-	 * Porownuje dwa elementy (do sprawdzania, czy dany element jest nowy).
-	 */
-	public boolean equals(Object obj) {
-		Item item = (Item) obj;
-		if (this.hashCode() == item.hashCode()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	void markAsRead() {
-		isRead = true;
-	}
-
-	void markAsUnread() {
-		isRead = false;
-	}
-
-	boolean isUnread() {
-		return !isRead;
-	}
 
 	String getTitle() { return title; }
 	String getLink() { return link; }
@@ -62,6 +38,18 @@ class Item {
 	void setGuid(String guid) { this.guid = guid; }
 	void setChannelKey(Integer channelKey) { this.channelKey = channelKey; }
 
+	void markAsRead() {
+		isRead = true;
+	}
+
+	void markAsUnread() {
+		isRead = false;
+	}
+
+	boolean isUnread() {
+		return !isRead;
+	}
+
 	/**
 	 * Do wykorzystania jako klucz w HashMapie.
 	 */
@@ -71,6 +59,40 @@ class Item {
 		} else {
 			// nie wykorzystywac pola date, bo moze byc zmienne
 			return title.concat(description).hashCode();
+		}
+	}
+
+	/**
+	 * Sprawdza czy elementy sa identyczne (do sprawdzania, czy dany element
+	 * jest nowy).
+	 */
+	public boolean equals(Object obj) {
+		Item item = (Item) obj;
+		if (this.hashCode() == item.hashCode()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Porownuje ten element z innym ze wzgledu na date.
+	 */
+	public int compareTo(Item item) {
+		if (this.getDate().before(item.getDate())) {
+			if (JReader.getConfig().getSortByNewest()) {
+				return 1;
+			} else {
+				return -1;
+			}
+		} else if (this.getDate().after(item.getDate())) {
+			if (JReader.getConfig().getSortByNewest()) {
+				return -1;
+			} else {
+				return 1;
+			}
+		} else {
+			return 0;
 		}
 	}
 }

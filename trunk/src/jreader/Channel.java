@@ -120,6 +120,13 @@ class Channel implements Comparable<Channel> {
 		return unreadItemsCount;
 	}
 
+	void setTitle(String title) { this.title = title; }
+	void setLink(String link) { this.link = link; }
+	void setDescription(String description) { this.description = description; }
+	void setImageURL(String imageURL) { this.imageURL = imageURL; }
+	void setImageTitle(String imageTitle) { this.imageTitle = imageTitle; }
+	void setImageLink(String imageLink) { this.imageLink = imageLink; }
+
 	/**
 	 * @return Lista tagow jako string w formacie 'tag1 tag2 tag3 [...]';
 	 *         jesli nie ma zadnych tagow, zwraca pusty string ""
@@ -170,13 +177,6 @@ class Channel implements Comparable<Channel> {
 		}
 		return false;
 	}
-
-	void setTitle(String title) { this.title = title; }
-	void setLink(String link) { this.link = link; }
-	void setDescription(String description) { this.description = description; }
-	void setImageURL(String imageURL) { this.imageURL = imageURL; }
-	void setImageTitle(String imageTitle) { this.imageTitle = imageTitle; }
-	void setImageLink(String imageLink) { this.imageLink = imageLink; }
 
 	/**
 	 * Porownywanie alfabetyczne kanalow wedlug ich tytulow.
