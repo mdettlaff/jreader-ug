@@ -110,7 +110,7 @@ class ChannelFactory extends DefaultHandler {
 				if (inputLine.contains("type=\"application/rss+xml\"")
 						|| inputLine.contains("type=\"application/atom+xml\"")) {
 					// rozbijamy na mniejsze linie, mniej problematyczne
-					inputLine = inputLine.replaceAll(">", ">\n");
+					inputLine = inputLine.replace(">", ">\n");
 					String[] smallLines = inputLine.split("\n");
 					for (String smallLine : smallLines) {
 						if (smallLine.contains("type=\"application/rss+xml\"")
@@ -245,7 +245,7 @@ class ChannelFactory extends DefaultHandler {
 			// wyszukiwarka albo cos podobnego, np. na slashdot.org
 		} else if (!insideItem) { // czytamy wlasciwosci kanalu
 			if (currentTag.equals("title")) {
-				channel.setTitle(chars.replaceAll("<.*?>", "").replaceAll("\n", " ").
+				channel.setTitle(chars.replaceAll("<.*?>", "").replace("\n", " ").
 						replaceAll(" +", " "));
 			} else if (currentTag.equals("link")) {
 				if ("".equals(channel.getLink()) || channel.getLink() == null) {
@@ -262,7 +262,7 @@ class ChannelFactory extends DefaultHandler {
 		} else { // czytamy wlasciwosci elementu
 			if (currentTag.equals("title") && item.getTitle() == null) {
 				// usuwamy niepotrzebne znaczniki z tytulu (Atom)
-				item.setTitle(chars.replaceAll("<.*?>", "").replaceAll("\n", " ").
+				item.setTitle(chars.replaceAll("<.*?>", "").replace("\n", " ").
 						replaceAll(" +", " "));
 			} else if (currentTag.equals("link")) {
 				if ("".equals(item.getLink()) || item.getLink() == null) {

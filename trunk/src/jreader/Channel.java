@@ -2,6 +2,7 @@ package jreader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ class Channel implements Comparable<Channel> {
 	private String channelURL;
 	/** Liczba nieprzeczytanych elementow. */
 	private int unreadItemsCount;
+	/** Tagi; jesli kanal nie jest oznaczony tagami, lista jest pusta. */
+	private List<String> tags = new LinkedList<String>();
 
 	private String title;
 	private String link;
@@ -115,6 +118,57 @@ class Channel implements Comparable<Channel> {
 	 */
 	int getUnreadItemsCount() {
 		return unreadItemsCount;
+	}
+
+	/**
+	 * @return Lista tagow jako string w formacie 'tag1 tag2 tag3 [...]';
+	 *         jesli nie ma zadnych tagow, zwraca pusty string ""
+	 */
+	List<String> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @return Lista tagow jako string w formacie 'tag1 tag2 tag3 [...]';
+	 *         jesli nie ma zadnych tagow, zwraca pusty string ""
+	 */
+	String getTagsAsString() {
+		String tagsList = "";
+		for (String tag : tags) {
+			tagsList += tag.concat(" ");
+		}
+		return tagsList;
+	}
+
+	/**
+	 * Ustawia liste tagow na podstawie lancucha znakow wprowadzonego przez
+	 * uzytkownika, np. 'blog linux tech science'. Tagi powinny byc oddzielone
+	 * spacjami, ale dozwolone sa tez przecinki.
+	 */
+	void setTags(String newTags) {
+		if (newTags == null) {
+			this.tags = new LinkedList<String>();
+		} else {
+			newTags = newTags.trim();
+			this.tags = new LinkedList<String>();
+			if (!"".equals(newTags)) {
+				newTags = newTags.replace(", ", ",");
+				newTags = newTags.replace(",", " ");
+				String[] newTagsArray = newTags.split(" ");
+				for (String tag : newTagsArray) {
+					this.tags.add(tag);
+				}
+			}
+		}
+	}
+
+	boolean containsTag(String tag) {
+		for (String tagInThisChannel : tags) {
+			if (tag.equals(tagInThisChannel)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void setTitle(String title) { this.title = title; }

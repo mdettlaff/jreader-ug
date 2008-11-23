@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.xml.sax.SAXParseException;
@@ -43,6 +44,8 @@ class JReader {
 	 * Przy pomocy przyciskow Wstecz i Dalej mozna nawigowac po liscie.
 	 */
 	private static HistoryList<Preview> preview = new HistoryList<Preview>(10);
+	/** Lista tagow do wyswietlenia w GUI. */
+	private static List<String> tags = new LinkedList<String>();
 
 
 	public static void main(String[] args) throws Exception {
@@ -66,7 +69,8 @@ class JReader {
 				System.out.println("Dostepne komendy:");
 				System.out.print("show channels\t");
 				System.out.print("show items\t");
-				System.out.println("show preview");
+				System.out.print("show preview\t");
+				System.out.println("show tags");
 
 				System.out.print("add channel\t");
 				System.out.print("previous item\t");
@@ -77,13 +81,16 @@ class JReader {
 				System.out.print("select item\t");
 				System.out.print("select channel\t");
 				System.out.print("select all\t");
-				System.out.println("select unread");
+				System.out.print("select unread\t");
+				System.out.println("select tag");
 
 				System.out.print("mark channel\t");
 				System.out.print("update channel\t");
+				System.out.print("edit tags\t");
 				System.out.println("remove channel");
 
 				System.out.print("set sort\t");
+				System.out.print("set delete\t");
 				System.out.print("help\t\t");
 				System.out.println("quit");
 			} else if (command.equals("show channels")) {
@@ -97,7 +104,7 @@ class JReader {
 						if (channel.getUnreadItemsCount() > 0) {
 							System.out.println(" (" + channel.getUnreadItemsCount() + ")");
 						} else {
-							System.out.println("");
+							System.out.println();
 						}
 					}
 				}
@@ -138,14 +145,25 @@ class JReader {
 					}
 					System.out.println("Opis: " + preview.getCurrent().getHTML());
 				}
+			} else if (command.equals("show tags")) {
+				if (tags.size() == 0) {
+					System.out.println("Lista tagow jest pusta.");
+				} else {
+					for (String tag : tags) {
+						System.out.print(tag.concat(" "));
+					}
+					System.out.println();
+				}
 
 			} else if (command.equals("add channel")) {
 				try {
 					System.out.print("Podaj adres URL: ");
 					String url = in.readLine();
 					// sposob na podanie tyldy w adresie: \tld
-					url = url.replaceAll("\\\\tld","~");
-					addChannel(url);
+					url = url.replace("\\tld","~");
+					System.out.print("Podaj tagi: ");
+					String tags = in.readLine();
+					addChannel(url, tags);
 					System.out.println("Kanal zostal dodany");
 				} catch (LinkNotFoundException lnfe) {
 					System.out.println("Nie znaleziono kanalow RSS na tej stronie.");
@@ -213,6 +231,10 @@ class JReader {
 				selectAll();
 			} else if (command.equals("select unread")) {
 				selectUnread();
+			} else if (command.equals("select tag")) {
+				System.out.print("Wybierz tag (all - wszystkie, " +
+						"untagged - nieoznaczone): ");
+				selectTag(in.readLine());
 			} else if (command.equals("mark channel")) {
 				System.out.print("Podaj numer kanalu: ");
 				int nr = new Integer(in.readLine()) - 1;
@@ -236,6 +258,16 @@ class JReader {
 					System.out.print("Nie mozna zaktualizowac kanalu.");
 					System.out.println(" Brak polaczenia ze strona.");
 				}
+			} else if (command.equals("edit tags")) {
+				System.out.print("Podaj numer kanalu: ");
+				int nr = new Integer(in.readLine()) - 1;
+				if (channels.get(nr).getTagsAsString() != null) {
+					System.out.println("Tagi: " + channels.get(nr).getTagsAsString());
+				} else {
+					System.out.println("Ten kanal nie ma tagow.");
+				}
+				System.out.print("Podaj nowe tagi: ");
+				editTags(channels.get(nr), in.readLine());
 			} else if (command.equals("remove channel")) {
 				System.out.print("Podaj numer kanalu: ");
 				int nr = new Integer(in.readLine()) - 1;
@@ -256,6 +288,18 @@ class JReader {
 				} else {
 					System.out.println("Nieprawidlowy wybor.");
 				}
+			} else if (command.equals("set delete")) {
+        if (config.getDeleteOlderThanDays() == 0) {
+					System.out.println("Stare wiadomosci nie sa usuwane.");
+				} else {
+					System.out.println("Wiadomosci sa usuwane po "
+							+ config.getDeleteOlderThanDays() + " dniach.");
+				}
+				System.out.print("Po ilu dniach usuwac wiadomosci (0 - wcale): ");
+				config.setDeleteOlderThanDays(new Integer(in.readLine().trim()));
+				if (!config.write()) {
+					System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
+				}
 			} else if (!command.equals("") && !command.equals("quit")) {
 				System.out.println("Nieznane polecenie.");
 			}
@@ -275,11 +319,19 @@ class JReader {
 	 * Dodaje nowy kanal na podstawie URLa podanego przez uzytkownika.
 	 * Moze byc to URL strony lub konkretnego pliku XML z trescia kanalu.
 	 */
-	static void addChannel(String siteURL) throws Exception {
+	static void addChannel(String siteURL, String channelTags) throws Exception {
 		Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
+		newChannel.setTags(channelTags);
+		// uzupelniamy liste tagow do wyswietlenia
+		for (String tag : newChannel.getTags()) {
+			if (!tags.contains(tag)) {
+				tags.add(tag);
+			}
+		}
+		Collections.sort(tags);
 		allChannels.put(newChannel.hashCode(), newChannel);
 		channels.add(newChannel);
-		// Sortujemy liste kanalow alfabetycznie
+		// sortujemy liste kanalow alfabetycznie
 		Collections.sort(channels);
 	}
 
@@ -412,11 +464,46 @@ class JReader {
 	}
 
 	/**
+	 * Ogranicza liste kanalow do kanalow oznaczonych wybranym tagiem.
+	 */
+	static void selectTag(String tag) {
+		tag = tag.trim();
+		channels = new ArrayList<Channel>();
+		if (tag.equals("all")) {
+			channels = new ArrayList<Channel>(allChannels.values());
+		} else if (tag.equals("untagged")) {
+			for (Channel channel : allChannels.values()) {
+				if ("".equals(channel.getTagsAsString())) {
+					channels.add(channel);
+				}
+			}
+		} else {
+			for (Channel channel : allChannels.values()) {
+				if (channel.containsTag(tag)) {
+					channels.add(channel);
+				}
+			}
+		}
+		Collections.sort(channels);
+	}
+
+	/**
 	 * Sprawdza, czy w danym kanale nie pojawily sie nowe wiadomosci i jesli
 	 * tak, to dodaje je do listy wiadomosci kanalu.
 	 */
 	static void updateChannel(Channel channel) throws Exception {
 		channel.update();
+	}
+
+	static void editTags(Channel channel, String channelTags) {
+		channel.setTags(channelTags);
+		// uzupelniamy liste tagow do wyswietlenia
+		for (String tag : channel.getTags()) {
+			if (!tags.contains(tag)) {
+				tags.add(tag);
+			}
+		}
+		Collections.sort(tags);
 	}
 
 	static void removeChannel(int index) {
