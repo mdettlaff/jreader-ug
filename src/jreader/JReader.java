@@ -1,12 +1,5 @@
 package jreader;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.xml.sax.SAXParseException;
 
 /**
  * Glowna klasa programu, przechowujaca obiekty przeznaczone do wyswietlania
@@ -35,278 +27,27 @@ class JReader {
 	 */
 	private static Config config = new Config();
 
-	/** Lista subskrypcji do wyswietlenia w GUI. */
+	/**
+	 * Lista subskrypcji do wyswietlenia w GUI.
+	 */
 	private static List<Channel> channels = new ArrayList<Channel>();
-	/** Lista wiadomosci do wyswietlenia w GUI. */
+	/**
+	 * Lista wiadomosci do wyswietlenia w GUI.
+	 */
 	private static List<Item> items = new ArrayList<Item>();
 	/**
 	 * Lista tresci wiadomosci lub informacji o kanale do wyswietlenia w GUI.
 	 * Przy pomocy przyciskow Wstecz i Dalej mozna nawigowac po liscie.
 	 */
 	private static HistoryList<Preview> preview = new HistoryList<Preview>(10);
-	/** Lista tagow do wyswietlenia w GUI. */
+	/**
+	 * Lista tagow do wyswietlenia w GUI.
+	 */
 	private static List<String> tags = new LinkedList<String>();
 
 
-	public static void main(String[] args) throws Exception {
-
-		/*
-		 * Tekstowy interfejs uzytkownika, w celach testowych.
-		 */
-		DateFormat shortDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
-		String command = new String();
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
-		boolean justStarted = true;
-		while (!(command.equals("quit"))) {
-			if (justStarted) {
-				command = "help";
-				justStarted = false;
-			} else {
-				command = in.readLine().trim();
-			}
-			if (command.equals("help")) {
-				System.out.println("Dostepne komendy:");
-				System.out.print("show channels\t");
-				System.out.print("show items\t");
-				System.out.print("show preview\t");
-				System.out.println("show tags");
-
-				System.out.print("add channel\t");
-				System.out.print("previous item\t");
-				System.out.print("next item\t");
-				System.out.print("update all\t");
-				System.out.println("next unread");
-
-				System.out.print("select item\t");
-				System.out.print("select channel\t");
-				System.out.print("select all\t");
-				System.out.print("select unread\t");
-				System.out.println("select tag");
-
-				System.out.print("mark channel\t");
-				System.out.print("update channel\t");
-				System.out.print("edit tags\t");
-				System.out.println("remove channel");
-
-				System.out.print("set sort\t");
-				System.out.print("set delete\t");
-				System.out.print("help\t\t");
-				System.out.println("quit");
-			} else if (command.equals("show channels")) {
-				if (channels.size() == 0) {
-					System.out.println("Lista subskrypcji jest pusta.");
-				} else {
-					Channel channel;
-					for (int i=0; i < channels.size(); i++) {
-						channel = channels.get(i);
-						System.out.print("Kanal " + (i+1) + ": " + channel.getTitle());
-						if (channel.getUnreadItemsCount() > 0) {
-							System.out.println(" (" + channel.getUnreadItemsCount() + ")");
-						} else {
-							System.out.println();
-						}
-					}
-				}
-			} else if (command.equals("show items")) {
-				if (items.size() == 0) {
-					System.out.println("Lista wiadomosci jest pusta.");
-				} else {
-					for (int i=0; i < items.size(); i++) {
-						Item item = items.get(i);
-						System.out.print((i+1) + ": ");
-						if (item.getDate() != null) {
-							System.out.print(shortDateFormat.format(item.getDate()) + " ");
-						}
-						if (item.isUnread()) {
-							System.out.print("N ");
-						}
-						if (allChannels.get(item.getChannelKey()).getTitle().length()>12) {
-							System.out.print(allChannels.get(item.getChannelKey()).
-									getTitle().substring(0, 12) + " ");
-						} else {
-							System.out.print(allChannels.get(item.getChannelKey()).
-									getTitle() + " ");
-						}
-						System.out.println(item.getTitle());
-					}
-				}
-			} else if (command.equals("show preview")) {
-				if (preview.getCurrent() == null) {
-					System.out.println("Nie wybrano zadnej wiadomosci.");
-				} else {
-					System.out.println(preview.getCurrent().getTitle());
-					System.out.println("Link: " + preview.getCurrent().getLink());
-					if (preview.getCurrent().getAuthor() != null) {
-						System.out.println("Autor: " + preview.getCurrent().getAuthor());
-					}
-					if (preview.getCurrent().getSource() != null) {
-						System.out.println("Zrodlo: " + preview.getCurrent().getSource());
-					}
-					System.out.println("Opis: " + preview.getCurrent().getHTML());
-				}
-			} else if (command.equals("show tags")) {
-				if (tags.size() == 0) {
-					System.out.println("Lista tagow jest pusta.");
-				} else {
-					for (String tag : tags) {
-						System.out.print(tag.concat(" "));
-					}
-					System.out.println();
-				}
-
-			} else if (command.equals("add channel")) {
-				try {
-					System.out.print("Podaj adres URL: ");
-					String url = in.readLine();
-					// sposob na podanie tyldy w adresie: \tld
-					url = url.replace("\\tld","~");
-					System.out.print("Podaj tagi: ");
-					String tags = in.readLine();
-					addChannel(url, tags);
-					System.out.println("Kanal zostal dodany");
-				} catch (LinkNotFoundException lnfe) {
-					System.out.println("Nie znaleziono kanalow RSS na tej stronie.");
-				} catch (MalformedURLException mue) {
-					System.out.print("Nie mozna dodac kanalu.");
-					System.out.println(" Podany URL jest nieprawidlowy.");
-				} catch (SAXParseException spe) {
-					System.out.print("Nie mozna dodac kanalu.");
-					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
-				} catch (SocketException se) {
-					System.out.println("Nie mozna dodac kanalu. Szczegoly:");
-					System.out.println(se.getLocalizedMessage());
-				} catch (FileNotFoundException fnfe) {
-					System.out.println("Podana strona nie istnieje.");
-				} catch (IOException ioe) {
-					System.out.println("Podana strona nie istnieje.");
-				} catch (IllegalArgumentException iae) {
-					System.out.print("Nie mozna dodac kanalu.");
-					System.out.println(" Podany URL jest nieprawidlowy.");
-				}
-			} else if (command.equals("previous item")) {
-				if (previousItem() == null) {
-					System.out.println("Nie mozna sie cofnac.");
-				}
-			} else if (command.equals("next item")) {
-				if (nextItem() == null) {
-					System.out.println("Nie mozna przejsc dalej.");
-				}
-			} else if (command.equals("update all")) {
-				for (Channel channel : channels) {
-					try {
-						updateChannel(channel);
-					} catch (SAXParseException spe) {
-						System.out.println("Nie mozna zaktualizowac kanalu "
-								+ channel.getTitle() + ".");
-						System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
-					} catch (SocketException se) {
-						System.out.println("Nie mozna zaktualizowac kanalu "
-								+ channel.getTitle() + ".");
-						System.out.println("Szczegoly: " + se.getLocalizedMessage());
-					} catch (FileNotFoundException fnfe) {
-						System.out.println("Nie mozna zaktualizowac kanalu "
-								+ channel.getTitle() + ".");
-						System.out.println("Brak polaczenia ze strona.");
-					} catch (IOException ioe) {
-						System.out.println("Nie mozna zaktualizowac kanalu "
-								+ channel.getTitle() + ".");
-						System.out.println("Brak polaczenia ze strona.");
-					}
-				}
-				System.out.println("Kanaly zostaly zaktualizowane.");
-			} else if (command.equals("next unread")) {
-				if (!nextUnread()) {
-					System.out.println("Nie ma nieprzeczytanych wiadomosci.");
-				}
-			} else if (command.equals("select item")) {
-				System.out.print("Podaj numer elementu: ");
-				int nr = new Integer(in.readLine()) - 1;
-				selectItem(items.get(nr));
-			} else if (command.equals("select channel")) {
-				System.out.print("Podaj numer kanalu: ");
-				int nr = new Integer(in.readLine()) - 1;
-				selectChannel(nr);
-			} else if (command.equals("select all")) {
-				selectAll();
-			} else if (command.equals("select unread")) {
-				selectUnread();
-			} else if (command.equals("select tag")) {
-				System.out.print("Wybierz tag (all - wszystkie, " +
-						"untagged - nieoznaczone): ");
-				selectTag(in.readLine());
-			} else if (command.equals("mark channel")) {
-				System.out.print("Podaj numer kanalu: ");
-				int nr = new Integer(in.readLine()) - 1;
-				markChannelAsRead(channels.get(nr));
-			} else if (command.equals("update channel")) {
-				try {
-					System.out.print("Podaj numer kanalu: ");
-					int nr = new Integer(in.readLine()) - 1;
-					updateChannel(channels.get(nr));
-					System.out.println("Kanal zostal zaktualizowany.");
-				} catch (SAXParseException spe) {
-					System.out.print("Nie mozna zaktualizowac kanalu.");
-					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
-				} catch (SocketException se) {
-					System.out.println("Nie mozna zaktualizowac kanalu. Szczegoly:");
-					System.out.println(se.getLocalizedMessage());
-				} catch (FileNotFoundException fnfe) {
-					System.out.print("Nie mozna zaktualizowac kanalu.");
-					System.out.println(" Brak polaczenia ze strona.");
-				} catch (IOException ioe) {
-					System.out.print("Nie mozna zaktualizowac kanalu.");
-					System.out.println(" Brak polaczenia ze strona.");
-				}
-			} else if (command.equals("edit tags")) {
-				System.out.print("Podaj numer kanalu: ");
-				int nr = new Integer(in.readLine()) - 1;
-				if (channels.get(nr).getTagsAsString() != null) {
-					System.out.println("Tagi: " + channels.get(nr).getTagsAsString());
-				} else {
-					System.out.println("Ten kanal nie ma tagow.");
-				}
-				System.out.print("Podaj nowe tagi: ");
-				editTags(channels.get(nr), in.readLine());
-			} else if (command.equals("remove channel")) {
-				System.out.print("Podaj numer kanalu: ");
-				int nr = new Integer(in.readLine()) - 1;
-				removeChannel(nr);
-			} else if (command.equals("set sort")) {
-				System.out.print("Sortuj wedlug (new/old): ");
-				String choice = in.readLine().trim();
-				if (choice.equals("old")) {
-					config.setSortByNewest(false);
-					if (!config.write()) {
-						System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
-					}
-				} else if (choice.equals("new")) {
-					config.setSortByNewest(true);
-					if (!config.write()) {
-						System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
-					}
-				} else {
-					System.out.println("Nieprawidlowy wybor.");
-				}
-			} else if (command.equals("set delete")) {
-        if (config.getDeleteOlderThanDays() == 0) {
-					System.out.println("Stare wiadomosci nie sa usuwane.");
-				} else {
-					System.out.println("Wiadomosci sa usuwane po "
-							+ config.getDeleteOlderThanDays() + " dniach.");
-				}
-				System.out.print("Po ilu dniach usuwac wiadomosci (0 - wcale): ");
-				config.setDeleteOlderThanDays(new Integer(in.readLine().trim()));
-				if (!config.write()) {
-					System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
-				}
-			} else if (!command.equals("") && !command.equals("quit")) {
-				System.out.println("Nieznane polecenie.");
-			}
-		}
-		/*
-		 * Koniec tekstowego UI.
-		 */
+	public static void main(String[] args) {
+		TextUI.run();
 	}
 
 
@@ -422,7 +163,7 @@ class JReader {
 	 */
 	static void selectChannel(int index) {
 		items = channels.get(index).getItems();
-		Collections.sort(items, new ItemComparator());
+		Collections.sort(items);
 		preview.setCurrent(new Preview(channels.get(index)));
 	}
 
@@ -443,7 +184,7 @@ class JReader {
 				items.add(item);
 			}
 		}
-		Collections.sort(items, new ItemComparator());
+		Collections.sort(items);
 	}
 
 	/**
@@ -460,7 +201,7 @@ class JReader {
 				}
 			}
 		}
-		Collections.sort(items, new ItemComparator());
+		Collections.sort(items);
 	}
 
 	/**
@@ -526,8 +267,76 @@ class JReader {
 		channels.remove(index);
 	}
 
+	static void importChannelList(String fileLocation) throws Exception {
+		for (Channel channel : ImportExport.getChannelsFromFile(fileLocation)) {
+			allChannels.put(channel.hashCode(), channel);
+			channels.add(channel);
+			// uzupelniamy liste tagow do wyswietlenia
+			for (String tag : channel.getTags()) {
+				if (!tags.contains(tag)) {
+					tags.add(tag);
+				}
+			}
+		}
+		Collections.sort(tags);
+	}
+
+	static void exportChannelList(String fileLocation) throws Exception {
+		ImportExport.writeChannelsToFile(channels, fileLocation);
+	}
+
+	/*
+	 * KONIEC metod obslugujacych glowne funkcjonalnosci programu.
+	 */
+
+	/*
+	 * Metody regulujace dostep do glownych struktur danych programu.
+	 */
+
 	static Config getConfig() {
 		return config;
+	}
+
+	/**
+	 * Zwraca kanal z listy wszystkich kanalow o wskazanym hashCode.
+	 */
+	static Channel getChannelFromHash(int hashCode) {
+		return allChannels.get(hashCode);
+	}
+
+	/**
+	 * Zwraca kanal z listy kanalow do wyswietlenia w GUI o wskazanym indeksie.
+	 */
+	static Channel getChannel(int index) {
+		return channels.get(index);
+	}
+
+	/**
+	 * Zwraca liste kanalow do wyswietlenia w GUI.
+	 */
+	static List<Channel> getChannels() {
+		return channels;
+	}
+
+	/**
+	 * Zwraca liste wiadomosci do wyswietlenia w GUI.
+	 */
+	static List<Item> getItems() {
+		return items;
+	}
+
+	/**
+	 * Zwraca liste wiadomosci do wyswietlenia w GUI.
+	 */
+	static HistoryList<Preview> getPreview() {
+		return preview;
+	}
+
+	/**
+	 * Zwraca liste tagow do wyswietlenia w GUI.
+	 */
+	static List<String> getTags() {
+		return tags;
 	}
 }
 

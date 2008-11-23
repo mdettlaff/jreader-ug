@@ -316,8 +316,8 @@ class ChannelFactory extends DefaultHandler {
 			// jesli data nie byla okreslona lub parsowanie nie powiodlo sie,
 			// stosujemy biezaca date
 			if (item.getDate() == null) {
-				// TODO: ponizsze 3 linijki ustawiaja przykladowa date zamiast biezacej,
-				// dla celow testowych. Docelowo zmienic na ta linijke:
+				// TODO: ponizsze 3 linijki ustawiaja przykladowa date zamiast
+				// biezacej, dla celow testowych. Docelowo zmienic na:
 				//item.setDate(new Date(currentUnixTime - counter));
 				try {
 					item.setDate(RSSDateFormat.parse("Sun, 9 Nov 2008 19:30:00 +0100"));
