@@ -269,7 +269,9 @@ class JReader {
 
 	static void importChannelList(String fileLocation) throws Exception {
 		for (Channel channel : ImportExport.getChannelsFromFile(fileLocation)) {
-			allChannels.put(channel.hashCode(), channel);
+			if (!allChannels.containsKey(channel.hashCode())) {
+				allChannels.put(channel.hashCode(), channel);
+			}
 			channels.add(channel);
 			// uzupelniamy liste tagow do wyswietlenia
 			for (String tag : channel.getTags()) {
@@ -282,7 +284,8 @@ class JReader {
 	}
 
 	static void exportChannelList(String fileLocation) throws Exception {
-		ImportExport.writeChannelsToFile(channels, fileLocation);
+		ImportExport.writeChannelsToFile(new LinkedList<Channel>(
+					allChannels.values()), fileLocation);
 	}
 
 	/*

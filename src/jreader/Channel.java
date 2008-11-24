@@ -14,6 +14,8 @@ class Channel implements Comparable<Channel> {
 	private String channelURL;
 	/** Liczba nieprzeczytanych elementow. */
 	private int unreadItemsCount;
+	/** true, jesli ostatnia proba aktualizowania kanalu nie powiodla sie. */
+	private boolean fail;
 	/** Tagi; jesli kanal nie jest oznaczony tagami, lista jest pusta. */
 	private List<String> tags = new LinkedList<String>();
 
@@ -27,7 +29,7 @@ class Channel implements Comparable<Channel> {
 	/** Elementy (wiadomosci) kanalu. */
 	private Map<Integer, Item> items = new HashMap<Integer, Item>();
 
-	Channel(String channelURL) throws Exception {
+	Channel(String channelURL) {
 		this.channelURL = channelURL;
 	}
 
@@ -120,6 +122,9 @@ class Channel implements Comparable<Channel> {
 		return unreadItemsCount;
 	}
 
+	boolean isFail() { return fail; }
+	void setFail(boolean b) { fail = b; }
+
 	void setTitle(String title) { this.title = title; }
 	void setLink(String link) { this.link = link; }
 	void setDescription(String description) { this.description = description; }
@@ -153,11 +158,16 @@ class Channel implements Comparable<Channel> {
 	 * spacjami, ale dozwolone sa tez przecinki.
 	 */
 	void setTags(String newTags) {
-		if (newTags == null) {
-			this.tags = new LinkedList<String>();
-		} else {
-			newTags = newTags.trim();
-			this.tags = new LinkedList<String>();
+		this.tags = new LinkedList<String>();
+		addTags(newTags);
+	}
+
+	/**
+	 * Dodaje podane tagi do juz istniejacych.
+	 */
+	void addTags(String newTags) {
+		if (newTags != null) {
+			newTags = newTags.trim().toLowerCase();
 			if (!"".equals(newTags)) {
 				newTags = newTags.replace(", ", ",");
 				newTags = newTags.replace(",", " ");
@@ -171,7 +181,7 @@ class Channel implements Comparable<Channel> {
 
 	boolean containsTag(String tag) {
 		for (String tagInThisChannel : tags) {
-			if (tag.equals(tagInThisChannel)) {
+			if (tag.toLowerCase().equals(tagInThisChannel.toLowerCase())) {
 				return true;
 			}
 		}

@@ -66,7 +66,11 @@ class TextUI {
 						Channel channel;
 						for (int i=0; i < JReader.getChannels().size(); i++) {
 							channel = JReader.getChannel(i);
-							System.out.print("Kanal " + (i+1) + ": " + channel.getTitle());
+							System.out.print("Kanal " + (i+1) + ": ");
+							if (channel.isFail()) {
+								System.out.print("FAIL ");
+							}
+						 	System.out.print(channel.getTitle());
 							if (channel.getUnreadItemsCount() > 0) {
 								System.out.println(" (" + channel.getUnreadItemsCount() + ")");
 							} else {
@@ -170,25 +174,31 @@ class TextUI {
 					for (Channel channel : JReader.getChannels()) {
 						try {
 							JReader.updateChannel(channel);
+							channel.setFail(false);
 						} catch (SAXParseException spe) {
 							System.out.println("Nie mozna zaktualizowac kanalu "
 									+ channel.getTitle() + ".");
 							System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
+							channel.setFail(true);
 						} catch (SocketException se) {
 							System.out.println("Nie mozna zaktualizowac kanalu "
 									+ channel.getTitle() + ".");
 							System.out.println("Szczegoly: " + se.getLocalizedMessage());
+							channel.setFail(true);
 						} catch (FileNotFoundException fnfe) {
 							System.out.println("Nie mozna zaktualizowac kanalu "
 									+ channel.getTitle() + ".");
 							System.out.println("Brak polaczenia ze strona.");
+							channel.setFail(true);
 						} catch (IOException ioe) {
 							System.out.println("Nie mozna zaktualizowac kanalu "
 									+ channel.getTitle() + ".");
 							System.out.println("Brak polaczenia ze strona.");
+							channel.setFail(true);
 						} catch (Exception e) {
 							System.out.print("Nie mozna zaktualizowac kanalu.");
 							System.out.println(" Nastapil nieoczekiwany blad.");
+							channel.setFail(true);
 						}
 					}
 					System.out.println("Kanaly zostaly zaktualizowane.");
@@ -217,31 +227,38 @@ class TextUI {
 					int nr = new Integer(in.readLine()) - 1;
 					JReader.markChannelAsRead(JReader.getChannel(nr));
 				} else if (command.equals("update channel")) {
+					int nr = 0;
 					try {
 						System.out.print("Podaj numer kanalu: ");
-						int nr = new Integer(in.readLine()) - 1;
+						nr = new Integer(in.readLine()) - 1;
 						JReader.updateChannel(JReader.getChannel(nr));
+						JReader.getChannel(nr).setFail(false);
 						System.out.println("Kanal zostal zaktualizowany.");
 					} catch (SAXParseException spe) {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+						JReader.getChannel(nr).setFail(true);
 					} catch (SocketException se) {
 						System.out.println("Nie mozna zaktualizowac kanalu. Szczegoly:");
 						System.out.println(se.getLocalizedMessage());
+						JReader.getChannel(nr).setFail(true);
 					} catch (FileNotFoundException fnfe) {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Brak polaczenia ze strona.");
+						JReader.getChannel(nr).setFail(true);
 					} catch (IOException ioe) {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Brak polaczenia ze strona.");
+						JReader.getChannel(nr).setFail(true);
 					} catch (Exception e) {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Nastapil nieoczekiwany blad.");
+						JReader.getChannel(nr).setFail(true);
 					}
 				} else if (command.equals("edit tags")) {
 					System.out.print("Podaj numer kanalu: ");
 					int nr = new Integer(in.readLine()) - 1;
-					if (JReader.getChannel(nr).getTagsAsString() != null) {
+					if (JReader.getChannel(nr).getTags().size() != 0) {
 						System.out.println("Tagi: " + JReader.getChannel(nr).
 								getTagsAsString());
 					} else {
@@ -286,18 +303,25 @@ class TextUI {
 					try {
 						System.out.print("Podaj lokalizacje pliku OPML: ");
 						JReader.importChannelList(in.readLine());
+					} catch (SAXParseException spe) {
+						System.out.print("Nie mozna dokonac importu.");
+						System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+						System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
+						System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+					} catch (FileNotFoundException fnfe) {
+						System.out.print("Nie mozna dokonac importu.");
+						System.out.println(" Podany plik nie istnieje.");
 					} catch (Exception e) {
 						System.out.print("Nie mozna dokonac importu.");
 						System.out.println(" Nastapil nieoczekiwany blad.");
 					}
 				} else if (command.equals("export")) {
 					try {
-						if (JReader.getChannels().size() == 0) {
-							System.out.println("Nie wybrano kanalow do eksportowania.");
-						} else {
-							System.out.print("Podaj plik docelowy: ");
-							JReader.exportChannelList(in.readLine());
-						}
+						System.out.print("Podaj plik docelowy: ");
+						JReader.exportChannelList(in.readLine());
+					} catch (IOException ioe) {
+						System.out.print("Nie mozna dokonac eksportu.");
+						System.out.println(" Zapisanie pliku jest niemozliwe.");
 					} catch (Exception e) {
 						System.out.print("Nie mozna dokonac eksportu.");
 						System.out.println(" Nastapil nieoczekiwany blad.");
