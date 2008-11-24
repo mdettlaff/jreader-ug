@@ -33,6 +33,9 @@ class HistoryList<T> {
 	}
 
 	T getCurrent() {
+		if (history.size() == 0) {
+			return null;
+		}
 		return history.get(currentPosition);
 	}
 
