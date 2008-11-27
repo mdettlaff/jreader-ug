@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -22,15 +23,16 @@ public class OptionsShell {
 	private static Shell optionsShell;
 	
 	public OptionsShell(Shell shell) {
-		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\jreader.png");
+		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\options.png");
 		optionsShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		optionsShell.setText("Preferences");
 		optionsShell.setLayout(new GridLayout(1, false));
 		optionsShell.setImage(jreader);
 		//Wysrodkowanie shella
-		Rectangle bounds = shell.getBounds();
-	    int x = bounds.width - 200;
-	    int y = bounds.height - 150;
+		Monitor primary = shell.getDisplay().getPrimaryMonitor();
+	    Rectangle bounds = primary.getBounds();
+	    int x = bounds.width / 2 - 100;
+	    int y = bounds.height/ 2 - 50;
 	    optionsShell.setLocation(x, y);
 	
 	
@@ -42,9 +44,9 @@ public class OptionsShell {
 		
 	//	Label Synchronizjacja co ile minut
 		Composite comp1 = new Composite(optionsShell, SWT.NONE);
-		comp1.setLayout(new FillLayout(SWT.HORIZONTAL));
+		comp1.setLayout(new GridLayout(3, false));
 		new Label(comp1, SWT.NONE).setText("Symchronize every ");
-		final Text autoSync = new Text(comp1, SWT.NONE);
+		final Text autoSync = new Text(comp1, SWT.BORDER);
 		autoSync.setTextLimit(3);
 		autoSync.setText("15");
 		new Label(comp1, SWT.NONE).setText(" minutes.");
@@ -64,33 +66,30 @@ public class OptionsShell {
 	
 	//	Label - remove by 
 		Composite comp2 = new Composite(optionsShell, SWT.NONE);
-		comp2.setLayout(new FillLayout(SWT.HORIZONTAL));
+		comp2.setLayout(new GridLayout(3, false));
 		new Label(comp2, SWT.NONE).setText("Remove messages older then ");
-		Text remove = new Text(comp2, SWT.NONE);
+		Text remove = new Text(comp2, SWT.BORDER);
 		remove.setText("10");
 		remove.setTextLimit(2);
 		new Label(comp2, SWT.NONE).setText(" days.");
 		
 	//	Buttons ok cancel
 		Composite comp3 = new Composite(optionsShell, SWT.NONE);
-		comp3.setLayout(new RowLayout());
+		comp3.setLayout(new GridLayout(4, true));
 		
 		Button okButton = new Button(comp3, SWT.PUSH);
+		okButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 	    okButton.setText("&OK");
 	    Button cancelButton = new Button(comp3, SWT.PUSH);
 	    cancelButton.setText("&Cancel");
 	    okButton.setFocus();
 	
 	//	Action Listeners (do wypelnienia pozniej)
-	    //wsynchronizacja pszy starcie -checkbox
+	    
+	    //synchronizacja przy starcie -checkbox
 		startupSync.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				if (!startupSync.getSelection()) {
-					autoSync.setEditable(false);
-				} else {
-					autoSync.setEditable(true);
-				}
-            
+				System.out.println("Autostart Synchronization");            
 			}
 		});
 		
