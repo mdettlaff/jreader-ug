@@ -148,6 +148,8 @@ public class MenuBar {
         aboutMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 System.out.println("JReader v. 0.0.1 \nAll rights reserved 2008.");
+                AboutShell s = new AboutShell(shell);
+                s.open();
           }
             public void widgetDefaultSelected(SelectionEvent e) {                
             }

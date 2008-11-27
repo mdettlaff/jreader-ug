@@ -1,9 +1,11 @@
 package swt.JReader;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
@@ -19,7 +21,7 @@ public class MainCoolBar {
 		
 	//	Main CoolBar	
 		final CoolBar coolBar = new CoolBar(shell, SWT.NONE);
-		coolBar.setLocation(0,0);
+		coolBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 4, 1));
 		
 		//	Opcjonalne ikony do przyciskow na CoolBar (moze dodamy pozniej)
 		
@@ -105,9 +107,8 @@ public class MainCoolBar {
         
         otherToolBar.pack();
         size = otherToolBar.getSize();
-        Point p = shell.getSize();
         otherCoolItem.setControl(otherToolBar);
-        otherCoolItem.setSize(otherCoolItem.computeSize(p.x, size.y));
+        otherCoolItem.setSize(otherCoolItem.computeSize(size.x, size.y));
         
         
    //	CollBar listeners (do wypelnienia pozniej)
@@ -115,9 +116,9 @@ public class MainCoolBar {
         //Add Subscryption
         addSubToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                System.out.println("Add Subscryption");
-                
-            }
+            	AddSubscryptionShell addShell = new AddSubscryptionShell(shell);
+		   		addShell.open();
+                }
         });
         //synchornizuj
         syncToolItem.addListener(SWT.Selection, new Listener() {
@@ -161,6 +162,20 @@ public class MainCoolBar {
 		   		optionsShell.open();
             }
         });
+        
+        subscryptionToolBar.addMouseMoveListener(new MouseMoveListener() {
+            public void mouseMove(MouseEvent e) {
+              ToolItem item = subscryptionToolBar.getItem(new Point(e.x, e.y));
+              String name = "";
+              if (item != null) {
+                name = item.getText();
+              }
+              if (!JReader.statusText.equals(name)) {
+            	  JReader.statusLine.setText(name);
+            	  JReader.statusText = name;
+              }
+            }
+          });
         
 	}
 }
