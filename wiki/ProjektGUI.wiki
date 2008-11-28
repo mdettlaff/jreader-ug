@@ -1,0 +1,4 @@
+﻿#summary Projekt graficznego interfejsu użytkownika.
+#labels Phase-Design
+
+http://jreader-ug.googlecode.com/svn/wiki/images/gui.png
