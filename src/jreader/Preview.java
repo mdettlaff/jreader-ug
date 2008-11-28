@@ -3,9 +3,9 @@ package jreader;
 import java.util.Date;
 
 /**
- * Dane potrzebne do wyswietlenia podgladu elementu lub kanalu w GUI.
+ * Dane potrzebne do wyświetlenia podglądu elementu lub kanału w GUI.
  */
-class Preview {
+public class Preview {
 	/** Czy pokazuje element, w przeciwnym wypadku informacje o kanale. */
 	private boolean showingItem;
 	private String title;
@@ -14,12 +14,15 @@ class Preview {
 	private String description;
 	private String author;
 	private String source;
-	/** Obrazek bedacy czescia opisu kanalu. */
+	/** Obrazek będący częścią opisu kanału. */
 	private String imageURL;
 	private String imageTitle;
 	private String imageLink;
 
-	Preview(Channel ch) {
+	/**
+	 * Tworzy nowy podgląd kanału.
+	 */
+	public Preview(Channel ch) {
 		showingItem = false;
 		this.title = ch.getTitle();
 		this.link = ch.getLink();
@@ -30,7 +33,10 @@ class Preview {
 		this.source = ch.getChannelURL().replace("\n", "");
 	}
 
-	Preview(Item item) {
+	/**
+	 * Tworzy nowy podgląd elementu.
+	 */
+	public Preview(Item item) {
 		showingItem = true;
 		this.title = item.getTitle();
 		this.link = item.getLink();
@@ -40,19 +46,30 @@ class Preview {
 		this.source = null;
 	}
 
-	String getTitle() { return title; }
-	String getLink() { return link; }
-	String getAuthor() { return author; }
-	String getSource() { return source; }
-	Date getDate() { return date; }
+	public String getTitle() { return title; }
+	public String getLink() { return link; }
+	public String getAuthor() { return author; }
+	/**
+	 * Zwraca URL źródła XML kanału lub <code>null</code> dla wiadomości.
+	 */
+	public String getSource() { return source; }
+	/**
+	 * Zwraca datę publikacji elementu lub <code>null</code> dla kanału.
+	 */
+	public Date getDate() { return date; }
 
-	String getHTML() {
+	/**
+	 * Zwraca właściwą treść wiadomości lub opis kanału.
+	 *
+	 * @return Opis, w którym mogą pojawić się znaczniki HTML.
+	 */
+	public String getHTML() {
 		if (description == null) {
 			return "Brak opisu.";
 		}
 		if (showingItem) {
 			return description;
-		} else { // konstruujemy opis kanalu, z obrazkiem jesli istnieje
+		} else { // konstruujemy opis kanału, z obrazkiem jeśli istnieje
 			String HTML = "";
 			if (imageURL != null) {
 				if (imageTitle != null) {

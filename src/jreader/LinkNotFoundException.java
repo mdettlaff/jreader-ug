@@ -1,7 +1,10 @@
 package jreader;
 
 /**
- * Wyjatek wyrzucany, jesli na podanej przez uzytkownika stronie nie znaleziono
- * zadnego kanalu RSS.
+ * Wyjątek wyrzucany, jeśli na podanej przez użytkownika stronie nie znaleziono
+ * żadnego kanału.
  */
-class LinkNotFoundException extends Exception { }
+public class LinkNotFoundException extends Exception {
+	private static final long serialVersionUID = 1L;
+}
+

@@ -8,14 +8,22 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * Tekstowy interfejs uzytkownika, w celach testowych.
+ * Tekstowy interfejs użytkownika.
  */
-class TextUI {
+public class TextUI {
 
-	static void run() {
+	/** Nie można tworzyć obiektów tej klasy. */
+	private TextUI() { }
+
+	/**
+	 * Uruchomienie tekstowego interfejsu użytkownika. Komunikacja
+	 * z użytkownikiem odbywa się za pomocą standardowego wejścia i wyjścia.
+	 */
+	public static void run() {
 		DateFormat shortDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 		String command = new String();
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -148,6 +156,11 @@ class TextUI {
 					} catch (SAXParseException spe) {
 						System.out.print("Nie mozna dodac kanalu.");
 						System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+						System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
+						System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+					} catch (SAXException saxe) {
+						System.out.print("Nie mozna dodac kanalu.");
+						System.out.println(" Blad parsera XML.");
 					} catch (SocketException se) {
 						System.out.println("Nie mozna dodac kanalu. Szczegoly:");
 						System.out.println(se.getLocalizedMessage());
@@ -179,7 +192,12 @@ class TextUI {
 							System.out.println("Nie mozna zaktualizowac kanalu "
 									+ channel.getTitle() + ".");
 							System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
+							System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
+							System.out.println("Szczegoly: " + spe.getLocalizedMessage());
 							channel.setFail(true);
+						} catch (SAXException saxe) {
+							System.out.print("Nie mozna dodac kanalu.");
+							System.out.println(" Blad parsera XML.");
 						} catch (SocketException se) {
 							System.out.println("Nie mozna zaktualizowac kanalu "
 									+ channel.getTitle() + ".");
@@ -237,7 +255,12 @@ class TextUI {
 					} catch (SAXParseException spe) {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
+						System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
+						System.out.println("Szczegoly: " + spe.getLocalizedMessage());
 						JReader.getChannel(nr).setFail(true);
+					} catch (SAXException saxe) {
+						System.out.print("Nie mozna dodac kanalu.");
+						System.out.println(" Blad parsera XML.");
 					} catch (SocketException se) {
 						System.out.println("Nie mozna zaktualizowac kanalu. Szczegoly:");
 						System.out.println(se.getLocalizedMessage());
@@ -308,6 +331,9 @@ class TextUI {
 						System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 						System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
 						System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+					} catch (SAXException saxe) {
+						System.out.print("Nie mozna dodac kanalu.");
+						System.out.println(" Blad parsera XML.");
 					} catch (FileNotFoundException fnfe) {
 						System.out.print("Nie mozna dokonac importu.");
 						System.out.println(" Podany plik nie istnieje.");

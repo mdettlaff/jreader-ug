@@ -7,6 +7,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/**
+ * Przechowuje ustawienia programu oraz umożliwia zapisywanie i odczytywanie
+ * ich z pliku.
+ */
 public class Config implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/**

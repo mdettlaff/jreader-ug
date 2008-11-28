@@ -3,25 +3,31 @@ package jreader;
 import java.util.LinkedList;
 
 /**
- * Przechowuje historie przegladanych elementow, po ktorych mozna nawigowac
- * za pomoca przyciskow Wstecz i Dalej. Ilosc pamietanych elementow jest
+ * Przechowuje historię przeglądanych elementów, po których można nawigować
+ * za pomocą przycisków Wstecz i Dalej. Ilość pamiętanych elementów jest
  * ograniczona.
  */
-class HistoryList<T> {
-  /** Ilosc pamietanych elementow. */
-  private int size;
-  private int currentPosition;
-  private LinkedList<T> history;
+public class HistoryList<T> {
+	/** Ilość pamiętanych elementów. */
+	private int size;
+	private int currentPosition;
+	private LinkedList<T> history;
 
-  HistoryList(int size) {
-    this.size = size;
-    currentPosition = 0;
-    history = new LinkedList<T>();
-  }
+	/**
+	 * Tworzy nową historię pamiętającą określoną ilość elementów.
+	 */
+	public HistoryList(int size) {
+		this.size = size;
+		currentPosition = 0;
+		history = new LinkedList<T>();
+	}
 
-  void setCurrent(T preview) {
-    if (currentPosition > 0) {
-      for (int i=0; i < currentPosition; i++) {
+	/**
+	 * Ustawia podany element jako bieżący.
+	 */
+	public void setCurrent(T preview) {
+		if (currentPosition > 0) {
+			for (int i=0; i < currentPosition; i++) {
 				history.removeFirst();
 			}
 		}
@@ -32,14 +38,25 @@ class HistoryList<T> {
 		}
 	}
 
-	T getCurrent() {
+	/**
+	 * Zwraca bieżący element.
+	 *
+	 * @return Aktualnie wyświetlany element, lub <code>null</code>
+	 * jeśli lista jest pusta.
+	 */
+	public T getCurrent() {
 		if (history.size() == 0) {
 			return null;
 		}
 		return history.get(currentPosition);
 	}
 
-	T previous() {
+	/**
+	 * Przesuwa historię o jedno miejsce wstecz.
+	 *
+	 * @return Poprzedni element, lub <code>null</code> jeśli nie ma takiego.
+	 */
+	public T previous() {
 		if (currentPosition < history.size()-1) {
 			currentPosition++;
 			return this.getCurrent();
@@ -48,7 +65,12 @@ class HistoryList<T> {
 		}
 	}
 
-	T next() {
+	/**
+	 * Przesuwa historię o jedno miejsce naprzód.
+	 *
+	 * @return Następny element, lub <code>null</code> jeśli nie ma takiego.
+	 */
+	public T next() {
 		if (currentPosition > 0) {
 			currentPosition--;
 			return this.getCurrent();
