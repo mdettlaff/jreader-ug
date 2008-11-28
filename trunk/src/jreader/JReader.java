@@ -11,39 +11,46 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Glowna klasa programu, przechowujaca obiekty przeznaczone do wyswietlania
- * w graficznym interfejsie uzytkownika i posiadajaca metody obslugujace
- * podstawowe funkcjonalnosci programu, uzywane za pomoca interfejsu
- * uzytkownika. 
+ * Główna klasa programu. Przechowuje zbiór wszystkich subskrypcji, ustawienia
+ * programu oraz obiekty przeznaczone do wyświetlania w graficznym interfejsie
+ * użytkownika. Posiada też metody obsługujące podstawowe funkcjonalności
+ * programu, używane przy pomocy interfejsu użytkownika. 
  */
-class JReader {
+public class JReader {
+	/** Ilość podglądów kanałów lub wiadomości o jaką można się cofnąć. */
+	public static final int HISTORY_SIZE = 10;
+
 	/**
-	 * Lista wszystkich kanalow.
+	 * Zbiór wszystkich kanałów.
 	 */
 	private static Map<Integer, Channel> allChannels =
 			new HashMap<Integer, Channel>();
 	/**
-	 * Ustawienia programu wybrane przez uzytkownika.
+	 * Ustawienia programu wybrane przez użytkownika.
 	 */
 	private static Config config = new Config();
 
 	/**
-	 * Lista subskrypcji do wyswietlenia w GUI.
+	 * Lista subskrypcji do wyświetlenia w GUI.
 	 */
 	private static List<Channel> channels = new ArrayList<Channel>();
 	/**
-	 * Lista wiadomosci do wyswietlenia w GUI.
+	 * Lista wiadomości do wyświetlenia w GUI.
 	 */
 	private static List<Item> items = new ArrayList<Item>();
 	/**
-	 * Lista tresci wiadomosci lub informacji o kanale do wyswietlenia w GUI.
-	 * Przy pomocy przyciskow Wstecz i Dalej mozna nawigowac po liscie.
+	 * Lista treści wiadomości lub informacji o kanale do wyświetlenia w GUI.
+	 * Przy pomocy przycisków Wstecz i Dalej można nawigować po liście.
 	 */
-	private static HistoryList<Preview> preview = new HistoryList<Preview>(10);
+	private static HistoryList<Preview> preview =
+			new HistoryList<Preview>(HISTORY_SIZE);
 	/**
-	 * Lista tagow do wyswietlenia w GUI.
+	 * Lista tagów do wyświetlenia w GUI.
 	 */
 	private static List<String> tags = new LinkedList<String>();
+
+	/** Nie można tworzyć obiektów tej klasy. */
+	private JReader() {}
 
 
 	public static void main(String[] args) {
@@ -52,18 +59,84 @@ class JReader {
 
 
 	/*
-	 * Metody obslugujace glowne funkcjonalnosci programu, wywolywane przy
-	 * pomocy interfejsu uzytkownika.
+	 * Metody regulujące dostęp do głównych struktur danych programu.
 	 */
 
 	/**
-	 * Dodaje nowy kanal na podstawie URLa podanego przez uzytkownika.
-	 * Moze byc to URL strony lub konkretnego pliku XML z trescia kanalu.
+	 * Zwraca ustawienia programu.
 	 */
-	static void addChannel(String siteURL, String channelTags) throws Exception {
+	public static Config getConfig() {
+		return config;
+	}
+
+	/**
+	 * Zwraca kanał o wskazanym hashCode z listy wszystkich kanałów.
+	 */
+	public static Channel getChannelFromHash(int hashCode) {
+		return allChannels.get(hashCode);
+	}
+
+	/**
+	 * Zwraca kanał o wskazanym indeksie z listy kanałów do wyświetlenia w GUI.
+	 */
+	public static Channel getChannel(int index) {
+		return channels.get(index);
+	}
+
+	/**
+	 * Zwraca listę kanałów do wyświetlenia w GUI.
+	 */
+	public static List<Channel> getChannels() {
+		return channels;
+	}
+
+	/**
+	 * Zwraca listę wiadomości do wyświetlenia w GUI.
+	 */
+	public static List<Item> getItems() {
+		return items;
+	}
+
+	/**
+	 * Zwraca historię wyświetlanych wiadomości.
+	 */
+	public static HistoryList<Preview> getPreview() {
+		return preview;
+	}
+
+	/**
+	 * Zwraca listę tagów do wyświetlenia w GUI.
+	 */
+	public static List<String> getTags() {
+		return tags;
+	}
+
+
+	/*
+	 * Metody obsługujące główne funkcjonalności programu, wywoływane przy
+	 * pomocy interfejsu użytkownika.
+	 */
+
+	/**
+	 * Dodaje nowy kanał na podstawie URLa oraz listy tagów podanej przez
+	 * użytkownika. URL może odnosić się do strony www lub konkretnego
+	 * pliku XML z treścią kanału. Lista tagów może być pustym Stringiem.
+	 *
+	 * @throws LinkNotFoundException jeśli na podanej stronie nie znaleziono
+	 *         żadnych odnośników do kanałów.
+	 * @throws MalformedURLException jeśli podany przez użytkownika adres
+	 *         nie jest prawidłowym adresem URL.
+	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
+	 *         się.
+	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
+	 *         pliku.
+	 */
+	public static void addChannel(String siteURL, String channelTags)
+			throws Exception {
 		Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
 		newChannel.setTags(channelTags);
-		// uzupelniamy liste tagow do wyswietlenia
+		// uzupełniamy listę tagów do wyświetlenia
 		for (String tag : newChannel.getTags()) {
 			if (!tags.contains(tag)) {
 				tags.add(tag);
@@ -72,39 +145,39 @@ class JReader {
 		Collections.sort(tags);
 		allChannels.put(newChannel.hashCode(), newChannel);
 		channels.add(newChannel);
-		// sortujemy liste kanalow alfabetycznie
+		// sortujemy listę kanałów alfabetycznie
 		Collections.sort(channels);
 	}
 
 	/**
-	 * Ustawia poprzedni element z historii jako biezacy.
+	 * Ustawia poprzedni element z historii jako bieżący.
 	 *
-	 * @return null, jesli nie mozna wrocic, w przeciwnym wypadku podglad
-	 *         elementu.
+	 * @return <code>null</code>, jeśli nie można wrócić, w przeciwnym
+	 *         wypadku podgląd elementu.
 	 */
-	static Preview previousItem() {
+	public static Preview previousItem() {
 		return preview.previous();
 	}
 
 	/**
-	 * Ustawia nastepny element z historii jako biezacy.
+	 * Ustawia następny element z historii jako bieżący.
 	 *
-	 * @return null, jesli nie mozna przejsc dalej, w przeciwnym wypadku
-	 *         podglad elementu.
+	 * @return <code>null</code>, jeśli nie można przejść dalej, w przeciwnym
+	 *         wypadku podgląd elementu.
 	 */
-	static Preview nextItem() {
+	public static Preview nextItem() {
 		return preview.next();
 	}
 
 	/**
-	 * Ustawia nastepny pod wzgledem daty nieprzeczytany element jako biezacy.
-	 * Jesli ustawione jest sortowanie od najnowszych, szuka najnowszego,
+	 * Ustawia następny pod względem daty nieprzeczytany element jako bieżący.
+	 * Jeśli ustawione jest sortowanie od najnowszych, szuka najnowszego,
 	 * w przeciwnym wypadku najstarszego.
 	 *
-	 * @return false, jesli nie ma wiecej nieprzeczytanych wiadomosci,
-	 *         true w przeciwnym wypadku
+	 * @return <code>false</code>, jeśli nie ma więcej nieprzeczytanych
+	 *         wiadomości, <code>true</code> w przeciwnym wypadku.
 	 */
-	static boolean nextUnread() {
+	public static boolean nextUnread() {
 		Item nextUnreadItem = new Item();
 		Date beginningOfTime = new Date(0); // 1 stycznia 1970
 		Date endOfTime = new Date();
@@ -148,37 +221,39 @@ class JReader {
 	}
 
 	/**
-	 * Efekt klikniecia na wybrany element.
+	 * Efekt kliknięcia na wybrany element.
 	 */
-	static void selectItem(Item item) {
+	public static void selectItem(Item item) {
 		item.markAsRead();
 		preview.setCurrent(new Preview(item));
-		// aktualizujemy ilosc nieprzeczytanych elementow kanalu, z ktorego
+		// aktualizujemy ilość nieprzeczytanych elementów kanału, z którego
 		// pochodzi wybrany item
 		allChannels.get(item.getChannelKey()).updateUnreadItemsCount();
 	}
 
 	/**
-	 * Efekt klikniecia na wybrany kanal.
+	 * Efekt kliknięcia na wybrany kanał.
+	 *
+	 * @param index Indeks kanału na liście kanałów do wyświetlenia.
 	 */
-	static void selectChannel(int index) {
+	public static void selectChannel(int index) {
 		items = channels.get(index).getItems();
 		Collections.sort(items);
 		preview.setCurrent(new Preview(channels.get(index)));
 	}
 
 	/**
-	 * Oznacza wszystkie wiadomosci w kanale jako przeczytane.
+	 * Oznacza wszystkie wiadomości w kanale jako przeczytane.
 	 */
-	static void markChannelAsRead(Channel channel) {
+	public static void markChannelAsRead(Channel channel) {
 		channel.markAllAsRead();
 	}
 
 	/**
-	 * Wybiera wszystkie elementy z listy kanalow.
+	 * Wybiera wszystkie elementy z listy kanałów.
 	 */
-	static void selectAll() {
-		items = new ArrayList<Item>(); // nie uzywac items.clear()
+	public static void selectAll() {
+		items = new ArrayList<Item>(); // nie uzywać items.clear()
 		for (Channel channel : channels) {
 			for (Item item : channel.getItems()) {
 				items.add(item);
@@ -188,10 +263,10 @@ class JReader {
 	}
 
 	/**
-	 * Wybiera nieprzeczytane elementy z listy kanalow.
+	 * Wybiera nieprzeczytane elementy z listy kanałów.
 	 */
-	static void selectUnread() {
-		items = new ArrayList<Item>(); // nie uzywac items.clear()
+	public static void selectUnread() {
+		items = new ArrayList<Item>(); // nie używać items.clear()
 		for (Channel channel : channels) {
 			if (channel.getUnreadItemsCount() > 0) {
 				for (Item item : channel.getItems()) {
@@ -205,9 +280,9 @@ class JReader {
 	}
 
 	/**
-	 * Ogranicza liste kanalow do kanalow oznaczonych wybranym tagiem.
+	 * Ogranicza listę kanałów do kanałów oznaczonych wybranym tagiem.
 	 */
-	static void selectTag(String tag) {
+	public static void selectTag(String tag) {
 		tag = tag.trim();
 		channels = new ArrayList<Channel>();
 		if (tag.equals("all")) {
@@ -229,16 +304,25 @@ class JReader {
 	}
 
 	/**
-	 * Sprawdza, czy w danym kanale nie pojawily sie nowe wiadomosci i jesli
-	 * tak, to dodaje je do listy wiadomosci kanalu.
+	 * Sprawdza, czy w danym kanale nie pojawiły się nowe wiadomości i jeśli
+	 * tak, to dodaje je do listy wiadomości kanału.
+	 *
+	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
+	 *         się.
+	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
+	 *         pliku.
 	 */
-	static void updateChannel(Channel channel) throws Exception {
+	public static void updateChannel(Channel channel) throws Exception {
 		channel.update();
 	}
 
-	static void editTags(Channel channel, String channelTags) {
+	/**
+	 * Zmienia tagi kanału na podane przez użytkownika.
+	 */
+	public static void editTags(Channel channel, String channelTags) {
 		channel.setTags(channelTags);
-		// uzupelniamy liste tagow do wyswietlenia
+		// uzupełniamy listę tagów do wyświetlenia
 		for (String tag : channel.getTags()) {
 			if (!tags.contains(tag)) {
 				tags.add(tag);
@@ -247,8 +331,13 @@ class JReader {
 		Collections.sort(tags);
 	}
 
-	static void removeChannel(int index) {
-		// najpierw usuwamy z listy elementow te pochadzace z usuwanego kanalu
+	/**
+	 * Usuwa kanał na stałe.
+	 *
+	 * @param index Indeks kanału na liście kanałów do wyświetlenia.
+	 */
+	public static void removeChannel(int index) {
+		// najpierw usuwamy z listy elementów te pochodzące z usuwanego kanału
 		List<Integer> indToRemove = new ArrayList<Integer>();
 		for (int i=0; i < items.size(); i++) {
 			for (Item channelItem : channels.get(index).getItems()) {
@@ -267,13 +356,22 @@ class JReader {
 		channels.remove(index);
 	}
 
-	static void importChannelList(String fileLocation) throws Exception {
+	/**
+	 * Importuje listę kanałów z pliku. Kanały są dodawane na koniec listy
+	 * wyświetlanych subskrypcji.
+	 *
+	 * @throws FileNotFoundException jeśli podany plik nie istnieje.
+	 * @throws SAXParseException jeśli parsowanie podanego pliku OPML
+	 *         nie powiodło się.
+	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 */
+	public static void importChannelList(String fileLocation) throws Exception {
 		for (Channel channel : ImportExport.getChannelsFromFile(fileLocation)) {
 			if (!allChannels.containsKey(channel.hashCode())) {
 				allChannels.put(channel.hashCode(), channel);
 			}
 			channels.add(channel);
-			// uzupelniamy liste tagow do wyswietlenia
+			// uzupełniamy listę tagów do wyświetlenia
 			for (String tag : channel.getTags()) {
 				if (!tags.contains(tag)) {
 					tags.add(tag);
@@ -283,63 +381,14 @@ class JReader {
 		Collections.sort(tags);
 	}
 
-	static void exportChannelList(String fileLocation) throws Exception {
+	/**
+	 * Eksportuje wszystkie kanały (nie tylko z listy do wyświetlenia) do pliku.
+	 *
+	 * @throws IOException jeśli zapisanie pliku jest niemożliwe.
+	 */
+	public static void exportChannelList(String fileLocation) throws Exception {
 		ImportExport.writeChannelsToFile(new LinkedList<Channel>(
 					allChannels.values()), fileLocation);
-	}
-
-	/*
-	 * KONIEC metod obslugujacych glowne funkcjonalnosci programu.
-	 */
-
-	/*
-	 * Metody regulujace dostep do glownych struktur danych programu.
-	 */
-
-	static Config getConfig() {
-		return config;
-	}
-
-	/**
-	 * Zwraca kanal z listy wszystkich kanalow o wskazanym hashCode.
-	 */
-	static Channel getChannelFromHash(int hashCode) {
-		return allChannels.get(hashCode);
-	}
-
-	/**
-	 * Zwraca kanal z listy kanalow do wyswietlenia w GUI o wskazanym indeksie.
-	 */
-	static Channel getChannel(int index) {
-		return channels.get(index);
-	}
-
-	/**
-	 * Zwraca liste kanalow do wyswietlenia w GUI.
-	 */
-	static List<Channel> getChannels() {
-		return channels;
-	}
-
-	/**
-	 * Zwraca liste wiadomosci do wyswietlenia w GUI.
-	 */
-	static List<Item> getItems() {
-		return items;
-	}
-
-	/**
-	 * Zwraca liste wiadomosci do wyswietlenia w GUI.
-	 */
-	static HistoryList<Preview> getPreview() {
-		return preview;
-	}
-
-	/**
-	 * Zwraca liste tagow do wyswietlenia w GUI.
-	 */
-	static List<String> getTags() {
-		return tags;
 	}
 }
 

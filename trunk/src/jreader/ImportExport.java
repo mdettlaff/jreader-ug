@@ -13,18 +13,26 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Klasa zawierajaca metody potrzebne do eksportowania i importowania kanalow
- * do plikow zapisanych w standardzie OPML.
+ * Zawiera metody potrzebne do importowania i eksportowania kanałów do plików
+ * zapisanych w standardzie OPML.
  */
-class ImportExport extends DefaultHandler {
-	/** Lista kanalow, ktora zwraca metoda getChannelsFromFile. */
+public class ImportExport extends DefaultHandler {
+	/** Lista kanałów, którą zwraca metoda getChannelsFromFile. */
 	private static List<Channel> channels;
 
 	public ImportExport() {
 		super();
 	}
 
-	static List<Channel> getChannelsFromFile(String fileName) throws Exception {
+	/**
+	 * @return Lista kanałów wyeksportowanych z podanego pliku OPML.
+	 * @throws FileNotFoundException jeśli podany plik nie istnieje.
+	 * @throws SAXParseException jeśli parsowanie podanego pliku OPML
+	 *         nie powiodło się.
+	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 */
+	public static List<Channel> getChannelsFromFile(String fileName)
+			throws Exception {
 		FileReader fr = new FileReader(fileName);
 		channels = new ArrayList<Channel>();
 
@@ -39,10 +47,12 @@ class ImportExport extends DefaultHandler {
 	}
 
 	/**
-	 * Zapisuje podane kanaly do pliku.
+	 * Zapisuje podane kanały do podanego pliku.
+	 *
+	 * @throws IOException jeśli zapisanie pliku jest niemożliwe.
 	 */
-	static void writeChannelsToFile(List<Channel> channels, String fileName)
-			throws Exception {
+	public static void writeChannelsToFile(List<Channel> channels,
+			String fileName) throws Exception {
 		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
 		out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		out.write("<opml version=\"1.0\">\n");
@@ -52,7 +62,7 @@ class ImportExport extends DefaultHandler {
     out.write("<body>\n");
 
 		Collections.sort(channels);
-		// kanaly ktore nie sa oznaczone zadnym tagiem
+		// kanały które nie są oznaczone żadnym tagiem
 		for (Channel channel : channels) {
 			if (channel.getTags().size() == 0) {
 				out.write("<outline text=\"");
@@ -67,7 +77,7 @@ class ImportExport extends DefaultHandler {
 				out.write("\"/>\n");
 			}
 		}
-		// kanaly oznaczone tagiem
+		// kanały oznaczone tagiem
 		for (String tag : JReader.getTags()) {
 			out.write("<outline title=\"" + tag + "\" text=\"" + tag + "\">\n");
 			for (Channel channel : channels) {
@@ -94,19 +104,22 @@ class ImportExport extends DefaultHandler {
 	}
 
 	/*
-	 * Metody oblugujace zdarzenia zwiazane z parsowaniem XML.
+	 * Metody obsługujące zdarzenia związane z parsowaniem XML.
 	 */
 
 	/** Nazwa aktualnie parsowanego znacznika. */
 	private String currentTag = "";
 	private Channel channel;
-	/** Nazwa aktualnego taga do oznaczenia kanalu. */
+	/** Nazwa aktualnego taga do oznaczenia kanału. */
 	private String channelTag;
 
 	public void startDocument() { }
 
 	public void endDocument() { }
 
+	/**
+	 * Wywoływana kiedy parser natrafia na początek znacznika.
+	 */
 	public void startElement(String uri, String name,
 			String qName, Attributes atts) {
 		if ("".equals(uri)) {
@@ -127,20 +140,20 @@ class ImportExport extends DefaultHandler {
 							}
 							channel.setLink(atts.getValue("htmlUrl"));
 							int index = indexOf(channel, channels);
-							if (index == -1) { // nie ma aktualnego kanalu na liscie
+							if (index == -1) { // nie ma aktualnego kanału na liście
 								if (channelTag != null) {
 									channel.setTags(channelTag);
 								}
 								if (channel.getTitle() != null) {
 									channels.add(channel);
 								}
-							} else { // jesli jest juz na liscie, dodajemy tylko tagi
+							} else { // jeśli jest już na liście, dodajemy tylko tagi
 								channels.get(index).addTags(channelTag);
 							}
 						}
 					}
 				}
-			// ustawiamy aktualny tag (w sensie tag do oznaczenia kanalu)
+			// ustawiamy aktualny tag (w sensie tag do oznaczenia kanału)
 			} else if (atts.getValue("xmlUrl") == null) {
 				channelTag = atts.getValue("title");
 				if (channelTag == null) {
@@ -150,9 +163,9 @@ class ImportExport extends DefaultHandler {
 		}
 	}
 
-	/*
-	 * Funkcja pomocnicza dla startElement(). Chodzi o to, zeby ignorowac tagi
-	 * przy porownywaniu kanalow.
+	/**
+	 * Funkcja pomocnicza dla startElement(). Chodzi o to, żeby ignorować tagi
+	 * przy porównywaniu kanałów.
 	 */
 	private int indexOf(Channel channel, List<Channel> channels) {
 		int index = -1;
@@ -164,8 +177,14 @@ class ImportExport extends DefaultHandler {
 		return index;
 	}
 
+	/**
+	 * Wywoływana kiedy parser natrafia na koniec znacznika.
+	 */
 	public void endElement(String uri, String name, String qName) { }
 
+	/**
+	 * Analiza treści znacznika.
+	 */
 	public void characters(char ch[], int start, int length) { }
 
 }

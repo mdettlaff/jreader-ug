@@ -3,14 +3,14 @@ package jreader;
 import java.util.Date;
 
 /**
- * Element (wiadomosc) kanalu.
+ * Element (wiadomość) kanału.
  */
-class Item implements Comparable<Item> {
-	/** Data sciagniecia elementu. */
+public class Item implements Comparable<Item> {
+	/** Data ściągnięcia elementu. */
 	private Date creationDate;
-	/** Klucz (do HashMapy) kanalu, z ktorego pochodzi element. */
+	/** Klucz (do HashMapy) kanału, z którego pochodzi element. */
 	private Integer channelKey;
-	/** Czy dany element jest juz przeczytany. */
+	/** Czy dany element jest już przeczytany. */
 	private boolean isRead;
 	private String title;
 	private String link;
@@ -21,33 +21,48 @@ class Item implements Comparable<Item> {
 	/** Unikalny identyfikator elementu. */
 	private String guid;
 
-	String getTitle() { return title; }
-	String getLink() { return link; }
-	String getDescription() { return description; }
-	String getAuthor() { return author; }
-	Date getDate() { return date; }
-	Date getCreationDate() { return creationDate; }
-	Integer getChannelKey() { return channelKey; }
+	/**
+	 * Tworzy nowy, pusty element.
+	 */
+	public Item() { }
 
-	void setTitle(String title) { this.title = title; }
-	void setLink(String link) { this.link = link; }
-	void setDescription(String description) { this.description = description; }
-	void setAuthor(String author) { this.author = author; }
-	void setDate(Date date) { this.date = date; }
-	void setCreationDate(Date date) { this.creationDate = date; }
-	void setGuid(String guid) { this.guid = guid; }
-	void setChannelKey(Integer channelKey) { this.channelKey = channelKey; }
+	public String getTitle() { return title; }
+	public void setTitle(String title) { this.title = title; }
 
-	void markAsRead() {
+	public String getLink() { return link; }
+	public void setLink(String link) { this.link = link; }
+
+	public String getDescription() { return description; }
+	public void setDescription(String description) {
+	 	this.description = description;
+ 	}
+
+	public String getAuthor() { return author; }
+	public void setAuthor(String author) { this.author = author; }
+
+	public Date getDate() { return date; }
+	public void setDate(Date date) { this.date = date; }
+
+	public Date getCreationDate() { return creationDate; }
+	public void setCreationDate(Date date) { this.creationDate = date; }
+
+	public Integer getChannelKey() { return channelKey; }
+	public void setChannelKey(Integer channelKey) {
+	 	this.channelKey = channelKey;
+ 	}
+
+	public void setGuid(String guid) { this.guid = guid; }
+
+	public boolean isUnread() {
+		return !isRead;
+	}
+
+	public void markAsRead() {
 		isRead = true;
 	}
 
-	void markAsUnread() {
+	public void markAsUnread() {
 		isRead = false;
-	}
-
-	boolean isUnread() {
-		return !isRead;
 	}
 
 	/**
@@ -57,13 +72,13 @@ class Item implements Comparable<Item> {
 		if (guid != null && !"".equals(guid)) {
 			return guid.hashCode();
 		} else {
-			// nie wykorzystywac pola date, bo moze byc zmienne
+			// nie wykorzystywać pola date, bo może być zmienne
 			return title.concat(description).hashCode();
 		}
 	}
 
 	/**
-	 * Sprawdza czy elementy sa identyczne (do sprawdzania, czy dany element
+	 * Sprawdza czy elementy są identyczne (do sprawdzania, czy dany element
 	 * jest nowy).
 	 */
 	public boolean equals(Object obj) {
@@ -76,7 +91,7 @@ class Item implements Comparable<Item> {
 	}
 
 	/**
-	 * Porownuje ten element z innym ze wzgledu na date.
+	 * Porównuje ten element z innym ze względu na datę.
 	 */
 	public int compareTo(Item item) {
 		if (this.getDate().before(item.getDate())) {
