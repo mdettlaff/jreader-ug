@@ -1,8 +1,6 @@
 #summary Konwencje stosowane przy pisaniu kodu.
 #labels Phase-Implementation
 
-== Konwencje ==
-
 Bardzo proszę o stosowanie się do poniższych praktyk:
 
   * jedno wcięcie to jeden tabulator
