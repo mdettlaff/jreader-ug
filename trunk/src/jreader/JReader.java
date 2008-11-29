@@ -128,7 +128,7 @@ public class JReader {
 	 *         nie jest prawidłowym adresem URL.
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
 	 *         się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 * @throws SAXException jeśli wystąpił błąd parsera XML.
 	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
 	 *         pliku.
 	 */
@@ -309,7 +309,7 @@ public class JReader {
 	 *
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
 	 *         się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 * @throws SAXException jeśli wystąpił błąd parsera XML.
 	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
 	 *         pliku.
 	 */
@@ -360,13 +360,16 @@ public class JReader {
 	 * Importuje listę kanałów z pliku. Kanały są dodawane na koniec listy
 	 * wyświetlanych subskrypcji.
 	 *
+	 * @return Ilość zaimportowanych kanałów.
 	 * @throws FileNotFoundException jeśli podany plik nie istnieje.
 	 * @throws SAXParseException jeśli parsowanie podanego pliku OPML
 	 *         nie powiodło się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 * @throws SAXException jeśli wystąpił błąd parsera XML.
 	 */
-	public static void importChannelList(String fileLocation) throws Exception {
-		for (Channel channel : ImportExport.getChannelsFromFile(fileLocation)) {
+	public static int importChannelList(String fileLocation) throws Exception {
+		List<Channel> importedChannels =
+				ImportExport.getChannelsFromFile(fileLocation);
+		for (Channel channel : importedChannels) {
 			if (!allChannels.containsKey(channel.hashCode())) {
 				allChannels.put(channel.hashCode(), channel);
 			}
@@ -379,6 +382,7 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
+		return importedChannels.size();
 	}
 
 	/**
