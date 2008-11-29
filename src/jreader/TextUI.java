@@ -325,7 +325,9 @@ public class TextUI {
 				} else if (command.equals("import")) {
 					try {
 						System.out.print("Podaj lokalizacje pliku OPML: ");
-						JReader.importChannelList(in.readLine());
+						if (JReader.importChannelList(in.readLine()) == 0) {
+							System.out.println("Brak kanalow do zaimportowania.");
+						}
 					} catch (SAXParseException spe) {
 						System.out.print("Nie mozna dokonac importu.");
 						System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");

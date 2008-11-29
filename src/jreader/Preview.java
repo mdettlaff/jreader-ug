@@ -30,7 +30,7 @@ public class Preview {
 		this.imageURL = ch.getImageURL();
 		this.imageTitle = ch.getImageTitle();
 		this.imageLink = ch.getImageLink();
-		this.source = ch.getChannelURL().replace("\n", "");
+		this.source = ch.getChannelURL();
 	}
 
 	/**

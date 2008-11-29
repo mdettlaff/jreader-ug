@@ -118,12 +118,21 @@ public class ChannelFactory extends DefaultHandler {
 			while ((inputLine = in.readLine()) != null) {
 				if (inputLine.contains("type=\"application/rss+xml\"")
 						|| inputLine.contains("type=\"application/atom+xml\"")) {
+					// jeśli linia nie zawiera odnośnika href (np. na thedailywtf.com),
+					// tylko jest on przeniesiony do dalszej linii, szukamy go dalej
+					if (!inputLine.contains("href=")) {
+						while ((inputLine = in.readLine()) != null) {
+							if (inputLine.contains("href=")) {
+								break;
+							}
+						}
+					}
 					// rozbijamy na mniejsze linie, mniej problematyczne
 					inputLine = inputLine.replace(">", ">\n");
 					String[] smallLines = inputLine.split("\n");
 					for (String smallLine : smallLines) {
 						if (smallLine.contains("type=\"application/rss+xml\"")
-								|| smallLine.contains("type=\"application/rss+atom\"")) {
+								|| smallLine.contains("type=\"application/atom+xml\"")) {
 							inputLine = smallLine;
 							break;
 						}
@@ -147,7 +156,7 @@ public class ChannelFactory extends DefaultHandler {
 			}
 		}
 
-		return getChannelFromXML(channelURL);
+		return getChannelFromXML(channelURL.trim());
 	}
 
 	/**

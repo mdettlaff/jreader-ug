@@ -29,7 +29,7 @@ public class ImportExport extends DefaultHandler {
 	 * @throws FileNotFoundException jeśli podany plik nie istnieje.
 	 * @throws SAXParseException jeśli parsowanie podanego pliku OPML
 	 *         nie powiodło się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML
+	 * @throws SAXException jeśli wystąpił błąd parsera XML.
 	 */
 	public static List<Channel> getChannelsFromFile(String fileName)
 			throws Exception {
@@ -56,10 +56,10 @@ public class ImportExport extends DefaultHandler {
 		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
 		out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		out.write("<opml version=\"1.0\">\n");
-    out.write("<head>\n");
-    out.write("<title>Subskrypcje kanałów</title>\n");
-    out.write("</head>\n");
-    out.write("<body>\n");
+		out.write("<head>\n");
+		out.write("<title>Subskrypcje kanałów</title>\n");
+		out.write("</head>\n");
+		out.write("<body>\n");
 
 		Collections.sort(channels);
 		// kanały które nie są oznaczone żadnym tagiem
@@ -97,8 +97,8 @@ public class ImportExport extends DefaultHandler {
 			out.write("</outline>\n");
 		}
 
-    out.write("</body>\n");
-    out.write("</opml>\n");
+		out.write("</body>\n");
+		out.write("</opml>\n");
 
 		out.close();
 	}
