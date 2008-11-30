@@ -149,7 +149,7 @@ public class TextUI {
 						JReader.addChannel(url, tags);
 						System.out.println("Kanal zostal dodany");
 					} catch (LinkNotFoundException lnfe) {
-						System.out.println("Nie znaleziono kanalow RSS na tej stronie.");
+						System.out.println("Nie znaleziono kanalow na tej stronie.");
 					} catch (MalformedURLException mue) {
 						System.out.print("Nie mozna dodac kanalu.");
 						System.out.println(" Podany URL jest nieprawidlowy.");
@@ -225,13 +225,25 @@ public class TextUI {
 						System.out.println("Nie ma nieprzeczytanych wiadomosci.");
 					}
 				} else if (command.equals("select item")) {
-					System.out.print("Podaj numer elementu: ");
-					int nr = new Integer(in.readLine()) - 1;
-					JReader.selectItem(JReader.getItems().get(nr));
+					try {
+						System.out.print("Podaj numer elementu: ");
+						int nr = new Integer(in.readLine()) - 1;
+						JReader.selectItem(JReader.getItems().get(nr));
+					} catch (NumberFormatException nfe) {
+						System.out.println("Musisz podac liczbe calkowita.");
+					} catch (IndexOutOfBoundsException ioobe) {
+						System.out.println("Nie ma takiego elementu.");
+					}
 				} else if (command.equals("select channel")) {
-					System.out.print("Podaj numer kanalu: ");
-					int nr = new Integer(in.readLine()) - 1;
-					JReader.selectChannel(nr);
+					try {
+						System.out.print("Podaj numer kanalu: ");
+						int nr = new Integer(in.readLine()) - 1;
+						JReader.selectChannel(nr);
+					} catch (NumberFormatException nfe) {
+						System.out.println("Musisz podac liczbe calkowita.");
+					} catch (IndexOutOfBoundsException ioobe) {
+						System.out.println("Nie ma takiego kanalu.");
+					}
 				} else if (command.equals("select all")) {
 					JReader.selectAll();
 				} else if (command.equals("select unread")) {
@@ -241,9 +253,15 @@ public class TextUI {
 							"untagged - nieoznaczone): ");
 					JReader.selectTag(in.readLine());
 				} else if (command.equals("mark channel")) {
-					System.out.print("Podaj numer kanalu: ");
-					int nr = new Integer(in.readLine()) - 1;
-					JReader.markChannelAsRead(JReader.getChannel(nr));
+					try {
+						System.out.print("Podaj numer kanalu: ");
+						int nr = new Integer(in.readLine()) - 1;
+						JReader.markChannelAsRead(JReader.getChannel(nr));
+					} catch (NumberFormatException nfe) {
+						System.out.println("Musisz podac liczbe calkowita.");
+					} catch (IndexOutOfBoundsException ioobe) {
+						System.out.println("Nie ma takiego kanalu.");
+					}
 				} else if (command.equals("update channel")) {
 					int nr = 0;
 					try {
@@ -273,26 +291,42 @@ public class TextUI {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Brak polaczenia ze strona.");
 						JReader.getChannel(nr).setFail(true);
+					} catch (NumberFormatException nfe) {
+						System.out.println("Musisz podac liczbe calkowita.");
+					} catch (IndexOutOfBoundsException ioobe) {
+						System.out.println("Nie ma takiego kanalu.");
 					} catch (Exception e) {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Nastapil nieoczekiwany blad.");
 						JReader.getChannel(nr).setFail(true);
 					}
 				} else if (command.equals("edit tags")) {
-					System.out.print("Podaj numer kanalu: ");
-					int nr = new Integer(in.readLine()) - 1;
-					if (JReader.getChannel(nr).getTags().size() != 0) {
-						System.out.println("Tagi: " + JReader.getChannel(nr).
-								getTagsAsString());
-					} else {
-						System.out.println("Ten kanal nie ma tagow.");
+					try {
+						System.out.print("Podaj numer kanalu: ");
+						int nr = new Integer(in.readLine()) - 1;
+						if (JReader.getChannel(nr).getTags().size() != 0) {
+							System.out.println("Tagi: " + JReader.getChannel(nr).
+									getTagsAsString());
+						} else {
+							System.out.println("Ten kanal nie ma tagow.");
+						}
+						System.out.print("Podaj nowe tagi: ");
+						JReader.editTags(JReader.getChannel(nr), in.readLine());
+					} catch (NumberFormatException nfe) {
+						System.out.println("Musisz podac liczbe calkowita.");
+					} catch (IndexOutOfBoundsException ioobe) {
+						System.out.println("Nie ma takiego kanalu.");
 					}
-					System.out.print("Podaj nowe tagi: ");
-					JReader.editTags(JReader.getChannel(nr), in.readLine());
 				} else if (command.equals("remove channel")) {
-					System.out.print("Podaj numer kanalu: ");
-					int nr = new Integer(in.readLine()) - 1;
-					JReader.removeChannel(nr);
+					try {
+						System.out.print("Podaj numer kanalu: ");
+						int nr = new Integer(in.readLine()) - 1;
+						JReader.removeChannel(nr);
+					} catch (NumberFormatException nfe) {
+						System.out.println("Musisz podac liczbe calkowita.");
+					} catch (IndexOutOfBoundsException ioobe) {
+						System.out.println("Nie ma takiego kanalu.");
+					}
 				} else if (command.equals("set sort")) {
 					System.out.print("Sortuj wedlug (new/old): ");
 					String choice = in.readLine().trim();
