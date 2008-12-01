@@ -1,7 +1,9 @@
 package jreader;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -11,6 +13,7 @@ import java.util.Locale;
 import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -68,11 +71,12 @@ public class ChannelFactory extends DefaultHandler {
 	 *         nie jest prawidłowym adresem URL.
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
 	 *         się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML
-	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
-	 *         pliku.
+	 * @throws SAXException jeśli wystąpił błąd parsera XML.
+	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
 	 */
-	public static Channel getChannelFromSite(String siteURL) throws Exception {
+	public static Channel getChannelFromSite(String siteURL)
+			throws LinkNotFoundException, MalformedURLException, SAXException,
+				IOException {
 		/**
 		 * URL pliku XML z treścią kanału, który musimy znaleźć na podstawie
 		 * źródła HTML znajdującego się pod adresem siteURL.
@@ -85,8 +89,7 @@ public class ChannelFactory extends DefaultHandler {
 		}
 		URL url = new URL(siteURL);
 		BufferedReader in = new BufferedReader(
-				new InputStreamReader(
-					url.openStream()));
+				new InputStreamReader(url.openStream()));
 		// najpierw sprawdzamy czy podany adres jest adresem do pliku XML,
 		// na podstawie 3 pierwszych linii
 		String[] lines = new String[3];
@@ -165,11 +168,11 @@ public class ChannelFactory extends DefaultHandler {
 	 * @return Aktualna postać kanału o podanym adresie URL.
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
 	 *         się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML
-	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
-	 *         pliku.
+	 * @throws SAXException jeśli wystąpił błąd parsera XML.
+	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
 	 */
-	public static Channel getChannelFromXML(String channelURL) throws Exception {
+	public static Channel getChannelFromXML(String channelURL)
+			throws SAXException, IOException {
 		channel = new Channel(channelURL);
 		URL url = new URL(channelURL);
 
