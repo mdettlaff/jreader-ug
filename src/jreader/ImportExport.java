@@ -3,12 +3,14 @@ package jreader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -27,12 +29,13 @@ public class ImportExport extends DefaultHandler {
 	/**
 	 * @return Lista kanałów wyeksportowanych z podanego pliku OPML.
 	 * @throws FileNotFoundException jeśli podany plik nie istnieje.
+	 * @throws IOException jeśli nie można odczytać pliku.
 	 * @throws SAXParseException jeśli parsowanie podanego pliku OPML
 	 *         nie powiodło się.
 	 * @throws SAXException jeśli wystąpił błąd parsera XML.
 	 */
 	public static List<Channel> getChannelsFromFile(String fileName)
-			throws Exception {
+			throws IOException, SAXException {
 		FileReader fr = new FileReader(fileName);
 		channels = new ArrayList<Channel>();
 
@@ -52,8 +55,9 @@ public class ImportExport extends DefaultHandler {
 	 * @throws IOException jeśli zapisanie pliku jest niemożliwe.
 	 */
 	public static void writeChannelsToFile(List<Channel> channels,
-			String fileName) throws Exception {
+			String fileName) throws IOException {
 		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+
 		out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		out.write("<opml version=\"1.0\">\n");
 		out.write("<head>\n");
@@ -164,7 +168,7 @@ public class ImportExport extends DefaultHandler {
 	}
 
 	/**
-	 * Funkcja pomocnicza dla startElement(). Chodzi o to, żeby ignorować tagi
+	 * Metoda pomocnicza dla startElement(). Chodzi o to, żeby ignorować tagi
 	 * przy porównywaniu kanałów.
 	 */
 	private int indexOf(Channel channel, List<Channel> channels) {

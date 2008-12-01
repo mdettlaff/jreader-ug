@@ -1,5 +1,7 @@
 package jreader;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.xml.sax.SAXException;
 
 /**
  * Główna klasa programu. Przechowuje zbiór wszystkich subskrypcji, ustawienia
@@ -129,11 +132,11 @@ public class JReader {
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
 	 *         się.
 	 * @throws SAXException jeśli wystąpił błąd parsera XML.
-	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
-	 *         pliku.
+	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
 	 */
 	public static void addChannel(String siteURL, String channelTags)
-			throws Exception {
+			throws LinkNotFoundException, MalformedURLException, SAXException,
+				IOException	{
 		Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
 		newChannel.setTags(channelTags);
 		// uzupełniamy listę tagów do wyświetlenia
@@ -221,7 +224,9 @@ public class JReader {
 	}
 
 	/**
-	 * Efekt kliknięcia na wybrany element.
+	 * Efekt kliknięcia na wybrany element. Zostaje on pokazany w podglądzie,
+	 * oznaczony jako przeczytany, a ilość elementów nieprzeczytanych kanału
+	 * z którego pochodzi zostaje zaktualizowana.
 	 */
 	public static void selectItem(Item item) {
 		item.markAsRead();
@@ -232,7 +237,8 @@ public class JReader {
 	}
 
 	/**
-	 * Efekt kliknięcia na wybrany kanał.
+	 * Efekt kliknięcia na wybrany kanał. Jego opis zostaje pokazany
+	 * w podglądzie, a na listę elementów zostają wpisane jego elementy.
 	 *
 	 * @param index Indeks kanału na liście kanałów do wyświetlenia.
 	 */
@@ -304,16 +310,16 @@ public class JReader {
 	}
 
 	/**
-	 * Sprawdza, czy w danym kanale nie pojawiły się nowe wiadomości i jeśli
-	 * tak, to dodaje je do listy wiadomości kanału.
+	 * Sprawdza, czy w danym kanale pojawiły się nowe wiadomości i jeśli tak,
+	 * to dodaje je do listy wiadomości kanału.
 	 *
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
 	 *         się.
 	 * @throws SAXException jeśli wystąpił błąd parsera XML.
-	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
-	 *         pliku.
+	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
 	 */
-	public static void updateChannel(Channel channel) throws Exception {
+	public static void updateChannel(Channel channel)
+			throws SAXException, IOException {
 		channel.update();
 	}
 
@@ -362,11 +368,13 @@ public class JReader {
 	 *
 	 * @return Ilość zaimportowanych kanałów.
 	 * @throws FileNotFoundException jeśli podany plik nie istnieje.
+	 * @throws IOException jeśli nie można odczytać pliku.
 	 * @throws SAXParseException jeśli parsowanie podanego pliku OPML
 	 *         nie powiodło się.
 	 * @throws SAXException jeśli wystąpił błąd parsera XML.
 	 */
-	public static int importChannelList(String fileLocation) throws Exception {
+	public static int importChannelList(String fileLocation)
+			throws IOException, SAXException {
 		List<Channel> importedChannels =
 				ImportExport.getChannelsFromFile(fileLocation);
 		for (Channel channel : importedChannels) {
@@ -390,7 +398,8 @@ public class JReader {
 	 *
 	 * @throws IOException jeśli zapisanie pliku jest niemożliwe.
 	 */
-	public static void exportChannelList(String fileLocation) throws Exception {
+	public static void exportChannelList(String fileLocation)
+			throws IOException {
 		ImportExport.writeChannelsToFile(new LinkedList<Channel>(
 					allChannels.values()), fileLocation);
 	}

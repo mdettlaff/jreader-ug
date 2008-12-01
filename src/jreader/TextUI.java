@@ -164,16 +164,11 @@ public class TextUI {
 					} catch (SocketException se) {
 						System.out.println("Nie mozna dodac kanalu. Szczegoly:");
 						System.out.println(se.getLocalizedMessage());
-					} catch (FileNotFoundException fnfe) {
-						System.out.println("Podana strona nie istnieje.");
 					} catch (IOException ioe) {
 						System.out.println("Podana strona nie istnieje.");
 					} catch (IllegalArgumentException iae) {
 						System.out.print("Nie mozna dodac kanalu.");
-						System.out.println(" Podany URL jest nieprawidlowy.");
-					} catch (Exception e) {
-						System.out.print("Nie mozna dodac kanalu.");
-						System.out.println(" Nastapil nieoczekiwany blad.");
+						System.out.println(" Podany napis nie jest adresem URL.");
 					}
 				} else if (command.equals("previous item")) {
 					if (JReader.previousItem() == null) {
@@ -203,19 +198,10 @@ public class TextUI {
 									+ channel.getTitle() + ".");
 							System.out.println("Szczegoly: " + se.getLocalizedMessage());
 							channel.setFail(true);
-						} catch (FileNotFoundException fnfe) {
-							System.out.println("Nie mozna zaktualizowac kanalu "
-									+ channel.getTitle() + ".");
-							System.out.println("Brak polaczenia ze strona.");
-							channel.setFail(true);
 						} catch (IOException ioe) {
 							System.out.println("Nie mozna zaktualizowac kanalu "
 									+ channel.getTitle() + ".");
 							System.out.println("Brak polaczenia ze strona.");
-							channel.setFail(true);
-						} catch (Exception e) {
-							System.out.print("Nie mozna zaktualizowac kanalu.");
-							System.out.println(" Nastapil nieoczekiwany blad.");
 							channel.setFail(true);
 						}
 					}
@@ -283,10 +269,6 @@ public class TextUI {
 						System.out.println("Nie mozna zaktualizowac kanalu. Szczegoly:");
 						System.out.println(se.getLocalizedMessage());
 						JReader.getChannel(nr).setFail(true);
-					} catch (FileNotFoundException fnfe) {
-						System.out.print("Nie mozna zaktualizowac kanalu.");
-						System.out.println(" Brak polaczenia ze strona.");
-						JReader.getChannel(nr).setFail(true);
 					} catch (IOException ioe) {
 						System.out.print("Nie mozna zaktualizowac kanalu.");
 						System.out.println(" Brak polaczenia ze strona.");
@@ -295,10 +277,6 @@ public class TextUI {
 						System.out.println("Musisz podac liczbe calkowita.");
 					} catch (IndexOutOfBoundsException ioobe) {
 						System.out.println("Nie ma takiego kanalu.");
-					} catch (Exception e) {
-						System.out.print("Nie mozna zaktualizowac kanalu.");
-						System.out.println(" Nastapil nieoczekiwany blad.");
-						JReader.getChannel(nr).setFail(true);
 					}
 				} else if (command.equals("edit tags")) {
 					try {
@@ -373,9 +351,9 @@ public class TextUI {
 					} catch (FileNotFoundException fnfe) {
 						System.out.print("Nie mozna dokonac importu.");
 						System.out.println(" Podany plik nie istnieje.");
-					} catch (Exception e) {
+					} catch (IOException e) {
 						System.out.print("Nie mozna dokonac importu.");
-						System.out.println(" Nastapil nieoczekiwany blad.");
+						System.out.println(" Odczytanie pliku nie powiodlo sie.");
 					}
 				} else if (command.equals("export")) {
 					try {
@@ -384,9 +362,6 @@ public class TextUI {
 					} catch (IOException ioe) {
 						System.out.print("Nie mozna dokonac eksportu.");
 						System.out.println(" Zapisanie pliku jest niemozliwe.");
-					} catch (Exception e) {
-						System.out.print("Nie mozna dokonac eksportu.");
-						System.out.println(" Nastapil nieoczekiwany blad.");
 					}
 				} else if (!command.equals("") && !command.equals("quit")) {
 					System.out.println("Nieznane polecenie.");

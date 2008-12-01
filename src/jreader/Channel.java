@@ -1,10 +1,12 @@
 package jreader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.xml.sax.SAXException;
 
 /**
  * Kanał RSS lub Atom.
@@ -135,11 +137,10 @@ public class Channel implements Comparable<Channel> {
 	 *
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
 	 *         się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML
-	 * @throws Exception różne wyjątki związane z niepowodzeniem pobierania
-	 *         pliku.
+	 * @throws SAXException jeśli wystąpił błąd parsera XML.
+	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
 	 */
-	public void update() throws Exception {
+	public void update() throws SAXException, IOException {
 		Channel ch = ChannelFactory.getChannelFromXML(channelURL);
 		this.title = ch.getTitle();
 		this.link = ch.getLink();
