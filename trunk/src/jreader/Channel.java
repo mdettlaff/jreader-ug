@@ -1,11 +1,8 @@
 package jreader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import org.xml.sax.SAXException;
 
 /**
@@ -24,12 +21,15 @@ public class Channel implements Comparable<Channel> {
 	private String title;
 	private String link;
 	private String description;
-	/** Zawartość elementu image (obrazek będący częścią opisu kanału). */
+	/* Zawartość elementu image (obrazek będący częścią opisu kanału). */
 	private String imageURL;
 	private String imageTitle;
 	private String imageLink;
-	/** Elementy (wiadomości) kanału. */
-	private Map<Integer, Item> items = new HashMap<Integer, Item>();
+
+	/**
+	 * Elementy (wiadomości) kanału.
+	 */
+	private List<Item> items = new LinkedList<Item>();
 
 	/**
 	 * Tworzy nowy kanał o podanym adresie źródła XML.
@@ -52,7 +52,7 @@ public class Channel implements Comparable<Channel> {
 	public String getChannelURL() { return channelURL; }
 
 	public List<Item> getItems() {
-		return new ArrayList<Item>(items.values());
+		return items;
 	}
 
 	public String getImageURL() { return imageURL; }
@@ -141,17 +141,17 @@ public class Channel implements Comparable<Channel> {
 	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
 	 */
 	public void update() throws SAXException, IOException {
-		Channel ch = ChannelFactory.getChannelFromXML(channelURL);
-		this.title = ch.getTitle();
-		this.link = ch.getLink();
-		this.description = ch.getDescription();
-		this.imageURL = ch.getImageURL();
-		this.imageTitle = ch.getImageTitle();
-		this.imageLink = ch.getImageLink();
+		Channel channel = ChannelFactory.getChannelFromXML(channelURL);
+		this.title = channel.title;
+		this.link = channel.link;
+		this.description = channel.description;
+		this.imageURL = channel.imageURL;
+		this.imageTitle = channel.imageTitle;
+		this.imageLink = channel.imageLink;
 		// dodawanie nowych elementów do kanału
-		for (Item updatedItem : ch.getItems()) {
+		for (Item updatedItem : channel.getItems()) {
 			boolean itemAlreadyExists = false;
-			for (Item item : items.values()) {
+			for (Item item : items) {
 				if (updatedItem.equals(item)) {
 					itemAlreadyExists = true;
 					break;
@@ -173,7 +173,7 @@ public class Channel implements Comparable<Channel> {
 	public int updateUnreadItemsCount() {
 		int oldCount = unreadItemsCount;
 		unreadItemsCount = 0;
-		for (Item item : items.values()) {
+		for (Item item : items) {
 			if (item.isUnread()) {
 				unreadItemsCount++;
 			}
@@ -186,11 +186,11 @@ public class Channel implements Comparable<Channel> {
 	}
 
 	public void addItem(Item item) {
-		items.put(item.hashCode(), item);
+		items.add(item);
 	}
 
 	public void markAllAsRead() {
-		for (Item item : items.values()) {
+		for (Item item : items) {
 			item.markAsRead();
 		}
 		this.updateUnreadItemsCount();
@@ -200,7 +200,7 @@ public class Channel implements Comparable<Channel> {
 	 * Oznacza wszystkie elementy kanału jako przeczytane.
 	 */
 	public void markAllAsUnread() {
-		for (Item item : items.values()) {
+		for (Item item : items) {
 			item.markAsUnread();
 		}
 		this.updateUnreadItemsCount();
@@ -210,14 +210,26 @@ public class Channel implements Comparable<Channel> {
 	 * Porównywanie alfabetyczne kanałów według ich tytułów.
 	 */
 	public int compareTo(Channel channel) {
-		return title.compareToIgnoreCase(channel.getTitle());
+		return this.title.compareToIgnoreCase(channel.title);
 	}
 
 	/**
-	 * Do użycia jako klucz w HashMapie.
+	 * Sprawdza czy kanały są identyczne.
 	 */
-	public int hashCode() {
-		return channelURL.hashCode();
+	public boolean equals(Object obj) {
+		Channel channel = (Channel) obj;
+		if (this.channelURL.equals(channel.channelURL)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Do wykorzystania jako klucz w HashMapie. Kluczem jest URL źródła kanału,
+	 * ponieważ indentyfikuje on kanał w sposób jednoznaczny.
+	 */
+	public String key() {
+		return channelURL;
 	}
 }
 
