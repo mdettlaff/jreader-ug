@@ -37,12 +37,6 @@ public class MainToolBar {
         final Image optionsIcon = new Image(display, "c:\\icons\\medium\\options.png");
         final Image unreadIcon = new Image(display, "c:\\icons\\medium\\unread.png");
         
-      //Synchronizuj
-        final ToolItem syncToolItem = new ToolItem(toolBar, SWT.FLAT);
-        syncToolItem.setImage(syncIcon);
-        //syncToolItem.setText("Synch");
-        syncToolItem.setToolTipText("Synchronize");
-        
       //Dodaj subskrypcje 
         final ToolItem addSubToolItem = new ToolItem(toolBar, SWT.FLAT);
         addSubToolItem.setImage(addIcon);
@@ -55,6 +49,12 @@ public class MainToolBar {
         //unreadToolItem.setText("Next msg");
         unreadToolItem.setToolTipText("Next unread message");
        
+      //Synchronizuj
+        final ToolItem syncToolItem = new ToolItem(toolBar, SWT.FLAT);
+        syncToolItem.setImage(syncIcon);
+        //syncToolItem.setText("Synch");
+        syncToolItem.setToolTipText("Synchronize");
+        
         //separator 1
         new ToolItem(toolBar, SWT.SEPARATOR);
         
