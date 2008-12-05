@@ -357,7 +357,7 @@ public class ChannelFactory extends DefaultHandler {
 			}
 			// data utworzenia, tj. ściągnięcia
 			item.setCreationDate(new Date());
-			item.setChannelKey(channel.hashCode());
+			item.setChannelKey(channel.key());
 			channel.addItem(item);
 		} else if (closingTag.equals("image")) {
 			insideImage = false;

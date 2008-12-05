@@ -26,8 +26,8 @@ public class JReader {
 	/**
 	 * Zbiór wszystkich kanałów.
 	 */
-	private static Map<Integer, Channel> allChannels =
-			new HashMap<Integer, Channel>();
+	private static Map<String, Channel> allChannels =
+			new HashMap<String, Channel>();
 	/**
 	 * Ustawienia programu wybrane przez użytkownika.
 	 */
@@ -73,10 +73,10 @@ public class JReader {
 	}
 
 	/**
-	 * Zwraca kanał o wskazanym hashCode z listy wszystkich kanałów.
+	 * Zwraca kanał o wskazanym kluczu z listy wszystkich kanałów.
 	 */
-	public static Channel getChannelFromHash(int hashCode) {
-		return allChannels.get(hashCode);
+	public static Channel getChannel(String key) {
+		return allChannels.get(key);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
-		allChannels.put(newChannel.hashCode(), newChannel);
+		allChannels.put(newChannel.key(), newChannel);
 		channels.add(newChannel);
 		// sortujemy listę kanałów alfabetycznie
 		Collections.sort(channels);
@@ -287,6 +287,10 @@ public class JReader {
 
 	/**
 	 * Ogranicza listę kanałów do kanałów oznaczonych wybranym tagiem.
+	 *
+	 * @param tag Tag, według którego filtrujemy kanały. Jeśli jest równy "all",
+	 *            wyświetlamy wszystkie kanały. Jeśli jest równy "untagged",
+	 *            wyświetlamy kanały, które nie są oznaczone żadnym tagiem.
 	 */
 	public static void selectTag(String tag) {
 		tag = tag.trim();
@@ -358,7 +362,7 @@ public class JReader {
 				indToRemove.set(j, indToRemove.get(j)-1);
 			}
 		}
-		allChannels.remove(channels.get(index).hashCode());
+		allChannels.remove(channels.get(index).key());
 		channels.remove(index);
 	}
 
@@ -378,8 +382,8 @@ public class JReader {
 		List<Channel> importedChannels =
 				ImportExport.getChannelsFromFile(fileLocation);
 		for (Channel channel : importedChannels) {
-			if (!allChannels.containsKey(channel.hashCode())) {
-				allChannels.put(channel.hashCode(), channel);
+			if (!allChannels.containsKey(channel.key())) {
+				allChannels.put(channel.key(), channel);
 			}
 			channels.add(channel);
 			// uzupełniamy listę tagów do wyświetlenia

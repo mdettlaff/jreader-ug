@@ -9,7 +9,7 @@ public class Item implements Comparable<Item> {
 	/** Data ściągnięcia elementu. */
 	private Date creationDate;
 	/** Klucz (do HashMapy) kanału, z którego pochodzi element. */
-	private Integer channelKey;
+	private String channelKey;
 	/** Czy dany element jest już przeczytany. */
 	private boolean isRead;
 	private String title;
@@ -46,8 +46,8 @@ public class Item implements Comparable<Item> {
 	public Date getCreationDate() { return creationDate; }
 	public void setCreationDate(Date date) { this.creationDate = date; }
 
-	public Integer getChannelKey() { return channelKey; }
-	public void setChannelKey(Integer channelKey) {
+	public String getChannelKey() { return channelKey; }
+	public void setChannelKey(String channelKey) {
 	 	this.channelKey = channelKey;
  	}
 
@@ -66,14 +66,23 @@ public class Item implements Comparable<Item> {
 	}
 
 	/**
-	 * Do wykorzystania jako klucz w HashMapie.
+	 * Porównuje ten element z innym ze względu na datę.
 	 */
-	public int hashCode() {
-		if (guid != null && !"".equals(guid)) {
-			return guid.hashCode();
+	public int compareTo(Item item) {
+		if (this.date.before(item.date)) {
+			if (JReader.getConfig().getSortByNewest()) {
+				return 1;
+			} else {
+				return -1;
+			}
+		} else if (this.date.after(item.date)) {
+			if (JReader.getConfig().getSortByNewest()) {
+				return -1;
+			} else {
+				return 1;
+			}
 		} else {
-			// nie wykorzystywać pola date, bo może być zmienne
-			return title.concat(description).hashCode();
+			return 0;
 		}
 	}
 
@@ -83,31 +92,19 @@ public class Item implements Comparable<Item> {
 	 */
 	public boolean equals(Object obj) {
 		Item item = (Item) obj;
-		if (this.hashCode() == item.hashCode()) {
-			return true;
-		} else {
+		if (this.guid != null && !"".equals(this.guid)
+				&& item.guid != null && !"".equals(item.guid)) {
+			if (this.guid.equals(item.guid)) {
+				return true;
+			}
 			return false;
-		}
-	}
-
-	/**
-	 * Porównuje ten element z innym ze względu na datę.
-	 */
-	public int compareTo(Item item) {
-		if (this.getDate().before(item.getDate())) {
-			if (JReader.getConfig().getSortByNewest()) {
-				return 1;
-			} else {
-				return -1;
-			}
-		} else if (this.getDate().after(item.getDate())) {
-			if (JReader.getConfig().getSortByNewest()) {
-				return -1;
-			} else {
-				return 1;
-			}
 		} else {
-			return 0;
+			if (!this.title.equals(item.title)) {
+				return false;
+			} else if (!this.description.equals(item.description)) {
+				return false;
+			}
+			return true;
 		}
 	}
 }

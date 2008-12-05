@@ -99,12 +99,12 @@ public class TextUI {
 							if (item.isUnread()) {
 								System.out.print("N ");
 							}
-							if (JReader.getChannelFromHash(item.getChannelKey()).getTitle().
+							if (JReader.getChannel(item.getChannelKey()).getTitle().
 									length() > 12) {
-								System.out.print(JReader.getChannelFromHash(
+								System.out.print(JReader.getChannel(
 											item.getChannelKey()).getTitle().substring(0, 12) + " ");
 							} else {
-								System.out.print(JReader.getChannelFromHash(
+								System.out.print(JReader.getChannel(
 											item.getChannelKey()).getTitle() + " ");
 							}
 							System.out.println(item.getTitle());
@@ -125,7 +125,7 @@ public class TextUI {
 							System.out.println("Zrodlo: " + JReader.getPreview().
 									getCurrent().getSource());
 						}
-						System.out.println("Opis: "+JReader.getPreview().
+						System.out.println("Opis: " + JReader.getPreview().
 								getCurrent().getHTML());
 					}
 				} else if (command.equals("show tags")) {
@@ -142,7 +142,7 @@ public class TextUI {
 					try {
 						System.out.print("Podaj adres URL: ");
 						String url = in.readLine();
-						// sposob na podanie tyldy w adresie: \tld
+						// sposób na podanie tyldy w adresie: \tld
 						url = url.replace("\\tld","~");
 						System.out.print("Podaj tagi: ");
 						String tags = in.readLine();
@@ -166,9 +166,6 @@ public class TextUI {
 						System.out.println(se.getLocalizedMessage());
 					} catch (IOException ioe) {
 						System.out.println("Podana strona nie istnieje.");
-					} catch (IllegalArgumentException iae) {
-						System.out.print("Nie mozna dodac kanalu.");
-						System.out.println(" Podany napis nie jest adresem URL.");
 					}
 				} else if (command.equals("previous item")) {
 					if (JReader.previousItem() == null) {
