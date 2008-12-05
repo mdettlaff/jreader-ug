@@ -48,7 +48,7 @@ public class Preview {
 
 	//	LISTENERS
 		
-		//potrzebne do obslugi minimalizacji/max itd
+		
 	
 		folderPreview.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			

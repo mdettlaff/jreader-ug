@@ -3,12 +3,16 @@ package swt.JReader;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class MenuBar {
 
+	Text textWidget;
+	
 	public MenuBar(final Shell shell) {
 		
 		//tworze pasek menu
@@ -71,6 +75,22 @@ public class MenuBar {
         importMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 System.out.println("Import");
+                FileDialog dialog = new FileDialog (shell, SWT.OPEN | SWT.MULTI);
+    			dialog.setFileName("*.xml");
+    			dialog.setFilterNames (new String[] {"Text files", "Doc files", "All files"});
+    			dialog.setFilterExtensions (new String[] {"*.txt", "*.doc", "*" });
+    			dialog.setText("Import a subscryption");
+    			String result = dialog.open();
+    			
+    			if ((dialog.getStyle () & SWT.MULTI) != 0) {
+    				String [] files = dialog.getFileNames ();
+    				for (int i=0; i<files.length; i++) {
+    					System.out.println("\t" + files [i] + Text.DELIMITER);
+    				}
+    			}
+    			System.out.println(result);
+    		
+    			return;
             }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
@@ -147,7 +167,7 @@ public class MenuBar {
         
         aboutMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                System.out.println("JReader v. 0.0.1 \nAll rights reserved 2008.");
+                System.out.println("JReader v. 0.0.5 \nAll rights reserved 2008.");
                 AboutShell s = new AboutShell(shell);
                 s.open();
           }

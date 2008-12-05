@@ -27,7 +27,7 @@ public class MainToolBar {
 		toolBar = new ToolBar(shell, SWT.FLAT | SWT.WRAP);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
 		
-	//	Opcjonalne ikony do przyciskow na CoolBar (moze dodamy pozniej)
+	//	Opcjonalne ikony do przyciskow na ToolBar
 		
 		final Image addIcon = new Image(display, "c:\\icons\\medium\\add.png");
         final Image syncIcon = new Image(display, "c:\\icons\\medium\\sync.png");
@@ -36,6 +36,12 @@ public class MainToolBar {
         final Image searchIcon = new Image(display, "c:\\icons\\medium\\search.png");
         final Image optionsIcon = new Image(display, "c:\\icons\\medium\\options.png");
         final Image unreadIcon = new Image(display, "c:\\icons\\medium\\unread.png");
+        
+      //Synchronizuj
+        final ToolItem syncToolItem = new ToolItem(toolBar, SWT.FLAT);
+        syncToolItem.setImage(syncIcon);
+        //syncToolItem.setText("Synch");
+        syncToolItem.setToolTipText("Synchronize");
         
       //Dodaj subskrypcje 
         final ToolItem addSubToolItem = new ToolItem(toolBar, SWT.FLAT);
@@ -49,14 +55,8 @@ public class MainToolBar {
         //unreadToolItem.setText("Next msg");
         unreadToolItem.setToolTipText("Next unread message");
        
-      //Synchronizuj
-        final ToolItem syncToolItem = new ToolItem(toolBar, SWT.FLAT);
-        syncToolItem.setImage(syncIcon);
-        //syncToolItem.setText("Synch");
-        syncToolItem.setToolTipText("Synchronize");
-        
         //separator 1
-        new ToolItem(toolBar, SWT.SEPARATOR);
+        new ToolItem(toolBar, SWT.SEPARATOR );
         
       //Back
         final ToolItem backToolItem = new ToolItem(toolBar, SWT.PUSH);
@@ -88,7 +88,7 @@ public class MainToolBar {
         
         //final Label statusLine = new Label(shell, SWT.NONE);
         
-    //	CollBar listeners (do wypelnienia pozniej)
+    //	TollBar listeners (do wypelnienia pozniej)
         
         //Add Subscryption
         addSubToolItem.addListener(SWT.Selection, new Listener() {
