@@ -8,32 +8,31 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class Filters {
 
-	
-	public Filters(final Shell shell, Display display) {
+	private CTabFolder folderFilter;
+
+	public Filters(final Composite shell) {
 		
+		Display display = shell.getDisplay();
 		final Image rssTab = new Image(display, "c:\\icons\\filters\\rss-tab.png");
 		
-		final CTabFolder folderFilter = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
-		folderFilter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 2));
+		folderFilter = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
 		folderFilter.setSimple(false);
-		folderFilter.setMaximized(true);
-		folderFilter.setMinimizeVisible(true);
-		folderFilter.setMaximizeVisible(true);
+		
 		  
 		Device device = Display.getCurrent ();
 		Color bottom = new Color (device, 156, 156, 213);
 		Color middle = new Color (device, 190, 190, 213);
 		  
-		  
+		//wlasciwy Ctab 
 		final CTabItem item = new CTabItem(folderFilter, SWT.NONE);
-		item.setText("Filters                ");
+		item.setText("Filters");
 		item.setImage(rssTab);
 		Text text = new Text(folderFilter, SWT.MULTI );
 		text.setText("Text for item ");
@@ -47,34 +46,33 @@ public class Filters {
 		
 		
 		folderFilter.addCTabFolder2Listener(new CTabFolder2Adapter() {
-			
-			//niezamykane taby
-			public void close(CTabFolderEvent event) {
-				if (event.item.equals(item)) {
-					event.doit = false;
-				}
-			}
 		
 			//maxmize, minimize, restore
 			public void minimize(CTabFolderEvent event) {
 				folderFilter.setMinimized(true);
-				folderFilter.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 2));
 				shell.layout(true);
 			}
 
 			public void maximize(CTabFolderEvent event) {
 				folderFilter.setMaximized(true);
-				folderFilter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 2));
 				shell.layout(true);
 			}
 
 			public void restore(CTabFolderEvent event) {
 				folderFilter.setMinimized(false);
 				folderFilter.setMaximized(false);
-				folderFilter.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1 , 2));
 				shell.layout(true);
 			}
 	   	});
 	}
 	
+	public void setBounds(Rectangle rect) {
+		folderFilter.setBounds(rect);
+	}
+	public void setBounds(int x, int y, int width, int height) {
+		folderFilter.setBounds(x, y, width, height);
+	}
+	public void setVisible(boolean bol) {
+		folderFilter.setVisible(bol);
+	}
 }
