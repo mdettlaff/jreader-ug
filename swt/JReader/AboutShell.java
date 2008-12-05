@@ -20,7 +20,7 @@ public class AboutShell {
 	
 	public AboutShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\big\\jreader.png");
-		aboutShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		aboutShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL |SWT.TOOL);
 		aboutShell.setText("About JReader programm");
 		//aboutShell.setSize(200, 200);
 		aboutShell.setImage(jreader);

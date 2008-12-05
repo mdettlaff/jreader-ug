@@ -24,7 +24,7 @@ public class OptionsShell {
 	
 	public OptionsShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\options.png");
-		optionsShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		optionsShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL );
 		optionsShell.setText("Preferences");
 		optionsShell.setLayout(new GridLayout(1, false));
 		optionsShell.setImage(jreader);
