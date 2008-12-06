@@ -8,7 +8,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -50,6 +52,23 @@ public class AddSubscryptionShell {
 	    Button caB = new Button(addShell, SWT.PUSH);
 	    caB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 	    caB.setText("Cancel");
+	    
+	    /*
+	     * Listeners
+	     */
+	    
+	    //OK button
+	    okB.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+            	JReader.statusLine.setText("");
+                }
+        });
+	    caB.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+            	JReader.statusLine.setText("");
+            	addShell.dispose();
+                }
+        });
 	    
 	    
 	    addShell.pack();

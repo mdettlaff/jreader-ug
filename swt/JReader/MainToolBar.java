@@ -93,6 +93,7 @@ public class MainToolBar {
         //Add Subscryption
         addSubToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
+            	JReader.statusLine.setText("Adding Subscryption");
             	AddSubscryptionShell addShell = new AddSubscryptionShell(shell);
 		   		addShell.open();
                 }
@@ -139,7 +140,21 @@ public class MainToolBar {
 		   		optionsShell.open();
             }
         });   
+        //Listener do wskaznika myszy - zmienia status line
         
+        toolBar.addMouseMoveListener(new MouseMoveListener() {
+            public void mouseMove(MouseEvent e) {
+              ToolItem item = toolBar.getItem(new Point(e.x, e.y));
+              String name = "";
+              if (item != null && item.getStyle() != SWT.SEPARATOR) {
+                name = item.getToolTipText();
+              }
+              if (!JReader.statusText.equals(name)) {
+                JReader.statusLine.setText(name);
+                JReader.statusText = name;
+              }
+            }
+          });
         
         toolBar.pack();
         

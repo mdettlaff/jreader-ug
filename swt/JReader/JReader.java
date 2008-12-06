@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Shell;
 public class JReader {
 
 	public static final Display display = new Display ();
-	//static String statusText = "";
-	static Label statusLine;
+	public static String statusText = "Status Line";
+	public static Label statusLine;
 	
 	public static void main(String[] args) {
 		
@@ -28,7 +28,7 @@ public class JReader {
 	//	Shell properites
 		
 		final Shell shell = new Shell (display);
-		shell.setMinimumSize(600, 400);
+		//shell.setMinimumSize(400,300);
 		shell.setSize (800, 600);
 		shell.setText("JReader 0.0.5");
 		shell.setImage(jreader);
@@ -59,10 +59,11 @@ public class JReader {
 		new MainSash(shell);
 		
 	//	status Line
-		statusLine = new Label(shell, SWT.BORDER);
+		statusLine = new Label(shell, SWT.NONE);
 		statusLine.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		statusLine.setText("StatusLine");
+		statusLine.setText(statusText);
 				
+		
 		
 		
 		//shell.pack();
