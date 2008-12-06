@@ -2,8 +2,6 @@ package swt.JReader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -15,17 +13,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
-public class Filters {
+public class Tags {
+	private CTabFolder folderTag;
 
-	private CTabFolder folderFilter;
-
-	public Filters(final Composite shell) {
+	public Tags(final Composite shell) {
 		
 		Display display = shell.getDisplay();
-		final Image rssTab = new Image(display, "c:\\icons\\filters\\rss-tab.png");
+		final Image rssTab = new Image(display, "c:\\icons\\tags\\tagTab.png");
 		
-		folderFilter = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
-		folderFilter.setSimple(false);
+		folderTag = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
+		folderTag.setSimple(false);
 		
 		  
 		Device device = Display.getCurrent ();
@@ -33,14 +30,14 @@ public class Filters {
 		Color middle = new Color (device, 190, 190, 213);
 		  
 		//wlasciwy Ctab 
-		final CTabItem item = new CTabItem(folderFilter, SWT.NONE);
-		item.setText("Filters");
+		final CTabItem item = new CTabItem(folderTag, SWT.NONE);
+		item.setText("Tags");
 		item.setImage(rssTab);
-		Text text = new Text(folderFilter, SWT.MULTI );
+		Text text = new Text(folderTag, SWT.MULTI );
 		text.setText("Text for item ");
 		item.setControl(text);
-		folderFilter.setSelection(item);
-		folderFilter.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
+		folderTag.setSelection(item);
+		folderTag.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
 				new int[] {20, 40, 100}, true);
 
 		  
@@ -48,19 +45,22 @@ public class Filters {
 		
 		text.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "Choose the type of messages filter.";
+              JReader.statusText = "Choose a tag to filtrate.";
               JReader.statusLine.setText(JReader.statusText);
             }
           });
 	}
 	
 	public void setBounds(Rectangle rect) {
-		folderFilter.setBounds(rect);
+		folderTag.setBounds(rect);
 	}
 	public void setBounds(int x, int y, int width, int height) {
-		folderFilter.setBounds(x, y, width, height);
+		folderTag.setBounds(x, y, width, height);
 	}
 	public void setVisible(boolean bol) {
-		folderFilter.setVisible(bol);
+		folderTag.setVisible(bol);
+	}
+	public Rectangle getBounds() {
+		return folderTag.getBounds();
 	}
 }

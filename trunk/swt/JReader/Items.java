@@ -5,6 +5,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -66,6 +68,12 @@ public class Items {
 				shell.layout(true);
 			}
 	   	});
+		text.addMouseMoveListener(new MouseMoveListener() {
+            public void mouseMove(MouseEvent e) {
+              JReader.statusText = "Select the topic you want to read.";
+              JReader.statusLine.setText(JReader.statusText);
+            }
+          });
 		
 	}
 	
