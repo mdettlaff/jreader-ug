@@ -16,18 +16,33 @@ public class Config implements Serializable {
 	/**
 	 * Sciezka do katalogu konfiguracyjnego
 	 */
-	private static File configDir = new File(System.getProperty("user.home") + File.separator + ".jreader");
+	private static File configDir = null;
 	/**
 	 * Sciezka do pliku zawierajacego ustawienia programu
 	 */
-	private static File configFile = new File(Config.configDir.getPath() + File.separator + "config");
+	private static File configFile = null;
 	/**
 	 * Obiekt zawierajacy ustawienia programu
 	 */
 	private static ConfigData cd = null;
 	
 	Config() { 
-		Config.configDir.mkdirs();
+		if(Config.configDir == null) {
+			String osName = System.getProperty("os.name");
+			if(osName.equalsIgnoreCase("Linux"))
+				Config.configDir = new File(System.getProperty("user.home") + File.separator + ".jreader");
+			else if(osName.equalsIgnoreCase("Windows Xp") || osName.equalsIgnoreCase("Windows Vista") ||
+					osName.equalsIgnoreCase("Windows 2000") || osName.equalsIgnoreCase("Windows NT"))
+				Config.configDir = new File(System.getProperty("user.home") + File.separator + "JReader");
+			else if(osName.equalsIgnoreCase("Windows 95") || osName.equalsIgnoreCase("Windows 98"))
+				Config.configDir = new File("Config");
+			else
+				Config.configDir = new File("Config");
+			Config.configDir.mkdirs();
+		}
+		if(Config.configFile == null) {
+			Config.configFile = new File(Config.configDir.getPath() + File.separator + "config");
+		}
 		if(Config.cd == null) {
 			if(!read()) {
 				Config.cd = new ConfigData();
