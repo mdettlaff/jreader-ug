@@ -34,7 +34,7 @@ public class MainToolBar {
         final Image backIcon = new Image(display, "c:\\icons\\medium\\back.png");
         final Image forwardIcon = new Image(display, "c:\\icons\\medium\\forward.png");
         final Image searchIcon = new Image(display, "c:\\icons\\medium\\search.png");
-        final Image optionsIcon = new Image(display, "c:\\icons\\medium\\options.png");
+        final Image optionsIcon = new Image(display, "c:\\icons\\medium\\options2.png");
         final Image unreadIcon = new Image(display, "c:\\icons\\medium\\unread.png");
         
       //Synchronizuj
@@ -94,7 +94,7 @@ public class MainToolBar {
         addSubToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
             	JReader.statusLine.setText("Adding Subscryption");
-            	AddSubscryptionShell addShell = new AddSubscryptionShell(shell);
+            	AddSubscriptionShell addShell = new AddSubscriptionShell(shell);
 		   		addShell.open();
                 }
         });

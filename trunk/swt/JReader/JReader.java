@@ -20,21 +20,22 @@ public class JReader {
 	public static final Display display = new Display ();
 	public static String statusText = "Status Line";
 	public static Label statusLine;
+	public static String version = "JReader v. 0.0.8";
+	public static boolean issimple = false;
+	public static Shell shell;
+	
 	
 	public static void main(String[] args) {
-		
 		final Image jreader = new Image(display, "c:\\icons\\small\\jreader.png");
 		
-	//	Shell properites
-		
-		final Shell shell = new Shell (display);
+	//	Shell properites	
+		shell = new Shell (display);
 		//shell.setMinimumSize(400,300);
 		shell.setSize (800, 600);
-		shell.setText("JReader 0.0.5");
+		shell.setText(version);
 		shell.setImage(jreader);
 		shell.setLayout(new GridLayout());
-		
-		//Wysrodkowanie shella
+		/* Wysrodkowanie shella */
 		Monitor primary = display.getPrimaryMonitor();
 	    Rectangle bounds = primary.getBounds();
 	    Rectangle rect = shell.getBounds();
@@ -42,30 +43,20 @@ public class JReader {
 	    int y = bounds.y + (bounds.height - rect.height) / 2;
 	    shell.setLocation(x, y);
 		
-		
 	//	MenuBar
 		new MenuBar(shell);
 		
-	//	SWT CoolBar
+	//	SWT ToolBar
 		new MainToolBar(shell);
-		
-	//	Filters - tab		
-		//new Filters(shell, display);
-	//	Items - tab
-		//new Items(shell, display);
-	//	Preview - tab
-		//new Preview(shell);
-		
+	
+	//	SASH
 		new MainSash(shell);
 		
 	//	status Line
 		statusLine = new Label(shell, SWT.NONE);
 		statusLine.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		statusLine.setText(statusText);
-				
-		
-		
-		
+
 		//shell.pack();
 		shell.open ();
 		while (!shell.isDisposed()) {

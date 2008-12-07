@@ -116,7 +116,7 @@ public class MainCoolBar {
         //Add Subscryption
         addSubToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	AddSubscryptionShell addShell = new AddSubscryptionShell(shell);
+            	AddSubscriptionShell addShell = new AddSubscriptionShell(shell);
 		   		addShell.open();
                 }
         });

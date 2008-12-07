@@ -14,17 +14,16 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 public class Tags {
-	private CTabFolder folderTag;
+	public static CTabFolder folderTag;
 
 	public Tags(final Composite shell) {
 		
 		Display display = shell.getDisplay();
-		final Image rssTab = new Image(display, "c:\\icons\\tags\\tagTab.png");
+		final Image rssTab = new Image(display, "c:\\icons\\tags\\tagTab2.png");
 		
 		folderTag = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
-		folderTag.setSimple(false);
-		
-		  
+		folderTag.setSimple(JReader.issimple);
+				  
 		Device device = Display.getCurrent ();
 		Color bottom = new Color (device, 156, 156, 213);
 		Color middle = new Color (device, 190, 190, 213);

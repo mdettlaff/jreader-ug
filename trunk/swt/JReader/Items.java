@@ -17,15 +17,15 @@ import org.eclipse.swt.widgets.Text;
 
 public class Items {
 
-	private CTabFolder folderItem;
+	public static CTabFolder folderItem;
 	
 	public Items(final Composite shell) {
 		
 		Display display = shell.getDisplay();
-		final Image itemsTab = new Image(display, "c:\\icons\\items\\itemsTab.png");
+		final Image itemsTab = new Image(display, "c:\\icons\\items\\itemsTab2.png");
 			
 		folderItem = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
-		folderItem.setSimple(false);
+		folderItem.setSimple(JReader.issimple);
 				
 		Device device = Display.getCurrent ();
 		Color bottom = new Color (device, 156, 156, 213);
@@ -35,10 +35,17 @@ public class Items {
 		final CTabItem item = new CTabItem(folderItem, SWT.NONE);
 		item.setText("Items");
 		item.setImage(itemsTab);
-		Text text = new Text(folderItem, SWT.MULTI );
-		text.setText("Text for item lsjklf\nklsdj\nklsdjflkjsdlfj\n");
-		item.setControl(text);
+
 		
+		/*
+		 * Zawartosc ctaba
+		 */
+		//Text text = new Text(folderItem, SWT.MULTI );
+		//text.setText("Text for item lsjklf\nklsdj\nklsdjflkjsdlfj\n");
+		//item.setControl(text);
+		/*
+		 * koniec zawartosci ctaba
+		 */
 		folderItem.setSelection(item);
 		folderItem.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
 				new int[] {20, 40, 100}, true);
@@ -68,7 +75,7 @@ public class Items {
 				shell.layout(true);
 			}
 	   	});
-		text.addMouseMoveListener(new MouseMoveListener() {
+		folderItem.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               JReader.statusText = "Select the topic you want to read.";
               JReader.statusLine.setText(JReader.statusText);
