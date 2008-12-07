@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class AddSubscryptionShell {
+public class AddSubscriptionShell {
 
 	private static Shell addShell;
 	
-	public AddSubscryptionShell(Shell shell) {
+	public AddSubscriptionShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\add.png");
 		addShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		addShell.setText("Add a subscryption");

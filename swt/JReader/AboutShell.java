@@ -19,10 +19,10 @@ public class AboutShell {
 	private static Shell aboutShell;
 	
 	public AboutShell(Shell shell) {
-		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\big\\jreader.png");
+		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\big\\jreader2.png");
 		aboutShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL |SWT.TOOL);
 		aboutShell.setText("About JReader programm");
-		//aboutShell.setSize(200, 200);
+
 		aboutShell.setImage(jreader);
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.pack = true;
@@ -44,7 +44,7 @@ public class AboutShell {
 	    Label pic = new Label(aboutShell, SWT.NONE);
 	    pic.setImage(jreader);
 	    Label version = new Label(aboutShell, SWT.NONE);
-	    version.setText("JReader v. 0.0.5");
+	    version.setText(JReader.version);
 	    new Label(aboutShell, SWT.NONE).setText("© All rights reserved.");
 	    new Label(aboutShell, SWT.NONE).setText("2008.");
 	    Button okButton = new Button(aboutShell, SWT.PUSH);

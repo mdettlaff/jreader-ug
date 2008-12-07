@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class Preview {
 
-	CTabFolder folderPreview;
+	public static CTabFolder folderPreview;
 	private Rectangle bounds;
 	private Rectangle tmpBounds = new Rectangle(0, 0, 0, 0);
 	
@@ -29,9 +29,7 @@ public class Preview {
 		final Image itemsTab = new Image(shell.getDisplay(), "c:\\icons\\preview\\previewTab.png");
 		
 		folderPreview = new CTabFolder(shell, SWT.BORDER | SWT.MULTI );
-		
-		folderPreview.setSimple(false);
-		//folderPreview.setMinimizeVisible(true);
+		folderPreview.setSimple(JReader.issimple);
 		folderPreview.setMaximizeVisible(true);
 		  
 		Device device = Display.getCurrent ();

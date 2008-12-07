@@ -56,6 +56,10 @@ public class MenuBar {
         maxMenuItem.setText("Ma&ximize");
         final MenuItem minMenuItem = new MenuItem(windowmenu, SWT.PUSH);
         minMenuItem.setText("Mi&nimize");
+        final MenuItem simpleView = new MenuItem(windowmenu, SWT.CHECK);
+        simpleView.setText("Simple windows");
+        simpleView.setSelection(false);
+        
         
      // Help Menu
         final MenuItem help = new MenuItem(menu, SWT.CASCADE);
@@ -155,6 +159,17 @@ public class MenuBar {
             public void widgetDefaultSelected(SelectionEvent e) {                
             }
         });
+        simpleView.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+            	Items.folderItem.setSimple(simpleView.getSelection());
+            	Filters.folderFilter.setSimple(simpleView.getSelection());
+            	Preview.folderPreview.setSimple(simpleView.getSelection());
+            	Subscriptions.folderSubs.setSimple(simpleView.getSelection());
+            	Tags.folderTag.setSimple(simpleView.getSelection());
+            }
+            public void widgetDefaultSelected(SelectionEvent e) { 
+            }
+        });
         
         //Help Menu Listeners
         helpMenuItem.addSelectionListener(new SelectionListener() {
@@ -167,7 +182,6 @@ public class MenuBar {
         
         aboutMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                System.out.println("JReader v. 0.0.5 \nAll rights reserved 2008.");
                 AboutShell s = new AboutShell(shell);
                 s.open();
           }
@@ -176,5 +190,6 @@ public class MenuBar {
             });      
         
         shell.setMenuBar(menu);
+        
 	}
 }

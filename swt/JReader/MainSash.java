@@ -19,14 +19,16 @@ public class MainSash {
 	Composite sashComp;
 	Sash vSash;
 	Sash hSash;
-	int SASH_LIMIT = 25;
+	Sash smallSash;
+	int SASH_LIMIT = 27;	//ogranicza z gory i z dolu
 	int SASH_WIDTH = 3;
-	int folderFilterHeight = 100;
+	int SMALL_SASH_LIMIT = 108; //ogranicza z gory
+	int folderFilterHeight = 80;
 	int folderItemHeight = 200;
 	static Filters folderFilter;
 	static Items folderItem;
 	static Preview folderPreview;
-	static Subscryptions folderSubs;
+	static Subscriptions folderSubs;
 	static Tags folderTag;
 	
 	public MainSash(Composite shell) {
@@ -38,12 +40,13 @@ public class MainSash {
 		folderFilter = new Filters(sashComp); 
 		folderItem = new Items(sashComp);
 		folderPreview = new Preview(sashComp);
-		folderSubs = new Subscryptions(sashComp);
+		folderSubs = new Subscriptions(sashComp);
 		folderTag = new Tags(sashComp);
 		
 		/* Dwie sashes */
 		vSash = new Sash (sashComp, SWT.VERTICAL | SWT.SMOOTH);
 		hSash = new Sash (sashComp, SWT.HORIZONTAL | SWT.SMOOTH);
+		smallSash = new Sash(sashComp, SWT.HORIZONTAL | SWT.SMOOTH);
 		
 		/* listeners */
 		hSash.addSelectionListener (new SelectionAdapter () {
@@ -59,9 +62,20 @@ public class MainSash {
 		vSash.addSelectionListener (new SelectionAdapter () {
 			public void widgetSelected (SelectionEvent event) {
 				Rectangle rect = vSash.getParent().getClientArea();
-				event.x = Math.min (Math.max (event.x, SASH_LIMIT), rect.width - SASH_LIMIT);
+				//math.max ((event.x, OGRANICZENIE_Z_LEWEJ), rect.width - OGRANICZENIE_Z_PRAWEJ)
+				event.x = Math.min (Math.max (event.x, SMALL_SASH_LIMIT), rect.width - SMALL_SASH_LIMIT);
 				if (event.detail != SWT.DRAG) {
 					vSash.setBounds (event.x, event.y, event.width, event.height);
+					layout ();
+				}
+			}
+		});
+		smallSash.addSelectionListener (new SelectionAdapter () {
+			public void widgetSelected (SelectionEvent event) {
+				Rectangle rect = vSash.getParent().getClientArea();
+				event.y = Math.min (Math.max (event.y, SMALL_SASH_LIMIT), rect.height - SASH_LIMIT);
+				if (event.detail != SWT.DRAG) {
+					smallSash.setBounds (event.x, event.y, event.width, event.height);
 					layout ();
 				}
 			}
@@ -83,22 +97,28 @@ public class MainSash {
 		
 
 	void layout () {
+		/*
+		 * Tu sie dzieje taka masakra ze nawet nie chce mi sie tego komentowac...
+		 * Jak masz odwage to sam to rozkmin.
+		 */
 		
 		Rectangle clientArea = sashComp.getClientArea ();
 		Rectangle hSashBounds = hSash.getBounds ();
 		Rectangle vSashBounds = vSash.getBounds ();
-		Rectangle subBounds;
+		Rectangle smallSashBounds = smallSash.getBounds();
 		
 		folderFilter.setBounds (0, 0, vSashBounds.x, folderFilterHeight);
 		folderItem.setBounds (vSashBounds.x + vSashBounds.width, 0, clientArea.width - (vSashBounds.x + vSashBounds.width), hSashBounds.y);
 		folderPreview.setBounds (vSashBounds.x + vSashBounds.width, hSashBounds.y + hSashBounds.height, clientArea.width - (vSashBounds.x + vSashBounds.width), clientArea.height - (hSashBounds.y + hSashBounds.height));
-		folderSubs.setBounds (0, folderFilterHeight + SASH_WIDTH, vSashBounds.x, ((clientArea.height - folderFilterHeight) /5) *3  );
-		subBounds = folderSubs.getBounds();
-		folderTag.setBounds(0, subBounds.height + folderFilterHeight + 2*SASH_WIDTH, vSashBounds.x, clientArea.height - folderFilterHeight - subBounds.height - 2*SASH_WIDTH);
+		folderSubs.setBounds (0, folderFilterHeight + SASH_WIDTH, vSashBounds.x, smallSashBounds.y - folderFilterHeight - smallSashBounds.height);
+		folderTag.setBounds(0, smallSashBounds.y + smallSashBounds.height, vSashBounds.x, clientArea.height - smallSashBounds.y - smallSashBounds.height);
 		
 		hSashBounds.width = clientArea.width - vSashBounds.x;
 		hSashBounds.x = vSashBounds.x;
-		hSash.setBounds (hSashBounds);
+		smallSashBounds.width = vSashBounds.x;
+		
+		hSash.setBounds(hSashBounds);
+		smallSash.setBounds(smallSashBounds);
 	}
 	
 	void resized () {
@@ -112,33 +132,28 @@ public class MainSash {
 		*/
 		Rectangle list1Bounds = new Rectangle (0, 0, (clientArea.width - SASH_WIDTH) / 5, folderFilterHeight);
 		folderFilter.setBounds (list1Bounds);
-	
 		/*
 		* Tworzy tab Items gora z prawej.
 		*/
 		folderItem.setBounds (list1Bounds.width + SASH_WIDTH, 0, clientArea.width - (list1Bounds.width + SASH_WIDTH), folderItemHeight);
-	
 		/*
 		* Tworzy tab Preview tak samo jak items tyle ze na dole
 		*/
 		folderPreview.setBounds (list1Bounds.width + SASH_WIDTH, folderItemHeight + SASH_WIDTH, clientArea.width - (list1Bounds.width + SASH_WIDTH), clientArea.height - (folderItemHeight + SASH_WIDTH));
-		
 		/*
 		 * Tworzy tab Subscryptions z lewej
 		 */
 		folderSubs.setBounds(0, folderFilterHeight + SASH_WIDTH, (clientArea.width - SASH_WIDTH) / 5, ((clientArea.height - folderFilterHeight) /5) *3 );
 		list1Bounds = folderSubs.getBounds();
-
 		/*
 		 * Tworzy tab Tags z lewej w dolnym rogu
 		 */
 		folderTag.setBounds(0, list1Bounds.height + folderFilterHeight + 2*SASH_WIDTH, (clientArea.width - SASH_WIDTH) / 5, clientArea.height - folderFilterHeight - list1Bounds.height - 2*SASH_WIDTH);
 		
-		
-		
 		/* Pozycjonowanie sashes */
 		vSash.setBounds (list1Bounds.width, 0, SASH_WIDTH, clientArea.height);
 		hSash.setBounds (list1Bounds.width, folderItemHeight, clientArea.width - list1Bounds.width, SASH_WIDTH);
+		smallSash.setBounds(0, list1Bounds.height + folderFilterHeight + SASH_WIDTH, (clientArea.width - SASH_WIDTH) / 5, SASH_WIDTH);
 	}
 	
 	
