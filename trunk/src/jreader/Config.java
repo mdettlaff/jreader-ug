@@ -22,6 +22,10 @@ public class Config implements Serializable {
 	 */
 	private static File configFile = null;
 	/**
+	 * Sciezka do pliku zawierajacego dane programu
+	 */
+	private static File configCache = null;
+	/**
 	 * Obiekt zawierajacy ustawienia programu
 	 */
 	private static ConfigData cd = null;
@@ -43,6 +47,9 @@ public class Config implements Serializable {
 		if(Config.configFile == null) {
 			Config.configFile = new File(Config.configDir.getPath() + File.separator + "config");
 		}
+		if(Config.configCache == null) {
+			Config.configCache = new File(Config.configDir.getPath() + File.separator + "cache");
+		}
 		if(Config.cd == null) {
 			if(!read()) {
 				Config.cd = new ConfigData();
@@ -52,17 +59,21 @@ public class Config implements Serializable {
 	}
 	/**
 	 * metoda zwraca sciezke do katalogu konfiguracyjnego
-	 * @return sciezka do katalogu typu String lub pusty String, gdy sciezki nie zdefiniowano
+	 * @return sciezka do katalogu typu File, null gdy sciezka jest niezdefiniowana
 	 */
-	public String getConfDir() {
-		return Config.configDir.getPath();
+	public File getConfigDir() {
+		return Config.configDir;
 	}
 	/**
 	 * metoda zwraca sciezke do pliku z ustawienia programu
-	 * @return sciezka do pliku typu String lub pusty String, gdy sciezka nie jest zdefiniowana
+	 * @return sciezka do pliku typu File, null gdy sciezka jest niezdefiniowana
 	 */
-	public String getConfFile() {
-		return Config.configFile.getPath();
+	public File getConfigFile() {
+		return Config.configFile;
+	}
+	
+	public File getConfigCache() {
+		return Config.configCache;
 	}
 
 	public boolean getSortByNewest() {
