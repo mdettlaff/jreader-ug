@@ -84,14 +84,14 @@ public class Preview {
 				shell.layout(true);
 			}
 	   	});
-		/* zmienia treœæ Status Line */
+		/* zmienia treÅ›Ä‡ Status Line */
 		text.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               JReader.statusText = "Message preview.";
               JReader.statusLine.setText(JReader.statusText);
             }
           });
-		/* Podwójne klikniê maksymalizuje lub przywraca rozmiar okna */
+		/* PodwÃ³jne klikniÄ™cie maksymalizuje lub przywraca rozmiar okna */
 		folderPreview.addMouseListener(new MouseListener() {
 			public void mouseDoubleClick(MouseEvent me) {
 				if (folderPreview.getMaximized()) {

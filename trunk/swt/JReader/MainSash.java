@@ -12,7 +12,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Sash;
 /**
- * G³ówny kompozyt zawieraj¹cy Previwe, Items, Filters, Tags.
+ * GÅ‚Ã³wny kompozyt zawierajÄ…cy Previwe, Items, Filters, Tags.
  *  
  * @author Karol
  *
@@ -130,7 +130,7 @@ public class MainSash {
 		
 		/*
 		* Tworzy bounds dla tabu 'filters'. Umieszcza go po lewej stronie.
-		* Wysokoœæ z góry ustalona.
+		* Wysokoï¿½ï¿½ z gï¿½ry ustalona.
 		* (x, y, width, height)
 		*/
 		Rectangle list1Bounds = new Rectangle (0, 0, (clientArea.width - SASH_WIDTH) / 5, folderFilterHeight);
