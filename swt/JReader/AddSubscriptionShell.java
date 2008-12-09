@@ -5,9 +5,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -22,7 +20,7 @@ public class AddSubscriptionShell {
 	public AddSubscriptionShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\add.png");
 		addShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		addShell.setText("Add a subscryption");
+		addShell.setText("Add a subscription");
 		//aboutShell.setSize(200, 150);
 		addShell.setImage(jreader);
 		addShell.setLayout(new GridLayout(2, true));

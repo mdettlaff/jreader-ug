@@ -5,10 +5,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -16,7 +14,6 @@ import org.eclipse.swt.widgets.ToolItem;
 
 public class MainToolBar {
 	
-	//static String statusText = "";
 	final ToolBar toolBar;
 
 	public MainToolBar(final Shell shell) {
@@ -25,7 +22,6 @@ public class MainToolBar {
 		
 	//	MainToolBar	
 		toolBar = new ToolBar(shell, SWT.FLAT | SWT.WRAP);
-		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
 		
 	//	Opcjonalne ikony do przyciskow na ToolBar
 		
@@ -37,14 +33,17 @@ public class MainToolBar {
         final Image optionsIcon = new Image(display, "c:\\icons\\medium\\options2.png");
         final Image unreadIcon = new Image(display, "c:\\icons\\medium\\unread.png");
         
+      //Separator0
+        new ToolItem(toolBar, SWT.SEPARATOR);
+        
       //Synchronizuj
-        final ToolItem syncToolItem = new ToolItem(toolBar, SWT.FLAT);
+        final ToolItem syncToolItem = new ToolItem(toolBar, SWT.PUSH);
         syncToolItem.setImage(syncIcon);
         //syncToolItem.setText("Synch");
         syncToolItem.setToolTipText("Synchronize");
         
       //Dodaj subskrypcje 
-        final ToolItem addSubToolItem = new ToolItem(toolBar, SWT.FLAT);
+        final ToolItem addSubToolItem = new ToolItem(toolBar, SWT.PUSH);
         addSubToolItem.setImage(addIcon);
         //addSubToolItem.setText("Add");
         addSubToolItem.setToolTipText("Add Subscription");
@@ -84,9 +83,6 @@ public class MainToolBar {
         optionsToolItem.setImage(optionsIcon);
         //optionsToolItem.setText("Options");
         optionsToolItem.setToolTipText("Preferences");
-        
-        
-        //final Label statusLine = new Label(shell, SWT.NONE);
         
     //	TollBar listeners (do wypelnienia pozniej)
         

@@ -3,7 +3,6 @@ package swt.JReader;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
@@ -125,8 +124,6 @@ public class Preview {
 					MainSash.folderTag.setVisible(false);
 				}
 			}
-
-			@Override
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
 				
