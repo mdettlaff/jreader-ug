@@ -7,13 +7,16 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.ToolItem;
-
+/**
+ * G³ówny kompozyt zawieraj¹cy Previwe, Items, Filters, Tags.
+ *  
+ * @author Karol
+ *
+ */
 public class MainSash {
 
 	Composite sashComp;
@@ -43,7 +46,7 @@ public class MainSash {
 		folderSubs = new Subscriptions(sashComp);
 		folderTag = new Tags(sashComp);
 		
-		/* Dwie sashes */
+		/* Trzy sashes */
 		vSash = new Sash (sashComp, SWT.VERTICAL | SWT.SMOOTH);
 		hSash = new Sash (sashComp, SWT.HORIZONTAL | SWT.SMOOTH);
 		smallSash = new Sash(sashComp, SWT.HORIZONTAL | SWT.SMOOTH);

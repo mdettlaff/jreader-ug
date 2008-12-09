@@ -8,7 +8,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
+/**
+ * Tworzy menu programu z elementami: File, Edit, Window, Help
+ */
 public class MenuBar {
 
 	Text textWidget;

@@ -26,7 +26,7 @@ public class JReader {
 	
 	
 	public static void main(String[] args) {
-		final Image jreader = new Image(display, "c:\\icons\\small\\jreader.png");
+		final Image jreader = new Image(display, "c:\\icons\\small\\jreader2.png");
 		
 	//	Shell properites	
 		shell = new Shell (display);
