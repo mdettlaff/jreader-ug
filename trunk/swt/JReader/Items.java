@@ -11,12 +11,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class Items {
 
 	public static CTabFolder folderItem;
+	ItemsTable itemsTable;
 	
 	public Items(final Composite shell) {
 		
@@ -24,6 +26,7 @@ public class Items {
 		final Image itemsTab = new Image(display, "c:\\icons\\items\\itemsTab2.png");
 			
 		folderItem = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
+		folderItem.setLayout(new FillLayout());
 		folderItem.setSimple(JReader.issimple);
 				
 		Device device = Display.getCurrent ();
@@ -39,9 +42,13 @@ public class Items {
 		/*
 		 * Zawartosc ctaba
 		 */
-		//Text text = new Text(folderItem, SWT.MULTI );
-		//text.setText("Text for item lsjklf\nklsdj\nklsdjflkjsdlfj\n");
-		//item.setControl(text);
+		Composite tableComposite = new Composite(folderItem, SWT.NONE);
+		tableComposite.setLayoutData(new FillLayout());
+		tableComposite.setLayout(new FillLayout(SWT.VERTICAL));
+		
+		itemsTable = new ItemsTable(tableComposite);
+		
+		item.setControl(tableComposite);
 		/*
 		 * koniec zawartosci ctaba
 		 */
