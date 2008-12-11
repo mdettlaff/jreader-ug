@@ -144,7 +144,7 @@ public class MainSash {
 		/*
 		 * Tworzy tab Subscryptions z lewej
 		 */
-		folderSubs.setBounds(0, folderFilterHeight + SASH_WIDTH, (clientArea.width - SASH_WIDTH) / 5, ((clientArea.height - folderFilterHeight) /5) *3 );
+		folderSubs.setBounds(0, folderFilterHeight + SASH_WIDTH, (clientArea.width - SASH_WIDTH) / 5, ((clientArea.height - folderFilterHeight) /3) *2 );
 		list1Bounds = folderSubs.getBounds();
 		/*
 		 * Tworzy tab Tags z lewej w dolnym rogu

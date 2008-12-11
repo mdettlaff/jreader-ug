@@ -20,7 +20,7 @@ public class JReader {
 	public static final Display display = new Display ();
 	public static String statusText = "Status Line";
 	public static Label statusLine;
-	public static String version = "JReader v. 0.60";
+	public static String version = "JReader v. 0.64";
 	public static boolean issimple = false;
 	public static Shell shell;
 	

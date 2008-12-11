@@ -128,8 +128,7 @@ public class Preview {
 				// TODO Auto-generated method stub
 				
 			}
-
-			@Override
+			
 			public void mouseUp(MouseEvent e) {
 				// TODO Auto-generated method stub
 				
