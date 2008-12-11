@@ -97,8 +97,6 @@ public class MainSash {
           });
 	}
 		
-		
-
 	void layout () {
 		/*
 		 * Tu sie dzieje taka masakra ze nawet nie chce mi sie tego komentowac...

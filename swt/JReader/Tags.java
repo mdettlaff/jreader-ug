@@ -9,12 +9,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 public class Tags {
 	public static CTabFolder folderTag;
+	TagList tagList;
 
 	public Tags(final Composite shell) {
 		
@@ -22,6 +24,7 @@ public class Tags {
 		final Image rssTab = new Image(display, "c:\\icons\\tags\\tagTab2.png");
 		
 		folderTag = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
+		folderTag.setLayout(new FillLayout());
 		folderTag.setSimple(JReader.issimple);
 				  
 		Device device = Display.getCurrent ();
@@ -32,9 +35,25 @@ public class Tags {
 		final CTabItem item = new CTabItem(folderTag, SWT.NONE);
 		item.setText("Tags");
 		item.setImage(rssTab);
-		Text text = new Text(folderTag, SWT.MULTI );
-		text.setText("Text for item ");
-		item.setControl(text);
+		
+		/*
+		 * tresc ctaba
+		 */
+		Composite tagComposite = new Composite(folderTag, SWT.NONE);
+		tagComposite.setLayoutData(new FillLayout());
+		tagComposite.setLayout(new FillLayout(SWT.VERTICAL));
+		
+		tagList = new TagList(tagComposite);
+		
+	
+		item.setControl(tagComposite);
+		
+		/*
+		 * koniec tresci ctaba
+		 */
+		
+		
+		
 		folderTag.setSelection(item);
 		folderTag.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
 				new int[] {20, 40, 100}, true);
@@ -42,7 +61,7 @@ public class Tags {
 		  
 //		LISTENERS
 		
-		text.addMouseMoveListener(new MouseMoveListener() {
+		tagComposite.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               JReader.statusText = "Choose a tag to filtrate.";
               JReader.statusLine.setText(JReader.statusText);

@@ -23,8 +23,7 @@ import org.eclipse.swt.widgets.TreeItem;
 public class Subscriptions {
 	
 	public static CTabFolder folderSubs;
-	final Tree tree;
-	final Menu popupMenu;
+	SubsList lista;
 	
 	public Subscriptions(final Composite shell) {
 		
@@ -50,41 +49,7 @@ public class Subscriptions {
 		subComposite.setLayoutData(new FillLayout());
 		subComposite.setLayout(new FillLayout(SWT.VERTICAL));
 		
-		tree = new Tree(subComposite, SWT.SINGLE);
-		popupMenu = new Menu(JReader.shell, SWT.POP_UP);
-		tree.setMenu(popupMenu);
-		TreeItem tItem = new TreeItem(tree, SWT.NONE);
-		for (int i = 0; i < 3; i++) {
-		      TreeItem iItem = new TreeItem(tree, SWT.NONE);
-		      iItem.setText("Item " + (i + 1));
-		      for (int j = 0; j < 3; j++) {
-		        TreeItem jItem = new TreeItem(iItem, SWT.NONE);
-		        jItem.setText("Sub Item " + (j + 1));
-		        for (int k = 0; k < 3; k++) {
-		          new TreeItem(jItem, SWT.NONE).setText("Sub Sub Item " + (k + 1));
-		        }
-		        jItem.setExpanded(true);
-		      }
-		      iItem.setExpanded(true);
-		}
-		tItem.setText("dsfsdf");
-		
-		popupMenu.addListener(SWT.Show, new Listener() {
-		      public void handleEvent(Event event) {
-		        MenuItem[] menuItems = popupMenu.getItems();
-		        for (int i = 0; i < menuItems.length; i++) {
-		          menuItems[i].dispose();
-		        }
-		        TreeItem[] treeItems = tree.getSelection();
-		        for (int i = 0; i < treeItems.length; i++) {
-		          MenuItem menuItem = new MenuItem(popupMenu, SWT.PUSH);
-		          menuItem.setText(treeItems[i].getText());
-		        }
-		      }
-
-			
-		    });
-		
+		lista = new SubsList(subComposite);
 		
 		item.setControl(subComposite);
 		/*
