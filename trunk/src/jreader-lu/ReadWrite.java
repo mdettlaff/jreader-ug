@@ -7,12 +7,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * Klasa zawiera operacje dyskowe
+ * Zawiera operacje dyskowe takie jak zapisywanie obiektu do pliku oraz wczytanie obieku z pliku
  */
 public class ReadWrite {
 	/**
+	 * Konstruktor nic nie robi
+	 */
+	public ReadWrite() {}
+	/**
 	 * Metoda odczytuje dane z dysku
-	 * @param file - plik z ktorego odczytujemy dane
+	 * @param file plik z ktorego odczytujemy dane
 	 * @return zwraca obiekt danych odczytanych z pliku, null jesli wystapi blad
 	 */
 	public static Object read(File file) {
@@ -35,8 +39,8 @@ public class ReadWrite {
 	}
 	/**
 	 * Metoda zapisuje dane do pliku
-	 * @param file - plik do ktorego zapisujemy dane
-	 * @param object - obiekt danych, ktore chcemy zapisac
+	 * @param file plik do ktorego zapisujemy dane
+	 * @param object obiekt danych, ktore chcemy zapisac
 	 * @return true jesli operacja sie powiedzie, false w przeciwnym wypadku
 	 */
 	public static boolean write(File file, Object object) {

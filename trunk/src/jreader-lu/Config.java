@@ -10,22 +10,24 @@ import java.io.Serializable;
 public class Config implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/**
-	 * Katalog w ktorym sa przechowywane ustawanienia urzytkownika
+	 * Katalog w którym są przechowywane ustawanienia użytkownika
 	 */
 	private static File configDir = null;
 	/**
-	 * Plik zawierajacy ustawienia programu
+	 * Plik zawierający ustawienia programu
 	 */
 	private static File configFile = null;
 	/**
-	 * Katalog w ktorym znajduja sie dane programu
+	 * Katalog w którym znajdują się dane programu
 	 */
 	private static File cacheDir = null;
 	/**
-	 * Obiekt przechowywujacy ustawienia programu
+	 * Obiekt przechowywujący ustawienia programu
 	 */
 	private static ConfigData cd = null;
-	
+	/**
+	 * Konstruktor automatycznie wczytuje ustawienia z pliku lub używa domyślnych ustawień
+	 */
 	Config() { 
 		if(Config.configDir == null) {
 			String osName = System.getProperty("os.name");
@@ -55,40 +57,58 @@ public class Config implements Serializable {
 		}
 	}
 	/**
-	 * metoda zwraca sciezke do katalogu konfiguracyjnego
-	 * @return sciezka do katalogu typu File, null gdy sciezka jest niezdefiniowana
+	 * Metoda zwraca ścieżkę do katalogu konfiguracyjnego
+	 * @return ścieżka do katalogu, null gdy ścieżka jest niezdefiniowana
 	 */
 	public File getConfigDir() {
 		return Config.configDir;
 	}
 	/**
-	 * metoda zwraca sciezke do pliku z ustawienia programu
-	 * @return sciezka do pliku typu File, null gdy sciezka jest niezdefiniowana
+	 * Metoda zwraca ścieżkę do pliku z ustawieniami programu
+	 * @return ścieżka do pliku, null gdy ścieżka jest niezdefiniowana
 	 */
 	public File getConfigFile() {
 		return Config.configFile;
 	}
-	
+	/**
+	 * Metoda zwraca ścieżkę do katalogu w którym są przechowywane dane programu
+	 * @return
+	 */
 	public File getCacheDir() {
 		return Config.cacheDir;
 	}
-
+	/**
+	 * Metoda zwraca informacje czy elementy mają być wyswietlone od najnowszych 
+	 * @return true, gdy elementy mają być wyświetlane od najnowszych, false - odnajstarszych
+	 */
 	public boolean getSortByNewest() {
 		return Config.cd.sortByNewest;
 	}
-	
+	/**
+	 * Metoda zwraca informacje czy kanały podczas uruchomienia programu mają pobrać nowe elementy
+	 * @return true, gdy kanały mają pobrać nowe elementy lub false, gdy nie
+	 */
 	public boolean getUpdateAllOnStartup() {
 		return Config.cd.updateAllOnStartup;
 	}
-	
+	/**
+	 * Metoda zwraca informacje co ile minut kanały mają automatycznie pobierać nowe elementy
+	 * @return ilość minut co ile kanały mają automatycznie pobierać nowe elementy, 0 (zero) - nigdy
+	 */
 	public int getAutoUpdateMinutes() {
 		return Config.cd.autoUpdateMinutes;
 	}
-	
+	/**
+	 * Metoda zwraca informacje po ilu dniach od dodania element zostanie automatycznie usunięty
+	 * @return ilość dni po których element zostanie automatycznie usunięty, 0 (zero) - zaraz po zamknięciu programu
+	 */
 	public int getDeleteOlderThanDays() {
 		return Config.cd.deleteOlderThanDays;
 	}
-	
+	/**
+	 * Metoda zwraca informacje o wielkości historii przeglądanych elementów
+	 * @return wielkość 
+	 */
 	public int getHistorySize() {
 		return Config.cd.historySize;
 	}
@@ -113,53 +133,56 @@ public class Config implements Serializable {
 		Config.cd.historySize = i;
 	}
 	/**
-	 * metoda zapisuje biezace ustawienia programu do pliku 
-	 * @return zwraca true, gdy operacja sie powiedzie lub false w przeciwnym wypadku
+	 * Metoda zapisuje bieżace ustawienia programu do pliku 
+	 * @return zwraca true, gdy operacja się powiedzie lub false w przeciwnym wypadku
 	 */
 	public boolean write() {
 		return ReadWrite.write(Config.configFile, Config.cd);
 	}
 	/**
-	 * metoda wczytuje ustawienia programu z pliku
-	 * @return zwraca true, gdy operacja sie powiedzie lub false w przeciwnym wypadku
+	 * Metoda wczytuje ustawienia programu z pliku
+	 * @return zwraca true, gdy operacja się powiedzie lub false w przeciwnym wypadku
 	 */
 	public boolean read() {
 		Config.cd = (ConfigData) ReadWrite.read(Config.configFile);
 		return Config.cd != null;
 	}
 	/**
-	 * Klasa przechowywujaca ustawienia programu
+	 * Klasą prywatna przechowywująca ustawienia programu
 	 */
 	private class ConfigData implements Serializable {
 		private static final long serialVersionUID = 1L;
 		/**
-		 * Kolejnosc sortowania elementow.
-		 * Czy najnowsze maja byc najpierw; jesli false, to najstarsze najpierw.
+		 * Kolejność sortowania elementów.
+		 * Czy najnowsze mają być najpierw; jeśli false, to najstarsze najpierw.
 		 */
 		public boolean sortByNewest;
 	    /**
-	     * Czy aktualizowac wszystkie kanaly automatycznie przy starcie programu.
+	     * Czy aktualizować wszystkie kanały automatycznie przy starcie programu.
 	     */
 	    public boolean updateAllOnStartup;
 	    /**
-	     * Co ile minut automatycznie aktualizowac wszystkie kanaly.
-	     * Wartosc 0 wylacza ta opcje.
+	     * Co ile minut automatycznie aktualizować wszystkie kanaly.
+	     * Wartość 0 wyłącza tą opcje.
 	     */
 	    public int autoUpdateMinutes;
 	    /**
-	     * Usuwa wiadomosci starsze niz dana ilosc dni.
-	     * Wartosc 0 wylacza ta opcje.
+	     * Usuwa wiadomości starsze niż dana ilość dni.
+	     * Wartość 0 wyłącza tą opcje.
 	     */
 	    public int deleteOlderThanDays;
 	    /**
-	     * Wielkosc historii przegladanych elementow
+	     * Wielkość historii przeglądanych elementów
+	     * Wartość 0 wyłąncza tą opcję
 	     */
 	    public int historySize;
-		
+		/**
+		 * Konstruktor ustawia wartości domyślne dla poszczególnych opcji
+		 */
 		public ConfigData() {
 			super();
 			/**
-			 * Konfiguracja domyślna
+			 * Konfiguracja domyślna programu
 			 */
 			this.sortByNewest = true;
 			this.updateAllOnStartup = false;
