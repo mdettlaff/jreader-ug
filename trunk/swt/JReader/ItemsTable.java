@@ -9,9 +9,11 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -114,6 +116,42 @@ public class ItemsTable {
               item[0].setImage(read);
             }
         });
+		/**
+		 * Podświetla kolorowym gradientem wybrany wiersz tabeli.
+		 */
+		itemsTable.addListener(SWT.EraseItem, new Listener() {
+		      public void handleEvent(Event event) {
+		        if ((event.detail & SWT.SELECTED) != 0) {
+		          GC gc = event.gc;
+		          Rectangle area = itemsTable.getClientArea();
+		          int columnCount = itemsTable.getColumnCount();
+		          if (event.index == columnCount - 1 || columnCount == 0) {
+		            int width = area.x + area.width - event.x;
+		            if (width > 0) {
+		              Region region = new Region();
+		              gc.getClipping(region);
+		              region.add(event.x, event.y, width, event.height);
+		              gc.setClipping(region);
+		              region.dispose();
+		            }
+		          }
+		          gc.setAdvanced(true);
+		          if (gc.getAdvanced())
+		            gc.setAlpha(95);
+		          Rectangle rect = event.getBounds();
+		          Color foreground = gc.getForeground();
+		          Color background = gc.getBackground();
+		          gc.setForeground(comp.getDisplay().getSystemColor(SWT.COLOR_RED));
+		          gc.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		          gc.fillGradientRectangle(0, rect.y, itemsTable.getClientArea().width, rect.height, false);
+		          // przywracanie domyślynch kolorów
+		          gc.setForeground(foreground);
+		          gc.setBackground(background);
+		          event.detail &= ~SWT.SELECTED;
+		        }
+		      }
+		    });
+		
 		
 	}
 	

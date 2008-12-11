@@ -42,7 +42,7 @@ public class AboutShell {
 	    pic.setImage(jreader);
 	    Label version = new Label(aboutShell, SWT.NONE);
 	    version.setText(JReader.version);
-	    new Label(aboutShell, SWT.NONE).setText("© All rights reserved.");
+	    new Label(aboutShell, SWT.NONE).setText("Feel free to use and have fun kids!");
 	    new Label(aboutShell, SWT.NONE).setText("2008.");
 	    Button okButton = new Button(aboutShell, SWT.PUSH);
 	    okButton.setText("&OK");
