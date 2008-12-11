@@ -21,8 +21,8 @@ public class Filters {
 	public static CTabFolder folderFilter;
 	public static Button allButton;
 	public static Button unreadButton;
-	public String allButtonLabel = "All messages ";
-	public String unreadButtonLabel = "Unread messages ";
+	public String allButtonLabel = "All items ";
+	public String unreadButtonLabel = "Unread items ";
 	public int unread = 0;
 	public int msgs = 0;
 
@@ -53,7 +53,6 @@ public class Filters {
 		allButton = new Button(filterComposite, SWT.TOGGLE | SWT.FLAT);
 		allButton.setAlignment(SWT.LEFT);
 		allButton.setText(allButtonLabel + "(" + msgs + ")");
-		allButton.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 		
 		unreadButton = new Button(filterComposite, SWT.TOGGLE | SWT.FLAT);
 		unreadButton.setAlignment(SWT.LEFT);
