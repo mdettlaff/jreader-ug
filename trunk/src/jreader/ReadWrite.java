@@ -7,13 +7,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * Zawiera operacje dyskowe takie jak zapisywanie obiektu do pliku oraz wczytanie obieku z pliku
+ * Zawiera operacje dyskowe takie jak zapisywanie obiektu do pliku
+ * oraz wczytanie obiektu z pliku.
  */
 public class ReadWrite {
 	/**
-	 * Konstruktor nic nie robi
+	 * Nie można tworzyć obiektów tej klasy.
 	 */
-	public ReadWrite() {}
+	private ReadWrite() {}
 	/**
 	 * Metoda odczytuje dane z dysku
 	 * @param file plik z ktorego odczytujemy dane

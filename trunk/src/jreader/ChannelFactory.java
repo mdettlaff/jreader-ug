@@ -75,13 +75,20 @@ public class ChannelFactory extends DefaultHandler {
 		super();
 	}
 
-	public List<Item> getDownloadedItems() {
+	/**
+	 * Udostępnia listę elementów należących do kanału pobranego przy pomocy
+	 * metody getChannelFromSite lub getChannelFromXML.
+	 *
+	 * @return Lista elementów ostatnio pobranego kanału.
+	 */
+	public static List<Item> getDownloadedItems() {
 		return downloadedItems;
 	}
 
 	/**
 	 * Szuka adresu pliku XML z treścią kanału w źródle strony HTML znajdującej
-	 * się pod podanym adresem.
+	 * się pod podanym adresem. Po wywołaniu tej metody należy też pobrać listę
+	 * elementów pobranego kanału przy pomocy metody getDownloadedItems.
 	 *
 	 * @return Nowy kanał o treści ze znalezionego pliku XML.
 	 * @throws LinkNotFoundException jeśli na podanej stronie nie znaleziono
@@ -183,6 +190,8 @@ public class ChannelFactory extends DefaultHandler {
 
 	/**
 	 * Pobiera i parsuje kanał o źródle w podanym adresie URL.
+	 * Po wywołaniu tej metody należy też pobrać listę elementów pobranego kanału
+	 * przy pomocy metody getDownloadedItems.
 	 *
 	 * @return Aktualna postać kanału o podanym adresie URL.
 	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
@@ -203,10 +212,7 @@ public class ChannelFactory extends DefaultHandler {
 
 		xr.parse(new InputSource(url.openStream()));
 
-		for (Item it : downloadedItems) {
-			channel.addItem(it);
-		}
-		channel.updateUnreadItemsCount();
+		channel.setUnreadItemsCount(downloadedItems.size());
 		return channel;
 	}
 
@@ -406,7 +412,8 @@ public class ChannelFactory extends DefaultHandler {
 
 
 	/**
-	 * Tworzy nowy element z danych pobranych podczas parsowania.
+	 * Tworzy nowy element z danych pobranych podczas parsowania i dodaje
+	 * go do kanału.
 	 *
 	 * @return Utworzony element.
 	 */
@@ -448,6 +455,9 @@ public class ChannelFactory extends DefaultHandler {
 		}
 		item.setDate((Date)date.clone());
 		item.markAsUnread();
+
+		// dodajemy identyfikator tego elementu do kanału
+		channel.addItem(item.getId());
 
 		return item;
 	}

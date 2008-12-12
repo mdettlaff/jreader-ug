@@ -71,8 +71,8 @@ public class Config implements Serializable {
 		return Config.configFile;
 	}
 	/**
-	 * Metoda zwraca ścieżkę do katalogu w którym są przechowywane dane programu
-	 * @return
+	 * Zwraca ścieżkę do katalogu w którym są przechowywane dane programu.
+	 * @return Ścieżka do katalogu z danymi programu.
 	 */
 	public File getCacheDir() {
 		return Config.cacheDir;
@@ -105,33 +105,23 @@ public class Config implements Serializable {
 	public int getDeleteOlderThanDays() {
 		return Config.cd.deleteOlderThanDays;
 	}
-	/**
-	 * Metoda zwraca informacje o wielkości historii przeglądanych elementów
-	 * @return wielkość 
-	 */
-	public int getHistorySize() {
-		return Config.cd.historySize;
-	}
-	
+
 	public void setSortByNewest(boolean b) {
 		Config.cd.sortByNewest = b;
 	}
-	
+
 	public void setUpdateAllOnStartup(boolean b) {
 		Config.cd.updateAllOnStartup = b;
 	}
-	
+
 	public void setAutoUpdateMinutes(int m) {
 		Config.cd.autoUpdateMinutes = m;
 	}
-	
+
 	public void setDeleteOlderThanDays(int d) {
 		Config.cd.deleteOlderThanDays = d;
 	}
-	
-	public void setHistorySize(int i) {
-		Config.cd.historySize = i;
-	}
+
 	/**
 	 * Metoda zapisuje bieżace ustawienia programu do pliku 
 	 * @return zwraca true, gdy operacja się powiedzie lub false w przeciwnym wypadku
@@ -157,25 +147,20 @@ public class Config implements Serializable {
 		 * Czy najnowsze mają być najpierw; jeśli false, to najstarsze najpierw.
 		 */
 		public boolean sortByNewest;
-	    /**
-	     * Czy aktualizować wszystkie kanały automatycznie przy starcie programu.
-	     */
-	    public boolean updateAllOnStartup;
-	    /**
-	     * Co ile minut automatycznie aktualizować wszystkie kanaly.
-	     * Wartość 0 wyłącza tą opcje.
-	     */
-	    public int autoUpdateMinutes;
-	    /**
-	     * Usuwa wiadomości starsze niż dana ilość dni.
-	     * Wartość 0 wyłącza tą opcje.
-	     */
-	    public int deleteOlderThanDays;
-	    /**
-	     * Wielkość historii przeglądanych elementów
-	     * Wartość 0 wyłąncza tą opcję
-	     */
-	    public int historySize;
+		/**
+		 * Czy aktualizować wszystkie kanały automatycznie przy starcie programu.
+		 */
+		public boolean updateAllOnStartup;
+		/**
+		 * Co ile minut automatycznie aktualizować wszystkie kanaly.
+		 * Wartość 0 wyłącza tą opcje.
+		 */
+		public int autoUpdateMinutes;
+		/**
+		 * Usuwa wiadomości starsze niż dana ilość dni.
+		 * Wartość 0 wyłącza tą opcje.
+		 */
+		public int deleteOlderThanDays;
 		/**
 		 * Konstruktor ustawia wartości domyślne dla poszczególnych opcji
 		 */
@@ -188,7 +173,6 @@ public class Config implements Serializable {
 			this.updateAllOnStartup = false;
 			this.autoUpdateMinutes = 0;
 			this.deleteOlderThanDays = 10;
-			this.historySize = 10;
 		}
 	}
 }

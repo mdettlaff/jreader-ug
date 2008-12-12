@@ -68,11 +68,11 @@ public class TextUI {
 					System.out.print("help\t\t");
 					System.out.println("quit");
 				} else if (command.equals("show channels")) {
-					if (JReader.getChannels().size() == 0) {
+					if (JReader.getVisibleChannels().size() == 0) {
 						System.out.println("Lista subskrypcji jest pusta.");
 					} else {
 						Channel channel;
-						for (int i=0; i < JReader.getChannels().size(); i++) {
+						for (int i=0; i < JReader.getVisibleChannels().size(); i++) {
 							channel = JReader.getChannel(i);
 							System.out.print("Kanal " + (i+1) + ": ");
 							if (channel.isFail()) {
@@ -176,7 +176,7 @@ public class TextUI {
 						System.out.println("Nie mozna przejsc dalej.");
 					}
 				} else if (command.equals("update all")) {
-					for (Channel channel : JReader.getChannels()) {
+					for (Channel channel : JReader.getVisibleChannels()) {
 						try {
 							JReader.updateChannel(channel);
 							channel.setFail(false);
