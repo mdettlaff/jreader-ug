@@ -22,6 +22,8 @@ public class ImportExport extends DefaultHandler {
 	/** Lista kanałów, którą zwraca metoda getChannelsFromFile. */
 	private static List<Channel> channels;
 
+	private static ChannelComparator channelComparator = new ChannelComparator();
+
 	public ImportExport() {
 		super();
 	}
@@ -65,7 +67,7 @@ public class ImportExport extends DefaultHandler {
 		out.write("</head>\n");
 		out.write("<body>\n");
 
-		Collections.sort(channels);
+		Collections.sort(channels, channelComparator);
 		// kanały które nie są oznaczone żadnym tagiem
 		for (Channel channel : channels) {
 			if (channel.getTags().size() == 0) {
@@ -146,13 +148,13 @@ public class ImportExport extends DefaultHandler {
 							int index = indexOf(channel, channels);
 							if (index == -1) { // nie ma aktualnego kanału na liście
 								if (channelTag != null) {
-									channel.setTags(channelTag);
+									channel.setTags(JReader.parseTags(channelTag));
 								}
 								if (channel.getTitle() != null) {
 									channels.add(channel);
 								}
 							} else { // jeśli jest już na liście, dodajemy tylko tagi
-								channels.get(index).addTags(channelTag);
+								channels.get(index).addTags(JReader.parseTags(channelTag));
 							}
 						}
 					}

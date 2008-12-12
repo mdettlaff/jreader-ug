@@ -1,25 +1,51 @@
 package jreader;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import org.xml.sax.SAXException;
 
 /**
  * Kanał RSS lub Atom.
  */
-public class Channel implements Comparable<Channel> {
-	/** URL pliku XML z treścią kanału. */
-	private String channelURL;
-	/** Liczba nieprzeczytanych elementów. */
-	private int unreadItemsCount;
-	/** true, jeśli ostatnia próba aktualizowania kanału nie powiodła się. */
-	private boolean fail;
-	/** Tagi; jeśli kanał nie jest oznaczony tagami, lista jest pusta. */
-	private List<String> tags = new LinkedList<String>();
+public class Channel implements Serializable {
+	private static final long serialVersionUID = 1L;
+	/**
+	 * Lista identyfikatorów elementów należących do kanału.
+	 */
+	private List<Item> items;
+	/**
+	 * Tagi; jeśli kanał nie jest oznaczony tagami, lista jest pusta.
+	 */
+	private List<String> tags;
 
+	/**
+	 * URL pliku XML z treścią kanału.
+	 */
+	private String channelURL;
+	/**
+	 * Unikalny identyfikator kanału.
+	 */
+	private String id;
+	/** 
+	 * Informacja o nieudanej aktualizacji kanału.
+	 */
+	private boolean isFail;
+	/**
+	 * Ilość nieprzeczytanych elementów.
+	 */
+	private int unreadItemsCount;
+
+	/**
+	 * Tytuł kanału.
+	 */
 	private String title;
+	/**
+	 * Odnośnik do strony z której został pobrany kanał.
+	 */
 	private String link;
+	/**
+	 * Opis kanału.
+	 */
 	private String description;
 	/* Zawartość elementu image (obrazek będący częścią opisu kanału). */
 	private String imageURL;
@@ -27,56 +53,211 @@ public class Channel implements Comparable<Channel> {
 	private String imageLink;
 
 	/**
-	 * Elementy (wiadomości) kanału.
-	 */
-	private List<Item> items = new LinkedList<Item>();
-
-	/**
-	 * Tworzy nowy kanał o podanym adresie źródła XML.
+	 * Inicjuje podstawowe wartości kanału.
+	 *
+	 * @param channelURL Adres URL źródła kanału.
 	 */
 	public Channel(String channelURL) {
 		this.channelURL = channelURL;
+		this.id = channelURL;
+		this.items = new LinkedList<Item>();
+		this.tags = new LinkedList<String>();
+		this.isFail = false;
+		this.unreadItemsCount = 0;
 	}
-
-	public String getTitle() { return title; }
-	public void setTitle(String title) { this.title = title; }
-
-	public String getLink() { return link; }
-	public void setLink(String link) { this.link = link; }
-
-	public String getDescription() { return description; }
-	public void setDescription(String description) {
-	 	this.description = description;
- 	}
-
-	public String getChannelURL() { return channelURL; }
-
-	public List<Item> getItems() {
-		return items;
-	}
-
-	public String getImageURL() { return imageURL; }
-	public void setImageURL(String imageURL) { this.imageURL = imageURL; }
-
-	public String getImageTitle() { return imageTitle; }
-	public void setImageTitle(String imageTitle) {
-	 	this.imageTitle = imageTitle;
- 	}
-
-	public String getImageLink() { return imageLink; }
-	public void setImageLink(String imageLink) { this.imageLink = imageLink; }
 
 	/**
-	 * @return Liczba nieprzeczytanych elementów kanału.
+	 * Dodaje identyfikator elementu do kanału.
+	 *
+	 * @param itemId Idetyfikator elementu.
+	 */
+	//public void addItem(String itemId) {
+	//	this.items.add(itemId);
+	//}
+	public void addItem(Item item) {
+		items.add(item);
+	}
+
+	/**
+	 * Zwraca listę wszystkich identyfikatorów elementów w kanale.
+	 *
+	 * @return Zwraca listę identyfikatorów elementów.
+	 */
+	//public List<String> getItems() {
+	//	return this.items;
+	//}
+	public List<Item> getItems() {
+		return this.items;
+	}
+
+	/**
+	 * Ustawia nową listę idetyfikatorów elementów, które mają należeć do kanału.
+	 *
+	 * @param items Lista elementów.
+	 */
+	//public void setItems(List<String> items) {
+	//	this.items = items;
+	//}
+
+	/**
+	 * Usuwa idetyfikator elementu z listy.
+	 *
+	 * @param itemId Identyfikator elementu.
+	 */
+	//public void removeItem(String itemId) {
+	//	this.items.remove(itemId);
+	//}
+
+	/**
+	 * Zwraca adres źródła kanału.
+	 *
+	 * @return Adres kanału.
+	 */
+	public String getChannelURL() {
+		return this.channelURL;
+	}
+
+	/**
+	 * Zwraca identyfikator kanału.
+	 *
+	 * @return Identyfikator kanału.
+	 */
+	public String getId() {
+		return this.id;
+	}
+
+	/**
+	 * Sprawdza, czy ostatnia aktualizacja kanału się nie powiodła.
+	 *
+	 * @return <code>true</code>, gdy ostatnia aktualizacja się nie powidła,
+	 *         <code>false</code> w przeciwnym wypadku.
+	 */
+	public boolean isFail() {
+		return this.isFail;
+	}
+
+	/**
+	 * Ustawia informację o nieudanej aktualizacji.
+	 *
+	 * @param isFail <code>true</code> gdy się nie powiodło,
+	 *               <code>false</code> w przeciwnym wypadku.
+	 */
+	public void setFail(boolean isFail) {
+		this.isFail = isFail;
+	}
+
+	/**
+	 * Zwraca tytuł kanału.
+	 *
+	 * @return Tytuł kanału lub <code>null</code>, gdy tytuł nie jest ustawiony.
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+
+	/**
+	 * Ustawia tytuł kanału.
+	 *
+	 * @param title Tytuł kanału na który chcemy zmienić.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * Zwraca odnośnik do strony z której został pobrany kanał.
+	 *
+	 * @return Odnośnik do strony lub <code>null</code>, gdy odnośnik nie jest
+	 *         ustawiony.
+	 */
+	public String getLink() {
+		return this.link;
+	}
+
+	/**
+	 * Ustawia odnośnik do strony z której został pobrany kanał.
+	 *
+	 * @param link Odnośnik do strony na który chcemy zmienić.
+	 */
+	public void setLink(String link) {
+		this.link = link;
+	}
+
+	/**
+	 * Zwraca opis kanału.
+	 *
+	 * @return Opis kanału lub <code>null</code>, gdy opis nie jest ustawiony.
+	 */
+	public String getDescription() {
+		return this.description;
+	}
+
+	/**
+	 * Ustawia opis kanału.
+	 *
+	 * @param description Opis kanału na który chcemy zmienić.
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getImageURL() {
+		return this.imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
+	public String getImageTitle() {
+		return this.imageTitle;
+	}
+
+	public void setImageTitle(String imageTitle) {
+		this.imageTitle = imageTitle;
+	}
+
+	public String getImageLink() {
+		return this.imageLink;
+	}
+
+	public void setImageLink(String imageLink) {
+		this.imageLink = imageLink;
+	}
+
+	/**
+	 * Zwraca ilość nieprzeczytanych elementów w kanale.
+	 *
+	 * @return Ilość nieprzeczytanych elementów.
 	 */
 	public int getUnreadItemsCount() {
-		return unreadItemsCount;
+		return this.unreadItemsCount;
 	}
 
-	public boolean isFail() { return fail; }
-	public void setFail(boolean b) { fail = b; }
+	/**
+	 * Liczy na nowo i aktualizuje ilość nieprzeczytanych elementów kanału.
+	 *
+	 * @return <code>true</code>, jeśli ilość nieprzeczytanych elementów
+	 *         się zmieniła; <code>false</code> w przeciwnym wypadku.
+	 */
+	public boolean updateUnreadItemsCount() {
+		int oldCount = unreadItemsCount;
+		unreadItemsCount = 0;
+		for (Item item : items) {
+			if (!item.isRead()) {
+				unreadItemsCount++;
+			}
+		}
+		if (oldCount == unreadItemsCount) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 	/**
+	 * Zwraca listę wszystkich tagów.
+	 *
 	 * @return Lista tagów.
 	 */
 	public List<String> getTags() {
@@ -96,30 +277,21 @@ public class Channel implements Comparable<Channel> {
 	}
 
 	/**
-	 * Ustawia listę tagów na podstawie łańcucha znaków wprowadzonego przez
-	 * użytkownika, np&#46; 'blog linux tech science'. Tagi powinny być
-	 * oddzielone spacjami, ale dozwolone są też przecinki.
+	 * Ustawia listę tagów kanału na podaną.
+	 *
+	 * @param tags Nowa lista tagów.
 	 */
-	public void setTags(String newTags) {
-		this.tags = new LinkedList<String>();
-		addTags(newTags);
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 	/**
 	 * Dodaje podane tagi do już istniejących.
+	 *
+	 * @param newTags Lista tagów.
 	 */
-	public void addTags(String newTags) {
-		if (newTags != null) {
-			newTags = newTags.trim().toLowerCase();
-			if (!"".equals(newTags)) {
-				newTags = newTags.replace(", ", ",");
-				newTags = newTags.replace(",", " ");
-				String[] newTagsArray = newTags.split(" ");
-				for (String tag : newTagsArray) {
-					this.tags.add(tag);
-				}
-			}
-		}
+	public void addTags(List<String> newTags) {
+		this.tags.addAll(newTags);
 	}
 
 	public boolean containsTag(String tag) {
@@ -132,88 +304,6 @@ public class Channel implements Comparable<Channel> {
 	}
 
 	/**
-	 * Pobiera i parsuje źródło XML kanału i uzupełnia informacje ogólne
-	 * o kanale oraz jego elementy.
-	 *
-	 * @throws SAXParseException jeśli parsowanie źródła XML kanału nie powiodło
-	 *         się.
-	 * @throws SAXException jeśli wystąpił błąd parsera XML.
-	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
-	 */
-	public void update() throws SAXException, IOException {
-		Channel channel = ChannelFactory.getChannelFromXML(channelURL);
-		this.title = channel.title;
-		this.link = channel.link;
-		this.description = channel.description;
-		this.imageURL = channel.imageURL;
-		this.imageTitle = channel.imageTitle;
-		this.imageLink = channel.imageLink;
-		// dodawanie nowych elementów do kanału
-		for (Item updatedItem : channel.getItems()) {
-			boolean itemAlreadyExists = false;
-			for (Item item : items) {
-				if (updatedItem.equals(item)) {
-					itemAlreadyExists = true;
-					break;
-				}
-			}
-			if (!itemAlreadyExists) {
-				this.addItem(updatedItem);
-			}
-		}
-		this.updateUnreadItemsCount();
-	}
-
-	/**
-	 * Liczy na nowo i aktualizuje ilość nieprzeczytanych elementów kanału.
-	 *
-	 * @return 1, jeśli ilość nieprzeczytanych elementów się zmieniła;
-	 *         w przeciwnym wypadku 0.
-	 */
-	public int updateUnreadItemsCount() {
-		int oldCount = unreadItemsCount;
-		unreadItemsCount = 0;
-		for (Item item : items) {
-			if (item.isUnread()) {
-				unreadItemsCount++;
-			}
-		}
-		if (oldCount == unreadItemsCount) {
-			return 0;
-		} else {
-			return 1;
-		}
-	}
-
-	public void addItem(Item item) {
-		items.add(item);
-	}
-
-	public void markAllAsRead() {
-		for (Item item : items) {
-			item.markAsRead();
-		}
-		this.updateUnreadItemsCount();
-	}
-
-	/**
-	 * Oznacza wszystkie elementy kanału jako przeczytane.
-	 */
-	public void markAllAsUnread() {
-		for (Item item : items) {
-			item.markAsUnread();
-		}
-		this.updateUnreadItemsCount();
-	}
-
-	/**
-	 * Porównywanie alfabetyczne kanałów według ich tytułów.
-	 */
-	public int compareTo(Channel channel) {
-		return this.title.compareToIgnoreCase(channel.title);
-	}
-
-	/**
 	 * Sprawdza czy kanały są identyczne.
 	 */
 	public boolean equals(Object obj) {
@@ -222,14 +312,6 @@ public class Channel implements Comparable<Channel> {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Do wykorzystania jako klucz w HashMapie. Kluczem jest URL źródła kanału,
-	 * ponieważ indentyfikuje on kanał w sposób jednoznaczny.
-	 */
-	public String key() {
-		return channelURL;
 	}
 }
 
