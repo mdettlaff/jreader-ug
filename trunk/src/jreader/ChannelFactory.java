@@ -9,6 +9,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
@@ -21,10 +23,23 @@ import org.xml.sax.helpers.DefaultHandler;
  * Stąd można pobrać nowo utworzony kanał lub aktualną treść kanału.
  */
 public class ChannelFactory extends DefaultHandler {
-	/** Zmienna, która zostanie zwrócona przez metodę getChannelFromXML(). */
+	/**
+	 * Kanał, który zostanie zwrócony przez metodę getChannelFromXML().
+	 */
 	private static Channel channel;
-	/** Tymczasowy element dla celów parsowania. */
-	private static Item item = new Item();
+	/**
+	 * Lista elementów kanału, który zostanie zwrócony przez getChannelFromXML().
+	 */
+	private static List<Item> downloadedItems;
+	/*
+	 * Dane wydobyte podczas parsowania, które zostaną wpisane do elementów.
+	 */
+	private String guid;
+	private String title;
+	private String link;
+	private String description;
+	private String author;
+	private Date date;
 
 	/**
 	 * Definicja standardowego formatu daty stosowanego w kanałach RSS (RFC 822).
@@ -58,6 +73,10 @@ public class ChannelFactory extends DefaultHandler {
 
 	public ChannelFactory() {
 		super();
+	}
+
+	public List<Item> getDownloadedItems() {
+		return downloadedItems;
 	}
 
 	/**
@@ -174,6 +193,7 @@ public class ChannelFactory extends DefaultHandler {
 	public static Channel getChannelFromXML(String channelURL)
 			throws SAXException, IOException {
 		channel = new Channel(channelURL);
+		downloadedItems = new LinkedList<Item>();
 		URL url = new URL(channelURL);
 
 		XMLReader xr = XMLReaderFactory.createXMLReader();
@@ -183,7 +203,10 @@ public class ChannelFactory extends DefaultHandler {
 
 		xr.parse(new InputSource(url.openStream()));
 
-		channel.markAllAsUnread();
+		for (Item it : downloadedItems) {
+			channel.addItem(it);
+		}
+		channel.updateUnreadItemsCount();
 		return channel;
 	}
 
@@ -224,7 +247,12 @@ public class ChannelFactory extends DefaultHandler {
 		}
 		if (currentTag.equals("item") || currentTag.equals("entry") /* Atom */) {
 			insideItem = true;
-			item = new Item();
+			guid = null;
+			title = null;
+			link = null;
+			description = null;
+			author = null;
+			date = null;
 			counter++;
 		} else if (currentTag.equals("image")) {
 			insideImage = true;
@@ -237,8 +265,8 @@ public class ChannelFactory extends DefaultHandler {
 			if (!"".equals(hrefLink) && !(hrefLink == null)) {
 				if (insideItem) {
 					if ("alternate".equals(atts.getValue("rel"))) {
-						if (item.getLink() == null || "".equals(item.getLink())) {
-							item.setLink(hrefLink);
+						if (link == null || "".equals(link)) {
+							link = hrefLink;
 						}
 					}
 				} else {
@@ -292,46 +320,46 @@ public class ChannelFactory extends DefaultHandler {
 				}
 			}
 		} else { // czytamy właściwości elementu
-			if (currentTag.equals("title") && item.getTitle() == null) {
+			if (currentTag.equals("title") && title == null) {
 				// usuwamy niepotrzebne znaczniki z tytułu (Atom)
-				item.setTitle(chars.replaceAll("<.*?>", "").replace("\n", " ").
-						replaceAll(" +", " "));
+				title = chars.replaceAll("<.*?>", "").replace("\n", " ").
+						replaceAll(" +", " ");
 			} else if (currentTag.equals("link")) {
-				if ("".equals(item.getLink()) || item.getLink() == null) {
-					item.setLink(chars);
+				if ("".equals(link) || link == null) {
+					link = chars;
 				}
 			} else if (currentTag.equals("description") // niżej: Atom
 					|| currentTag.equals("content") || currentTag.equals("summary")) {
-				item.setDescription(chars);
+				description = chars;
 			} else if (currentTag.equals("author") || currentTag.equals("name")
 					|| currentTag.equals("creator")) {
-				item.setAuthor(chars);
+				author = chars;
 			} else if (currentTag.equals("email")) { // Atom; email autora
-				if (insideItem && item.getAuthor() != null) {
-					item.setAuthor(item.getAuthor() + " (" + chars + ")");
+				if (insideItem && author != null) {
+					author = author + " (" + chars + ")";
 				}
 			} else if (currentTag.equals("pubDate") || currentTag.equals("date")
 					|| currentTag.equals("updated")) {
 				try {
 					Date parsedDate = RSSDateFormat.parse(chars);
-					item.setDate(parsedDate);
+					date = parsedDate;
 				} catch (ParseException pe) {
 					// jak się nie uda ze standardową datą RFC 822, to próbujemy
 					// alternatyw
 					try {
 						Date parsedDate = DateFormat1.parse(chars);
-						item.setDate(parsedDate);
+						date = parsedDate;
 					} catch (ParseException pe1) {
 						try {
 							Date parsedDate = DateFormat2.parse(chars);
-							item.setDate(parsedDate);
+							date = parsedDate;
 						} catch (ParseException pe2) {
 							// później będzie wpisana domyślnie bieżąca data
 						}
 					}
 				}
 			} else if (currentTag.equals("guid") || currentTag.equals("id")) { //Atom
-				item.setGuid(chars);
+				guid = chars;
 			}
 		}
 
@@ -347,18 +375,17 @@ public class ChannelFactory extends DefaultHandler {
 			insideItem = false;
 			// jeśli data nie była określona lub parsowanie nie powiodło się,
 			// stosujemy bieżącą datę
-			if (item.getDate() == null) {
+			if (date == null) {
 				// TODO: poniższe 3 linijki ustawiają przykładową datę zamiast
 				// bieżącej, dla celów testowych. Docelowo zmienić na:
-				//item.setDate(new Date(currentUnixTime - counter));
+				//date = new Date(currentUnixTime - counter);
 				try {
-					item.setDate(RSSDateFormat.parse("Sun, 9 Nov 2008 19:30:00 +0100"));
+					date = RSSDateFormat.parse("Sun, 9 Nov 2008 19:30:00 +0100");
 				} catch (ParseException pe) { }
 			}
-			// data utworzenia, tj. ściągnięcia
-			item.setCreationDate(new Date());
-			item.setChannelKey(channel.key());
-			channel.addItem(item);
+
+			downloadedItems.add(makeNewItem());
+
 		} else if (closingTag.equals("image")) {
 			insideImage = false;
 		} else if (closingTag.equals("textinput")) {
@@ -375,6 +402,54 @@ public class ChannelFactory extends DefaultHandler {
 		for (int i = start; i < start + length; i++) {
 			chars += ch[i];
 		}
+	}
+
+
+	/**
+	 * Tworzy nowy element z danych pobranych podczas parsowania.
+	 *
+	 * @return Utworzony element.
+	 */
+	private Item makeNewItem() {
+		/*
+		 * Tworzymy unikalny id dla elementu.
+		 */
+		String id;
+		if (guid != null && !"".equals(guid)) {
+			id = guid;
+		} else {
+			if (description.length() > 32) {
+				id = title.concat(channel.getId()).concat(description.substring(0, 32));
+			} else {
+				id = title.concat(channel.getId()).concat(description);
+			}
+		}
+
+		Item item = new Item(new String(id), new String(channel.getId()));
+		if (title == null) {
+			item.setTitle(null);
+		} else {
+			item.setTitle(new String(title));
+		}
+		if (link == null) {
+			item.setLink(null);
+		} else {
+			item.setLink(new String(link));
+		}
+		if (description == null) {
+			item.setDescription(null);
+		} else {
+			item.setDescription(new String(description));
+		}
+		if (author == null) {
+			item.setAuthor(null);
+		} else {
+			item.setAuthor(new String(author));
+		}
+		item.setDate((Date)date.clone());
+		item.markAsUnread();
+
+		return item;
 	}
 }
 

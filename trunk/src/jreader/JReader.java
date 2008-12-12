@@ -26,7 +26,7 @@ public class JReader {
 	/**
 	 * Zbiór wszystkich kanałów.
 	 */
-	private static Map<String, Channel> allChannels =
+	private static Map<String, Channel> channels =
 			new HashMap<String, Channel>();
 	/**
 	 * Ustawienia programu wybrane przez użytkownika.
@@ -36,7 +36,7 @@ public class JReader {
 	/**
 	 * Lista subskrypcji do wyświetlenia w GUI.
 	 */
-	private static List<Channel> channels = new ArrayList<Channel>();
+	private static List<Channel> visibleChannels = new ArrayList<Channel>();
 	/**
 	 * Lista wiadomości do wyświetlenia w GUI.
 	 */
@@ -51,6 +51,9 @@ public class JReader {
 	 * Lista tagów do wyświetlenia w GUI.
 	 */
 	private static List<String> tags = new LinkedList<String>();
+
+	private static ChannelComparator channelComparator = new ChannelComparator();
+	private static ItemComparator itemComparator = new ItemComparator();
 
 	/** Nie można tworzyć obiektów tej klasy. */
 	private JReader() {}
@@ -76,21 +79,21 @@ public class JReader {
 	 * Zwraca kanał o wskazanym kluczu z listy wszystkich kanałów.
 	 */
 	public static Channel getChannel(String key) {
-		return allChannels.get(key);
+		return channels.get(key);
 	}
 
 	/**
 	 * Zwraca kanał o wskazanym indeksie z listy kanałów do wyświetlenia w GUI.
 	 */
 	public static Channel getChannel(int index) {
-		return channels.get(index);
+		return visibleChannels.get(index);
 	}
 
 	/**
 	 * Zwraca listę kanałów do wyświetlenia w GUI.
 	 */
 	public static List<Channel> getChannels() {
-		return channels;
+		return visibleChannels;
 	}
 
 	/**
@@ -138,7 +141,7 @@ public class JReader {
 			throws LinkNotFoundException, MalformedURLException, SAXException,
 				IOException	{
 		Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
-		newChannel.setTags(channelTags);
+		newChannel.setTags(parseTags(channelTags));
 		// uzupełniamy listę tagów do wyświetlenia
 		for (String tag : newChannel.getTags()) {
 			if (!tags.contains(tag)) {
@@ -146,10 +149,10 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
-		allChannels.put(newChannel.key(), newChannel);
-		channels.add(newChannel);
+		channels.put(newChannel.getId(), newChannel);
+		visibleChannels.add(newChannel);
 		// sortujemy listę kanałów alfabetycznie
-		Collections.sort(channels);
+		Collections.sort(visibleChannels, channelComparator);
 	}
 
 	/**
@@ -181,17 +184,17 @@ public class JReader {
 	 *         wiadomości, <code>true</code> w przeciwnym wypadku.
 	 */
 	public static boolean nextUnread() {
-		Item nextUnreadItem = new Item();
+		Item nextUnreadItem = new Item("", "");
 		Date beginningOfTime = new Date(0); // 1 stycznia 1970
 		Date endOfTime = new Date();
 		try { endOfTime = new SimpleDateFormat("yyyy").parse("9999");
 		} catch (ParseException pe) { }
 		if (config.getSortByNewest()) { // szukamy najnowszego nieprzeczytanego
 			nextUnreadItem.setDate(beginningOfTime);
-			for (Channel channel : channels) {
+			for (Channel channel : visibleChannels) {
 				if (channel.getUnreadItemsCount() > 0) {
 					for (Item item : channel.getItems()) {
-						if (item.isUnread()) {
+						if (!item.isRead()) {
 							if (item.getDate().after(nextUnreadItem.getDate())) {
 								nextUnreadItem = item;
 							}
@@ -201,10 +204,10 @@ public class JReader {
 			}
 		} else { // szukamy najstarszego nieprzeczytanego
 			nextUnreadItem.setDate(endOfTime);
-			for (Channel channel : channels) {
+			for (Channel channel : visibleChannels) {
 				if (channel.getUnreadItemsCount() > 0) {
 					for (Item item : channel.getItems()) {
-						if (item.isUnread()) {
+						if (!item.isRead()) {
 							if (item.getDate().before(nextUnreadItem.getDate())) {
 								nextUnreadItem = item;
 							}
@@ -218,7 +221,7 @@ public class JReader {
 			return false;
 		}
 		nextUnreadItem.markAsRead();
-		allChannels.get(nextUnreadItem.getChannelKey()).updateUnreadItemsCount();
+		channels.get(nextUnreadItem.getChannelId()).updateUnreadItemsCount();
 		preview.setCurrent(new Preview(nextUnreadItem));
 		return true;
 	}
@@ -233,7 +236,7 @@ public class JReader {
 		preview.setCurrent(new Preview(item));
 		// aktualizujemy ilość nieprzeczytanych elementów kanału, z którego
 		// pochodzi wybrany item
-		allChannels.get(item.getChannelKey()).updateUnreadItemsCount();
+		channels.get(item.getChannelId()).updateUnreadItemsCount();
 	}
 
 	/**
@@ -243,16 +246,19 @@ public class JReader {
 	 * @param index Indeks kanału na liście kanałów do wyświetlenia.
 	 */
 	public static void selectChannel(int index) {
-		items = channels.get(index).getItems();
-		Collections.sort(items);
-		preview.setCurrent(new Preview(channels.get(index)));
+		items = visibleChannels.get(index).getItems();
+		Collections.sort(items, itemComparator);
+		preview.setCurrent(new Preview(visibleChannels.get(index)));
 	}
 
 	/**
 	 * Oznacza wszystkie wiadomości w kanale jako przeczytane.
 	 */
 	public static void markChannelAsRead(Channel channel) {
-		channel.markAllAsRead();
+		for (Item item : channel.getItems()) {
+			item.markAsRead();
+		}
+		channel.updateUnreadItemsCount();
 	}
 
 	/**
@@ -260,12 +266,12 @@ public class JReader {
 	 */
 	public static void selectAll() {
 		items = new ArrayList<Item>(); // nie uzywać items.clear()
-		for (Channel channel : channels) {
+		for (Channel channel : visibleChannels) {
 			for (Item item : channel.getItems()) {
 				items.add(item);
 			}
 		}
-		Collections.sort(items);
+		Collections.sort(items, itemComparator);
 	}
 
 	/**
@@ -273,16 +279,16 @@ public class JReader {
 	 */
 	public static void selectUnread() {
 		items = new ArrayList<Item>(); // nie używać items.clear()
-		for (Channel channel : channels) {
+		for (Channel channel : visibleChannels) {
 			if (channel.getUnreadItemsCount() > 0) {
 				for (Item item : channel.getItems()) {
-					if (item.isUnread()) {
+					if (!item.isRead()) {
 						items.add(item);
 					}
 				}
 			}
 		}
-		Collections.sort(items);
+		Collections.sort(items, itemComparator);
 	}
 
 	/**
@@ -294,23 +300,23 @@ public class JReader {
 	 */
 	public static void selectTag(String tag) {
 		tag = tag.trim();
-		channels = new ArrayList<Channel>();
+		visibleChannels = new ArrayList<Channel>();
 		if (tag.equals("all")) {
-			channels = new ArrayList<Channel>(allChannels.values());
+			visibleChannels = new ArrayList<Channel>(channels.values());
 		} else if (tag.equals("untagged")) {
-			for (Channel channel : allChannels.values()) {
+			for (Channel channel : channels.values()) {
 				if ("".equals(channel.getTagsAsString())) {
-					channels.add(channel);
+					visibleChannels.add(channel);
 				}
 			}
 		} else {
-			for (Channel channel : allChannels.values()) {
+			for (Channel channel : channels.values()) {
 				if (channel.containsTag(tag)) {
-					channels.add(channel);
+					visibleChannels.add(channel);
 				}
 			}
 		}
-		Collections.sort(channels);
+		Collections.sort(visibleChannels, channelComparator);
 	}
 
 	/**
@@ -324,14 +330,35 @@ public class JReader {
 	 */
 	public static void updateChannel(Channel channel)
 			throws SAXException, IOException {
-		channel.update();
+		Channel newChannel = ChannelFactory.getChannelFromXML(
+				channel.getChannelURL());
+		channel.setTitle(newChannel.getTitle());
+		channel.setLink(newChannel.getLink());
+		channel.setDescription(newChannel.getDescription());
+		channel.setImageURL(newChannel.getImageURL());
+		channel.setImageTitle(newChannel.getImageTitle());
+		channel.setImageLink(newChannel.getImageLink());
+		// dodawanie nowych elementów do kanału
+		for (Item updatedItem : newChannel.getItems()) {
+			boolean itemAlreadyExists = false;
+			for (Item item : channel.getItems()) {
+				if (updatedItem.equals(item)) {
+					itemAlreadyExists = true;
+					break;
+				}
+			}
+			if (!itemAlreadyExists) {
+				channel.addItem(updatedItem);
+			}
+		}
+		channel.updateUnreadItemsCount();
 	}
 
 	/**
 	 * Zmienia tagi kanału na podane przez użytkownika.
 	 */
 	public static void editTags(Channel channel, String channelTags) {
-		channel.setTags(channelTags);
+		channel.setTags(parseTags(channelTags));
 		// uzupełniamy listę tagów do wyświetlenia
 		for (String tag : channel.getTags()) {
 			if (!tags.contains(tag)) {
@@ -350,7 +377,7 @@ public class JReader {
 		// najpierw usuwamy z listy elementów te pochodzące z usuwanego kanału
 		List<Integer> indToRemove = new ArrayList<Integer>();
 		for (int i=0; i < items.size(); i++) {
-			for (Item channelItem : channels.get(index).getItems()) {
+			for (Item channelItem : visibleChannels.get(index).getItems()) {
 				if (items.get(i).equals(channelItem)) {
 					indToRemove.add(i);
 				}
@@ -362,8 +389,8 @@ public class JReader {
 				indToRemove.set(j, indToRemove.get(j)-1);
 			}
 		}
-		allChannels.remove(channels.get(index).key());
-		channels.remove(index);
+		channels.remove(visibleChannels.get(index).getId());
+		visibleChannels.remove(index);
 	}
 
 	/**
@@ -382,10 +409,10 @@ public class JReader {
 		List<Channel> importedChannels =
 				ImportExport.getChannelsFromFile(fileLocation);
 		for (Channel channel : importedChannels) {
-			if (!allChannels.containsKey(channel.key())) {
-				allChannels.put(channel.key(), channel);
+			if (!channels.containsKey(channel.getId())) {
+				channels.put(channel.getId(), channel);
 			}
-			channels.add(channel);
+			visibleChannels.add(channel);
 			// uzupełniamy listę tagów do wyświetlenia
 			for (String tag : channel.getTags()) {
 				if (!tags.contains(tag)) {
@@ -405,7 +432,32 @@ public class JReader {
 	public static void exportChannelList(String fileLocation)
 			throws IOException {
 		ImportExport.writeChannelsToFile(new LinkedList<Channel>(
-					allChannels.values()), fileLocation);
+					channels.values()), fileLocation);
+	}
+
+
+	/**
+	 * Zwraca listę tagów utworzoną na podstawie napisu wprowadzonego przez
+	 * użytkownika.
+	 *
+	 * @param tagsAsString Tagi, które wprowadził użytkownik.
+	 * @return Lista tagów utworzona na podstawie podanego napisu.
+	 */
+	public static List<String> parseTags(String tagsAsString) {
+		List<String> tagsAsList = new LinkedList<String>();
+
+		if (tagsAsString != null) {
+			tagsAsString = tagsAsString.trim().toLowerCase();
+			if (!"".equals(tagsAsString)) {
+				tagsAsString = tagsAsString.replace(", ", ",");
+				tagsAsString = tagsAsString.replace(",", " ");
+				String[] tagsAsStringArray = tagsAsString.split(" ");
+				for (String tag : tagsAsStringArray) {
+					tagsAsList.add(tag);
+				}
+			}
+		}
+		return tagsAsList;
 	}
 }
 

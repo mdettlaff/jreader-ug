@@ -96,16 +96,16 @@ public class TextUI {
 							if (item.getDate() != null) {
 								System.out.print(shortDateFormat.format(item.getDate()) + " ");
 							}
-							if (item.isUnread()) {
+							if (!item.isRead()) {
 								System.out.print("N ");
 							}
-							if (JReader.getChannel(item.getChannelKey()).getTitle().
+							if (JReader.getChannel(item.getChannelId()).getTitle().
 									length() > 12) {
 								System.out.print(JReader.getChannel(
-											item.getChannelKey()).getTitle().substring(0, 12) + " ");
+											item.getChannelId()).getTitle().substring(0, 12) + " ");
 							} else {
 								System.out.print(JReader.getChannel(
-											item.getChannelKey()).getTitle() + " ");
+											item.getChannelId()).getTitle() + " ");
 							}
 							System.out.println(item.getTitle());
 						}
