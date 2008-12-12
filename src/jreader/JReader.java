@@ -26,8 +26,7 @@ public class JReader {
 	/**
 	 * Zbiór wszystkich kanałów.
 	 */
-	private static Map<String, Channel> channels =
-			new HashMap<String, Channel>();
+	private static Channels channels = new Channels();
 	/**
 	 * Ustawienia programu wybrane przez użytkownika.
 	 */
@@ -60,7 +59,13 @@ public class JReader {
 
 
 	public static void main(String[] args) {
+		updateTagsList();
+		selectTag("all");
+		selectUnread();
+
 		TextUI.run();
+
+		channels.write();
 	}
 
 
@@ -76,10 +81,10 @@ public class JReader {
 	}
 
 	/**
-	 * Zwraca kanał o wskazanym kluczu z listy wszystkich kanałów.
+	 * Zwraca kanał o wskazanym identyfikatorze z listy wszystkich kanałów.
 	 */
-	public static Channel getChannel(String key) {
-		return channels.get(key);
+	public static Channel getChannel(String channelId) {
+		return channels.getChannel(channelId);
 	}
 
 	/**
@@ -92,7 +97,7 @@ public class JReader {
 	/**
 	 * Zwraca listę kanałów do wyświetlenia w GUI.
 	 */
-	public static List<Channel> getChannels() {
+	public static List<Channel> getVisibleChannels() {
 		return visibleChannels;
 	}
 
@@ -149,10 +154,11 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
-		channels.put(newChannel.getId(), newChannel);
+		channels.add(newChannel, ChannelFactory.getDownloadedItems());
 		visibleChannels.add(newChannel);
 		// sortujemy listę kanałów alfabetycznie
 		Collections.sort(visibleChannels, channelComparator);
+		channels.write();
 	}
 
 	/**
@@ -193,7 +199,7 @@ public class JReader {
 			nextUnreadItem.setDate(beginningOfTime);
 			for (Channel channel : visibleChannels) {
 				if (channel.getUnreadItemsCount() > 0) {
-					for (Item item : channel.getItems()) {
+					for (Item item : channels.getItems(channel.getId())) {
 						if (!item.isRead()) {
 							if (item.getDate().after(nextUnreadItem.getDate())) {
 								nextUnreadItem = item;
@@ -206,7 +212,7 @@ public class JReader {
 			nextUnreadItem.setDate(endOfTime);
 			for (Channel channel : visibleChannels) {
 				if (channel.getUnreadItemsCount() > 0) {
-					for (Item item : channel.getItems()) {
+					for (Item item : channels.getItems(channel.getId())) {
 						if (!item.isRead()) {
 							if (item.getDate().before(nextUnreadItem.getDate())) {
 								nextUnreadItem = item;
@@ -221,8 +227,9 @@ public class JReader {
 			return false;
 		}
 		nextUnreadItem.markAsRead();
-		channels.get(nextUnreadItem.getChannelId()).updateUnreadItemsCount();
+		updateUnreadItemsCount(channels.getChannel(nextUnreadItem.getChannelId()));
 		preview.setCurrent(new Preview(nextUnreadItem));
+		channels.write();
 		return true;
 	}
 
@@ -236,7 +243,9 @@ public class JReader {
 		preview.setCurrent(new Preview(item));
 		// aktualizujemy ilość nieprzeczytanych elementów kanału, z którego
 		// pochodzi wybrany item
-		channels.get(item.getChannelId()).updateUnreadItemsCount();
+		if (updateUnreadItemsCount(channels.getChannel(item.getChannelId()))) {
+			channels.write();
+		}
 	}
 
 	/**
@@ -246,7 +255,7 @@ public class JReader {
 	 * @param index Indeks kanału na liście kanałów do wyświetlenia.
 	 */
 	public static void selectChannel(int index) {
-		items = visibleChannels.get(index).getItems();
+		items = channels.getItems(visibleChannels.get(index).getId());
 		Collections.sort(items, itemComparator);
 		preview.setCurrent(new Preview(visibleChannels.get(index)));
 	}
@@ -255,10 +264,12 @@ public class JReader {
 	 * Oznacza wszystkie wiadomości w kanale jako przeczytane.
 	 */
 	public static void markChannelAsRead(Channel channel) {
-		for (Item item : channel.getItems()) {
+		for (Item item : channels.getItems(channel.getId())) {
 			item.markAsRead();
 		}
-		channel.updateUnreadItemsCount();
+		if (updateUnreadItemsCount(channel)) {
+			channels.write();
+		}
 	}
 
 	/**
@@ -267,7 +278,7 @@ public class JReader {
 	public static void selectAll() {
 		items = new ArrayList<Item>(); // nie uzywać items.clear()
 		for (Channel channel : visibleChannels) {
-			for (Item item : channel.getItems()) {
+			for (Item item : channels.getItems(channel.getId())) {
 				items.add(item);
 			}
 		}
@@ -281,7 +292,7 @@ public class JReader {
 		items = new ArrayList<Item>(); // nie używać items.clear()
 		for (Channel channel : visibleChannels) {
 			if (channel.getUnreadItemsCount() > 0) {
-				for (Item item : channel.getItems()) {
+				for (Item item : channels.getItems(channel.getId())) {
 					if (!item.isRead()) {
 						items.add(item);
 					}
@@ -302,18 +313,16 @@ public class JReader {
 		tag = tag.trim();
 		visibleChannels = new ArrayList<Channel>();
 		if (tag.equals("all")) {
-			visibleChannels = new ArrayList<Channel>(channels.values());
+			visibleChannels = channels.getChannels();
 		} else if (tag.equals("untagged")) {
-			for (Channel channel : channels.values()) {
-				if ("".equals(channel.getTagsAsString())) {
+			for (Channel channel : channels.getChannels()) {
+				if (channel.getTags().size() == 0) {
 					visibleChannels.add(channel);
 				}
 			}
 		} else {
-			for (Channel channel : channels.values()) {
-				if (channel.containsTag(tag)) {
-					visibleChannels.add(channel);
-				}
+			for (Channel channel : channels.getChannels(tag)) {
+				visibleChannels.add(channel);
 			}
 		}
 		Collections.sort(visibleChannels, channelComparator);
@@ -339,19 +348,22 @@ public class JReader {
 		channel.setImageTitle(newChannel.getImageTitle());
 		channel.setImageLink(newChannel.getImageLink());
 		// dodawanie nowych elementów do kanału
-		for (Item updatedItem : newChannel.getItems()) {
+		for (Item updatedItem : ChannelFactory.getDownloadedItems()) {
 			boolean itemAlreadyExists = false;
-			for (Item item : channel.getItems()) {
+			for (Item item : channels.getItems(channel.getId())) {
 				if (updatedItem.equals(item)) {
 					itemAlreadyExists = true;
 					break;
 				}
 			}
 			if (!itemAlreadyExists) {
-				channel.addItem(updatedItem);
+				channels.addItem(updatedItem);
+				channel.addItem(updatedItem.getId());
 			}
 		}
-		channel.updateUnreadItemsCount();
+		if (updateUnreadItemsCount(channel)) {
+			channels.write();
+		}
 	}
 
 	/**
@@ -366,6 +378,7 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
+		channels.write();
 	}
 
 	/**
@@ -377,7 +390,8 @@ public class JReader {
 		// najpierw usuwamy z listy elementów te pochodzące z usuwanego kanału
 		List<Integer> indToRemove = new ArrayList<Integer>();
 		for (int i=0; i < items.size(); i++) {
-			for (Item channelItem : visibleChannels.get(index).getItems()) {
+			for (Item channelItem : channels.getItems(
+						visibleChannels.get(index).getId())) {
 				if (items.get(i).equals(channelItem)) {
 					indToRemove.add(i);
 				}
@@ -389,8 +403,14 @@ public class JReader {
 				indToRemove.set(j, indToRemove.get(j)-1);
 			}
 		}
-		channels.remove(visibleChannels.get(index).getId());
+		// usuwamy elementy, bo samo usunięcie kanału ich nie usunie
+		for (String itemId : visibleChannels.get(index).getItems()) {
+			channels.removeItem(itemId);
+		}
+		channels.removeChannel(visibleChannels.get(index).getId());
 		visibleChannels.remove(index);
+		updateTagsList();
+		channels.write();
 	}
 
 	/**
@@ -409,8 +429,8 @@ public class JReader {
 		List<Channel> importedChannels =
 				ImportExport.getChannelsFromFile(fileLocation);
 		for (Channel channel : importedChannels) {
-			if (!channels.containsKey(channel.getId())) {
-				channels.put(channel.getId(), channel);
+			if (!channels.containsChannel(channel.getId())) {
+				channels.add(channel);
 			}
 			visibleChannels.add(channel);
 			// uzupełniamy listę tagów do wyświetlenia
@@ -421,6 +441,7 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
+		channels.write();
 		return importedChannels.size();
 	}
 
@@ -432,7 +453,7 @@ public class JReader {
 	public static void exportChannelList(String fileLocation)
 			throws IOException {
 		ImportExport.writeChannelsToFile(new LinkedList<Channel>(
-					channels.values()), fileLocation);
+					channels.getChannels()), fileLocation);
 	}
 
 
@@ -458,6 +479,41 @@ public class JReader {
 			}
 		}
 		return tagsAsList;
+	}
+
+	/**
+	 * Liczy na nowo i aktualizuje ilość nieprzeczytanych elementów kanału.
+	 *
+	 * @return <code>true</code>, jeśli ilość nieprzeczytanych elementów
+	 *         się zmieniła; <code>false</code> w przeciwnym wypadku.
+	 */
+	private static boolean updateUnreadItemsCount(Channel channel) {
+		int oldCount = channel.getUnreadItemsCount();
+		channel.setUnreadItemsCount(0);
+		for (Item item : channels.getItems(channel.getId())) {
+			if (!item.isRead()) {
+				channel.setUnreadItemsCount(channel.getUnreadItemsCount() + 1);
+			}
+		}
+		if (oldCount == channel.getUnreadItemsCount()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * Aktualizuje listę tagów do wyświetlenia w GUI.
+	 */
+	private static void updateTagsList() {
+		for (Channel channel : channels.getChannels()) {
+			for (String tag : channel.getTags()) {
+				if (!tags.contains(tag)) {
+					tags.add(tag);
+				}
+			}
+		}
+		Collections.sort(tags);
 	}
 }
 

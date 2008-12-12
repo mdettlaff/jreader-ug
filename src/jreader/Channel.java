@@ -12,7 +12,7 @@ public class Channel implements Serializable {
 	/**
 	 * Lista identyfikatorów elementów należących do kanału.
 	 */
-	private List<Item> items;
+	private List<String> items;
 	/**
 	 * Tagi; jeśli kanał nie jest oznaczony tagami, lista jest pusta.
 	 */
@@ -47,9 +47,18 @@ public class Channel implements Serializable {
 	 * Opis kanału.
 	 */
 	private String description;
-	/* Zawartość elementu image (obrazek będący częścią opisu kanału). */
+	/**
+	 * Położenie obrazka będącego częścią opisu kanału.
+	 */
 	private String imageURL;
+	/**
+	 * Tytuł obrazka będącego częścią opisu kanału.
+	 */
 	private String imageTitle;
+	/**
+	 * Link do strony, która powinna się otworzyć po kliknięciu obrazka będącego
+	 * częścią opisu kanału.
+	 */
 	private String imageLink;
 
 	/**
@@ -60,7 +69,7 @@ public class Channel implements Serializable {
 	public Channel(String channelURL) {
 		this.channelURL = channelURL;
 		this.id = channelURL;
-		this.items = new LinkedList<Item>();
+		this.items = new LinkedList<String>();
 		this.tags = new LinkedList<String>();
 		this.isFail = false;
 		this.unreadItemsCount = 0;
@@ -71,11 +80,17 @@ public class Channel implements Serializable {
 	 *
 	 * @param itemId Idetyfikator elementu.
 	 */
-	//public void addItem(String itemId) {
-	//	this.items.add(itemId);
-	//}
-	public void addItem(Item item) {
-		items.add(item);
+	public void addItem(String itemId) {
+		this.items.add(itemId);
+	}
+
+	/**
+	 * Usuwa idetyfikator elementu z listy.
+	 *
+	 * @param itemId Identyfikator elementu.
+	 */
+	public void removeItem(String itemId) {
+		this.items.remove(itemId);
 	}
 
 	/**
@@ -83,30 +98,9 @@ public class Channel implements Serializable {
 	 *
 	 * @return Zwraca listę identyfikatorów elementów.
 	 */
-	//public List<String> getItems() {
-	//	return this.items;
-	//}
-	public List<Item> getItems() {
+	public List<String> getItems() {
 		return this.items;
 	}
-
-	/**
-	 * Ustawia nową listę idetyfikatorów elementów, które mają należeć do kanału.
-	 *
-	 * @param items Lista elementów.
-	 */
-	//public void setItems(List<String> items) {
-	//	this.items = items;
-	//}
-
-	/**
-	 * Usuwa idetyfikator elementu z listy.
-	 *
-	 * @param itemId Identyfikator elementu.
-	 */
-	//public void removeItem(String itemId) {
-	//	this.items.remove(itemId);
-	//}
 
 	/**
 	 * Zwraca adres źródła kanału.
@@ -235,24 +229,12 @@ public class Channel implements Serializable {
 	}
 
 	/**
-	 * Liczy na nowo i aktualizuje ilość nieprzeczytanych elementów kanału.
+	 * Ustawia ilość nieprzeczytanych elementów kanału.
 	 *
-	 * @return <code>true</code>, jeśli ilość nieprzeczytanych elementów
-	 *         się zmieniła; <code>false</code> w przeciwnym wypadku.
+	 * @param unreadItemsCount Ilość nieprzeczytanych elementów.
 	 */
-	public boolean updateUnreadItemsCount() {
-		int oldCount = unreadItemsCount;
-		unreadItemsCount = 0;
-		for (Item item : items) {
-			if (!item.isRead()) {
-				unreadItemsCount++;
-			}
-		}
-		if (oldCount == unreadItemsCount) {
-			return false;
-		} else {
-			return true;
-		}
+	public void setUnreadItemsCount(int unreadItemsCount) {
+		this.unreadItemsCount = unreadItemsCount;
 	}
 
 	/**

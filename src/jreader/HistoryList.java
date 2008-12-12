@@ -3,7 +3,7 @@ package jreader;
 import java.util.LinkedList;
 
 /**
- * Przechowuje historię przeglądanych elementów, po których można nawigować
+ * Przechowuje historię przeglądanych elementów, po której można nawigować
  * za pomocą przycisków Wstecz i Dalej. Ilość pamiętanych elementów jest
  * ograniczona.
  */
