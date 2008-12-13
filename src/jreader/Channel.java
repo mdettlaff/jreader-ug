@@ -60,6 +60,10 @@ public class Channel implements Serializable {
 	 * częścią opisu kanału.
 	 */
 	private String imageLink;
+	/**
+	 * Ścieżka do ikony kanału, pobranej ze strony z której pochodzi kanał.
+	 */
+	private String iconPath;
 
 	/**
 	 * Inicjuje podstawowe wartości kanału.
@@ -217,6 +221,14 @@ public class Channel implements Serializable {
 
 	public void setImageLink(String imageLink) {
 		this.imageLink = imageLink;
+	}
+
+	public String getIconPath() {
+		return this.iconPath;
+	}
+
+	public void setIconPath(String iconPath) {
+		this.iconPath = iconPath;
 	}
 
 	/**

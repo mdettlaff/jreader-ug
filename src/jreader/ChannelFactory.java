@@ -1,8 +1,12 @@
 package jreader;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -140,13 +144,43 @@ public class ChannelFactory extends DefaultHandler {
 		in.close();
 		in = new BufferedReader(new InputStreamReader(url.openStream()));
 
+		String iconURL = null;
+
 		String inputLine;
 		// jeśli nie podano adresu do pliku XML tylko do strony głównej, to czytamy
 		// plik HTML dopóki nie znajdziemy odnośnika do pliku XML kanału
 		if ("".equals(channelURL)) {
+			boolean isIconURLFound = false;
+			boolean isChannelURLFound = false;
 			while ((inputLine = in.readLine()) != null) {
-				if (inputLine.contains("type=\"application/rss+xml\"")
-						|| inputLine.contains("type=\"application/atom+xml\"")) {
+				// szukamy adresu URL ikony strony (tej którą widać na pasku adresu)
+				if (inputLine.contains("type=\"image/x-icon\"")
+						|| inputLine.contains("rel=\"shortcut icon\"")) {
+					isIconURLFound = true;
+					iconURL = inputLine.replaceAll("^.*href=\"", "");
+					iconURL = iconURL.replaceAll("\".*", "");
+					// sklejemy link strony i ikony w razie potrzeby
+					if (iconURL.charAt(0) == '/') {
+						if (siteURL.charAt(siteURL.length()-1) == '/') {
+							iconURL = siteURL + iconURL.substring(1);
+						} else {
+							iconURL = siteURL + iconURL;
+						}
+					} else {
+						if (siteURL.charAt(siteURL.length()-1) == '/') {
+							iconURL = siteURL + iconURL;
+						} else {
+							iconURL = siteURL + "/" + iconURL;
+						}
+					}
+					if (isChannelURLFound && isIconURLFound) {
+						break;
+					}
+				}
+				// szukamy w tej linii odnośnika do źródła kanału
+				if ((inputLine.contains("type=\"application/rss+xml\"")
+						|| inputLine.contains("type=\"application/atom+xml\""))
+						&& !isChannelURLFound) { // bierzemy pierwszy kanał ze strony
 					// jeśli linia nie zawiera odnośnika href (np. na thedailywtf.com),
 					// tylko jest on przeniesiony do dalszej linii, szukamy go dalej
 					if (!inputLine.contains("href=")) {
@@ -168,7 +202,7 @@ public class ChannelFactory extends DefaultHandler {
 					}
 					channelURL = inputLine.replaceAll("^.*href=\"", "");
 					channelURL = channelURL.replaceAll("\".*", "");
-					// sklejemy link strony i kanału w razie potrzeby
+					// sklejamy link strony i kanału w razie potrzeby
 					if (channelURL.charAt(0) == '/') {
 						if (siteURL.charAt(siteURL.length()-1) == '/') {
 							channelURL = siteURL + channelURL.substring(1);
@@ -176,6 +210,14 @@ public class ChannelFactory extends DefaultHandler {
 							channelURL = siteURL + channelURL;
 						}
 					}
+					isChannelURLFound = true;
+					if (isChannelURLFound && isIconURLFound) {
+						break;
+					}
+				}
+				// nie szukamy już dalej odnośnika do źródła lub ikony jeśli minęliśmy
+				// sekcję head
+				if (inputLine.contains("</head>".toLowerCase())) {
 					break;
 				}
 			}
@@ -185,7 +227,41 @@ public class ChannelFactory extends DefaultHandler {
 			}
 		}
 
-		return getChannelFromXML(channelURL.trim());
+		// ściągamy ikonę kanału, zapisujemy ją na dysk i dodajemy ścieżkę do niej
+		// do kanału
+		if (iconURL != null && !"".equals(iconURL)) {
+			Channel ch = getChannelFromXML(channelURL.trim());
+			try {
+				// ustalamy nazwę pliku, w którym zapiszemy ikonę
+				String iconFileName = channel.getLink();
+				if (iconFileName.startsWith("http://")) {
+					iconFileName = iconFileName.substring(7);
+				}
+				iconFileName = iconFileName.replaceAll("\\W", " ").trim().
+						replace(" ", "_").concat(".ico");
+				String iconPath = JReader.getConfig().getShortcutIconsDir()
+				 	+ File.separator + iconFileName;
+
+				// zapisujemy ikonę na dysk
+				InputStream inIcon = new URL(iconURL).openStream();
+				OutputStream outIcon = new FileOutputStream(iconPath);
+				// przepisuje bajty z inIcon do outIcon
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = inIcon.read(buf)) > 0) {
+					outIcon.write(buf, 0, len);
+				}
+				inIcon.close();
+				outIcon.close();
+
+				channel.setIconPath(iconPath);
+			} catch (Exception e) {
+				// nie udało się pobrać ikony (np. jest w nierozpoznanym formacie)
+			}
+			return ch;
+		} else {
+			return getChannelFromXML(channelURL.trim());
+		}
 	}
 
 	/**
