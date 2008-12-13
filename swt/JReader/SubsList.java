@@ -20,7 +20,7 @@ public class SubsList {
 	 
 	public SubsList(Composite comp) {
 	    
-		Image def = new Image(comp.getDisplay(), "c:\\icons\\default_icon.png");
+		Image def = new Image(comp.getDisplay(), "c:\\icons\\unread.png");
 		/*subsList = new List(comp, SWT.SINGLE | SWT.V_SCROLL);
 
 	    for (int i = 0, n = ITEMS.length; i < n; i++) {
