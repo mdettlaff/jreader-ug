@@ -4,8 +4,13 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -17,16 +22,34 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
+/**
+ * Tworzy tabelę z listą itemów danego kanału, taga lub filtru.
+ * 
+ * @author Karol
+ *
+ */
 public class ItemsTable {
 
+	/**
+	 * Tabela itemów.
+	 */
 	public static Table itemsTable;
+	/**
+	 * Nazwy kolumn tabeli.
+	 */
 	String[] titles = {"Title", "Date"};
 	private int DATE_WIDTH = 200;
 
+	/**
+	 * Konstruktor umieszczający tabelę w kompozycie podanym jako parametr.
+	 * 
+	 * @param comp Kompozyt służący jako <i>parent</i>, w którym ma być umieszczona tabela.  
+	 */
 	public ItemsTable(final Composite comp) {
 		Calendar cal = Calendar.getInstance();
 	    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
@@ -65,6 +88,16 @@ public class ItemsTable {
 	    for (int i=0; i<=20; i++) {
 	    	itemsTable.getItem(i).setFont(newFont);
 	    }
+	    
+	    Menu popupMenu = new Menu(itemsTable);
+	    MenuItem openNewTab = new MenuItem(popupMenu, SWT.NONE);
+	    openNewTab.setText("Open item in a new tab");
+	    MenuItem refreshItem = new MenuItem(popupMenu, SWT.NONE);
+	    refreshItem.setText("Refresh");
+	    MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
+	    deleteItem.setText("Delete");
+	    
+	    itemsTable.setMenu(popupMenu);
 		
 	    /*
 	     * Listeners
@@ -101,19 +134,18 @@ public class ItemsTable {
 		 */
 		itemsTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-             
 				TableItem[] item = itemsTable.getSelection();
-             
-              Font initialFont = item[0].getFont();
-              FontData[] fontData = initialFont.getFontData();
+             	Font initialFont = item[0].getFont();
+				FontData[] fontData = initialFont.getFontData();
+				if(fontData[0].getStyle() != SWT.NORMAL) {
+					for (int i = 0; i < fontData.length; i++) {            	  
+						fontData[i].setStyle(SWT.NORMAL);
+					}
               
-              for (int i = 0; i < fontData.length; i++) {            	  
-      	    		fontData[i].setStyle(SWT.NORMAL);
-              }
-              
-              Font newFont = new Font(comp.getDisplay(), fontData);
-              item[0].setFont(newFont);
-              item[0].setImage(read);
+					Font newFont = new Font(comp.getDisplay(), fontData);
+					item[0].setFont(newFont);
+					item[0].setImage(read);
+				}
             }
         });
 		/**
@@ -137,12 +169,12 @@ public class ItemsTable {
 		          }
 		          gc.setAdvanced(true);
 		          if (gc.getAdvanced())
-		            gc.setAlpha(95);
+		            gc.setAlpha(127);
 		          Rectangle rect = event.getBounds();
 		          Color foreground = gc.getForeground();
 		          Color background = gc.getBackground();
-		          gc.setForeground(comp.getDisplay().getSystemColor(SWT.COLOR_RED));
-		          gc.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		          gc.setForeground(comp.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		          gc.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
 		          gc.fillGradientRectangle(0, rect.y, itemsTable.getClientArea().width, rect.height, false);
 		          // przywracanie domyślynch kolorów
 		          gc.setForeground(foreground);
@@ -151,12 +183,32 @@ public class ItemsTable {
 		        }
 		      }
 		    });
-		
-		
+		/**
+		 * Podwójne kliknięcie myszą na wiersz tabeli owtiera nową zakładkę w Preview.
+		 */
+		MouseListener openListener = new MouseListener(){
+			public void mouseDoubleClick(MouseEvent me) {
+				TableItem[] item = itemsTable.getSelection();
+				CTabItem ctabItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
+				ctabItem.setText(item[0].getText());
+				ctabItem.setImage(new Image(comp.getDisplay(), "c:\\icons\\preview\\previewTab.png"));
+			}
+			public void mouseDown(MouseEvent e) {}
+			public void mouseUp(MouseEvent e) {}
+		};
+		itemsTable.addMouseListener(openListener);
+		/**
+		 * Obługuje menuItem 'Open item in a new tab' w menu pod prawym przyciskiem myszy.
+		 */
+		openNewTab.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+            	TableItem[] item = itemsTable.getSelection();
+				CTabItem ctabItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
+				ctabItem.setText(item[0].getText());
+				ctabItem.setImage(new Image(comp.getDisplay(), "c:\\icons\\preview\\previewTab.png"));
+           }
+            public void widgetDefaultSelected(SelectionEvent e) {                
+           }
+        });
 	}
-	
-	
-	
-	
-	
 }
