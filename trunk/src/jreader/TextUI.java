@@ -152,7 +152,7 @@ public class TextUI {
 						System.out.println("Nie znaleziono kanalow na tej stronie.");
 					} catch (MalformedURLException mue) {
 						System.out.print("Nie mozna dodac kanalu.");
-						System.out.println(" Podany URL jest nieprawidlowy.");
+						System.out.println(" URL jest nieprawidlowy.");
 					} catch (SAXParseException spe) {
 						System.out.print("Nie mozna dodac kanalu.");
 						System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
@@ -165,7 +165,8 @@ public class TextUI {
 						System.out.println("Nie mozna dodac kanalu. Szczegoly:");
 						System.out.println(se.getLocalizedMessage());
 					} catch (IOException ioe) {
-						System.out.println("Podana strona nie istnieje.");
+						System.out.print("Nie mozna dodac kanalu.");
+						System.out.println(" Pobieranie strony nie powiodlo sie.");
 					}
 				} else if (command.equals("previous item")) {
 					if (JReader.previousItem() == null) {
@@ -234,7 +235,7 @@ public class TextUI {
 				} else if (command.equals("select tag")) {
 					System.out.print("Wybierz tag (all - wszystkie, " +
 							"untagged - nieoznaczone): ");
-					JReader.selectTag(in.readLine());
+					JReader.selectTag(in.readLine().replace("untagged", ""));
 				} else if (command.equals("mark channel")) {
 					try {
 						System.out.print("Podaj numer kanalu: ");

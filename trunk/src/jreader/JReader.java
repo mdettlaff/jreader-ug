@@ -24,13 +24,13 @@ public class JReader {
 	public static final int HISTORY_SIZE = 10;
 
 	/**
-	 * Zbiór wszystkich kanałów.
-	 */
-	private static Channels channels = new Channels();
-	/**
 	 * Ustawienia programu wybrane przez użytkownika.
 	 */
 	private static Config config = new Config();
+	/**
+	 * Zbiór wszystkich kanałów.
+	 */
+	private static Channels channels = new Channels();
 
 	/**
 	 * Lista subskrypcji do wyświetlenia w GUI.
@@ -59,6 +59,7 @@ public class JReader {
 
 
 	public static void main(String[] args) {
+		channels.removeItems();
 		updateTagsList();
 		selectTag("all");
 		selectUnread();
@@ -306,23 +307,26 @@ public class JReader {
 	 * Ogranicza listę kanałów do kanałów oznaczonych wybranym tagiem.
 	 *
 	 * @param tag Tag, według którego filtrujemy kanały. Jeśli jest równy "all",
-	 *            wyświetlamy wszystkie kanały. Jeśli jest równy "untagged",
-	 *            wyświetlamy kanały, które nie są oznaczone żadnym tagiem.
+	 *            wyświetla wszystkie kanały. Jeśli jest równy "" (pusty napis)
+	 *            lub <code>null</code>, wyświetla kanały które nie są oznaczone
+	 *            żadnym tagiem.
 	 */
 	public static void selectTag(String tag) {
 		tag = tag.trim();
 		visibleChannels = new ArrayList<Channel>();
 		if (tag.equals("all")) {
 			visibleChannels = channels.getChannels();
-		} else if (tag.equals("untagged")) {
+		} else if (tag.equals("") || tag == null) {
 			for (Channel channel : channels.getChannels()) {
 				if (channel.getTags().size() == 0) {
 					visibleChannels.add(channel);
 				}
 			}
 		} else {
-			for (Channel channel : channels.getChannels(tag)) {
-				visibleChannels.add(channel);
+			for (Channel channel : channels.getChannels()) {
+				if (channel.containsTag(tag)) {
+					visibleChannels.add(channel);
+				}
 			}
 		}
 		Collections.sort(visibleChannels, channelComparator);

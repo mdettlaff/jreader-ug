@@ -15,10 +15,13 @@ public class ReadWrite {
 	 * Nie można tworzyć obiektów tej klasy.
 	 */
 	private ReadWrite() {}
+
 	/**
-	 * Metoda odczytuje dane z dysku
-	 * @param file plik z ktorego odczytujemy dane
-	 * @return zwraca obiekt danych odczytanych z pliku, null jesli wystapi blad
+	 * Odczytuje dane z dysku.
+	 *
+	 * @param  file Plik z którego odczytujemy dane.
+	 * @return Obiekt danych odczytanych z pliku, <code>null</code> jeśli wystąpi
+	 *         błąd.
 	 */
 	public static Object read(File file) {
 		ObjectInputStream ois = null;
@@ -38,11 +41,14 @@ public class ReadWrite {
 			} catch(Exception e) {}
 		}
 	}
+
 	/**
-	 * Metoda zapisuje dane do pliku
-	 * @param file plik do ktorego zapisujemy dane
-	 * @param object obiekt danych, ktore chcemy zapisac
-	 * @return true jesli operacja sie powiedzie, false w przeciwnym wypadku
+	 * Zapisuje dane do pliku.
+	 *
+	 * @param  file Plik do którego zapisujemy dane.
+	 * @param  object Obiekt danych, które chcemy zapisać.
+	 * @return <code>true</code> jeśli operacja się powiedzie,
+	 *         <code>false</code> w przeciwnym wypadku.
 	 */
 	public static boolean write(File file, Object object) {
 		ObjectOutputStream oos = null;
@@ -64,3 +70,4 @@ public class ReadWrite {
 		return true;
 	}
 }
+
