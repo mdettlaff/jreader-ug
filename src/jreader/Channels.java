@@ -85,7 +85,7 @@ public class Channels implements Serializable {
 	 *
 	 * @param  channelId Identyfikator kanału.
 	 * @return <code>true</code> jeśli istnieje, <code>false</code> w przeciwnym
-	 *         wypadku
+	 *         wypadku.
 	 */
 	public boolean containsChannel(String channelId) {
 		return this.channels.containsKey(channelId);

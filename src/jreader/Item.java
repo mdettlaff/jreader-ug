@@ -17,11 +17,11 @@ public class Item implements Serializable {
 	 */
 	private String id;
 	/**
-	 * Unikalny identyfikator kanału do którego należy element
+	 * Unikalny identyfikator kanału do którego należy element.
 	 */
 	private String channelId;
 	/**
-	 * Informacja o tym czy element został przeczytany
+	 * Informacja o tym czy element został przeczytany.
 	 */
 	private boolean isRead;
 

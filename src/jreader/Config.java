@@ -42,9 +42,9 @@ public class Config implements Serializable {
 					osName.equalsIgnoreCase("Windows 2000") || osName.equalsIgnoreCase("Windows NT"))
 				Config.configDir = new File(System.getProperty("user.home") + File.separator + "JReader");
 			else if(osName.equalsIgnoreCase("Windows 95") || osName.equalsIgnoreCase("Windows 98"))
-				Config.configDir = new File("Config");
+				Config.configDir = new File("data");
 			else
-				Config.configDir = new File("Config");
+				Config.configDir = new File("data");
 			Config.configDir.mkdirs();
 		}
 		if(Config.configFile == null) {
@@ -220,7 +220,7 @@ public class Config implements Serializable {
 			this.sortByNewest = true;
 			this.updateAllOnStartup = false;
 			this.autoUpdateMinutes = 0;
-			this.deleteOlderThanDays = 10;
+			this.deleteOlderThanDays = 30;
 		}
 	}
 }
