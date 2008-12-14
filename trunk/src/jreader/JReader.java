@@ -7,10 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import org.xml.sax.SAXException;
 
 /**
@@ -340,8 +338,9 @@ public class JReader {
 	 *         się.
 	 * @throws SAXException jeśli wystąpił błąd parsera XML.
 	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
+	 * @return Ilość nowych wiadomości dodanych do kanału.
 	 */
-	public static void updateChannel(Channel channel)
+	public static int updateChannel(Channel channel)
 			throws SAXException, IOException {
 		Channel newChannel = ChannelFactory.getChannelFromXML(
 				channel.getChannelURL());
@@ -352,6 +351,7 @@ public class JReader {
 		channel.setImageTitle(newChannel.getImageTitle());
 		channel.setImageLink(newChannel.getImageLink());
 		// dodawanie nowych elementów do kanału
+		int newItemsCount = 0;
 		for (Item updatedItem : ChannelFactory.getDownloadedItems()) {
 			boolean itemAlreadyExists = false;
 			for (Item item : channels.getItems(channel.getId())) {
@@ -363,11 +363,13 @@ public class JReader {
 			if (!itemAlreadyExists) {
 				channels.addItem(updatedItem);
 				channel.addItem(updatedItem.getId());
+				newItemsCount++;
 			}
 		}
 		if (updateUnreadItemsCount(channel)) {
 			channels.write();
 		}
+		return newItemsCount;
 	}
 
 	/**

@@ -223,10 +223,20 @@ public class Channel implements Serializable {
 		this.imageLink = imageLink;
 	}
 
+	/**
+	 * Zwraca ścieżkę do ikony kanału.
+	 *
+	 * @return Ścieżka do pliku graficznego na dysku, zawierającego ikonę kanału.
+	 */
 	public String getIconPath() {
 		return this.iconPath;
 	}
 
+	/**
+	 * Ustawia ścieżkę do ikony kanału.
+	 *
+	 * @param iconPath Ścieżka do pliku, w którym jest zapisana ikona kanału.
+	 */
 	public void setIconPath(String iconPath) {
 		this.iconPath = iconPath;
 	}

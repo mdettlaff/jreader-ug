@@ -30,6 +30,12 @@ public class TextUI {
 
 		try {
 			boolean justStarted = true;
+			if (JReader.getConfig().getUpdateAllOnStartup()) {
+				updateVisibleChannels();
+			}
+			if (JReader.getConfig().getAutoUpdateMinutes() > 0) {
+				new UpdateDaemon();
+			}
 			while (!(command.equals("quit"))) {
 				if (justStarted) {
 					command = "help";
@@ -63,8 +69,11 @@ public class TextUI {
 
 					System.out.print("set sort\t");
 					System.out.print("set delete\t");
+					System.out.print("set update\t");
+					System.out.println("set autoupdate");
+
 					System.out.print("import\t\t");
-					System.out.println("export");
+					System.out.print("export\t\t");
 					System.out.print("help\t\t");
 					System.out.println("quit");
 				} else if (command.equals("show channels")) {
@@ -177,33 +186,7 @@ public class TextUI {
 						System.out.println("Nie mozna przejsc dalej.");
 					}
 				} else if (command.equals("update all")) {
-					for (Channel channel : JReader.getVisibleChannels()) {
-						try {
-							JReader.updateChannel(channel);
-							channel.setFail(false);
-						} catch (SAXParseException spe) {
-							System.out.println("Nie mozna zaktualizowac kanalu "
-									+ channel.getTitle() + ".");
-							System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
-							System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
-							System.out.println("Szczegoly: " + spe.getLocalizedMessage());
-							channel.setFail(true);
-						} catch (SAXException saxe) {
-							System.out.print("Nie mozna dodac kanalu.");
-							System.out.println(" Blad parsera XML.");
-						} catch (SocketException se) {
-							System.out.println("Nie mozna zaktualizowac kanalu "
-									+ channel.getTitle() + ".");
-							System.out.println("Szczegoly: " + se.getLocalizedMessage());
-							channel.setFail(true);
-						} catch (IOException ioe) {
-							System.out.println("Nie mozna zaktualizowac kanalu "
-									+ channel.getTitle() + ".");
-							System.out.println("Brak polaczenia ze strona.");
-							channel.setFail(true);
-						}
-					}
-					System.out.println("Kanaly zostaly zaktualizowane.");
+					updateVisibleChannels();
 				} else if (command.equals("next unread")) {
 					if (!JReader.nextUnread()) {
 						System.out.println("Nie ma nieprzeczytanych wiadomosci.");
@@ -326,9 +309,37 @@ public class TextUI {
 						System.out.println("Wiadomosci sa usuwane po "
 								+ JReader.getConfig().getDeleteOlderThanDays() + " dniach.");
 					}
-					System.out.print("Po ilu dniach usuwac wiadomosci (0 - wcale): ");
+					System.out.print("Po ilu dniach usuwac wiadomosci? (0 - wcale): ");
 					JReader.getConfig().setDeleteOlderThanDays(
 							new Integer(in.readLine().trim()));
+					if (!JReader.getConfig().write()) {
+						System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
+					}
+				} else if (command.equals("set update")) {
+					System.out.println("Aktualizowanie kanalow po uruchomieniu: " +
+							JReader.getConfig().getUpdateAllOnStartup());
+					System.out.print("Czy aktualizowac kanaly po uruchomieniu? (t/n) ");
+					if (in.readLine().toLowerCase().trim().equals("t")) {
+						JReader.getConfig().setUpdateAllOnStartup(true);
+					} else {
+						JReader.getConfig().setUpdateAllOnStartup(false);
+					}
+					if (!JReader.getConfig().write()) {
+						System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
+					}
+				} else if (command.equals("set autoupdate")) {
+					if (JReader.getConfig().getAutoUpdateMinutes() == 0) {
+						System.out.println("Automatyczne aktualizowanie jest wylaczone.");
+					} else {
+						System.out.println("Automatyczne aktualizowanie co "
+								+ JReader.getConfig().getAutoUpdateMinutes() + " minut.");
+					}
+					System.out.print("Co ile minut aktualizowac kanaly? (0 - wcale): ");
+					int aum = new Integer(in.readLine().trim());
+					if (aum > 0 && JReader.getConfig().getAutoUpdateMinutes() == 0) {
+						new UpdateDaemon();
+					}
+					JReader.getConfig().setAutoUpdateMinutes(aum);
 					if (!JReader.getConfig().write()) {
 						System.out.println("Blad: zapisanie ustawien nie powiodlo sie.");
 					}
@@ -368,6 +379,40 @@ public class TextUI {
 		} catch (IOException ioe) {
 			System.err.println("Blad interfejsu tekstowego.");
 		}
+	}
+
+	public static void updateVisibleChannels() {
+		for (Channel channel : JReader.getVisibleChannels()) {
+			try {
+				if (JReader.updateChannel(channel) > 0) {
+					System.out.println(channel.getTitle() + " zaktualizowany.");
+				} else {
+					System.out.println(channel.getTitle() + " nie zmienil sie.");
+				}
+				channel.setFail(false);
+			} catch (SAXParseException spe) {
+				System.out.println("Nie mozna zaktualizowac kanalu "
+						+ channel.getTitle() + ".");
+				System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
+				System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
+				System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+				channel.setFail(true);
+			} catch (SAXException saxe) {
+				System.out.print("Nie mozna dodac kanalu.");
+				System.out.println(" Blad parsera XML.");
+			} catch (SocketException se) {
+				System.out.println("Nie mozna zaktualizowac kanalu "
+						+ channel.getTitle() + ".");
+				System.out.println("Szczegoly: " + se.getLocalizedMessage());
+				channel.setFail(true);
+			} catch (IOException ioe) {
+				System.out.println("Nie mozna zaktualizowac kanalu "
+						+ channel.getTitle() + ".");
+				System.out.println("Brak polaczenia ze strona.");
+				channel.setFail(true);
+			}
+		}
+		System.out.println("Kanaly zostaly zaktualizowane.");
 	}
 }
 
