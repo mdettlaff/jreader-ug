@@ -47,20 +47,15 @@ public class ItemsTable {
 	 * Nazwy kolumn tabeli.
 	 */
 	String[] titles = {"Title", "Date"};
-	private int DATE_WIDTH = 200;
 	private static Image unread;
-	private Image read;
+	static Image read;
 	
 	/**
 	 * Konstruktor umieszczający tabelę w kompozycie podanym jako parametr.
 	 * 
 	 * @param comp Kompozyt służący jako <i>parent</i>, w którym ma być umieszczona tabela.  
 	 */
-	public ItemsTable(final Composite comp) {
-		
-		Calendar cal = Calendar.getInstance();
-	    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
-		
+	public ItemsTable(final Composite comp) {		
 		unread = new Image(comp.getDisplay(), "c:\\icons\\unread.png");
 		read = new Image(comp.getDisplay(), "c:\\icons\\read.png");
 		
@@ -72,8 +67,6 @@ public class ItemsTable {
 		column1.setText(titles[0]);
 		final TableColumn column2 = new TableColumn(itemsTable, SWT.NONE);
 		column2.setText(titles[1]);
-		
-		itemsTable.getColumn(1).setWidth(DATE_WIDTH);
 	    
 	    Menu popupMenu = new Menu(itemsTable);
 	    MenuItem openNewTab = new MenuItem(popupMenu, SWT.NONE);
@@ -108,7 +101,7 @@ public class ItemsTable {
 	            column2.setWidth(width - column1.getWidth());
 	            itemsTable.setSize(area.width, area.height);
 	          } else {
-	            // zwiekszenie tabeli - zwiekszenie kolumn
+	            // zwiekszenie tabeli - zwiększenie kolumn
 	            itemsTable.setSize(area.width, area.height);
 	            column1.setWidth((width/3)*2);
 	            column2.setWidth(width - column1.getWidth());
@@ -130,7 +123,8 @@ public class ItemsTable {
 					}
               
 					Font newFont = new Font(comp.getDisplay(), fontData);
-					item[0].setFont(newFont);					
+					item[0].setFont(newFont);
+					item[0].setImage(read);
 				}
 				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
 				SubsList.refresh();
@@ -220,7 +214,7 @@ public class ItemsTable {
             public void widgetSelected(SelectionEvent e) {
             	//ta metda markasunread powinna byc zamieniona na tą ktora powstanie w JReader
             	JReader.getItems().get(itemsTable.getSelectionIndex()).markAsUnread();
-            
+            	
             	SubsList.refresh();
             	refresh();
            }
@@ -244,7 +238,10 @@ public class ItemsTable {
 		for (Item it : JReader.getItems()) {
 			TableItem item = new TableItem(ItemsTable.itemsTable, SWT.NONE);
 			if (JReader.getChannel(it.getChannelId()).getIconPath() == null)
-				item.setImage(unread);
+				if (it.isRead())
+					item.setImage(read);
+				else
+					item.setImage(unread);
 			else
 				item.setImage(new Image(Items.tableComposite.getDisplay(), JReader.getChannel(it.getChannelId()).getIconPath()));
 			item.setText(0, it.getTitle());
