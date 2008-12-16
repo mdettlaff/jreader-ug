@@ -42,7 +42,10 @@ public class SubsList {
 	    for (Channel ch : JReader.getVisibleChannels()) {
 	    	TableItem item = new TableItem(subsList, SWT.NONE);
 	    	if (ch.getIconPath() == null)
-	    		item.setImage(def);
+	    		if (ch.getUnreadItemsCount() == 0)
+	    			item.setImage(ItemsTable.read);
+	    		else
+	    			item.setImage(def);
 	    	else  	item.setImage(new Image(comp.getDisplay(), ch.getIconPath()));
 	    	item.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + ")");
 	    	if (ch.getUnreadItemsCount() != 0)
@@ -69,14 +72,16 @@ public class SubsList {
 		for (Channel ch : JReader.getVisibleChannels()) {
 	    	TableItem subs = new TableItem(SubsList.subsList, SWT.NONE);
 	    	if (ch.getIconPath() == null)
-	    		subs.setImage(def);
+	    		if (ch.getUnreadItemsCount() == 0)
+	    			subs.setImage(ItemsTable.read);
+	    		else
+	    			subs.setImage(def);
 	    	else {
 	    		subs.setImage(new Image(Subscriptions.subComposite.getDisplay(), ch.getIconPath()));
 	    	}
 	    	subs.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + ")");
 	    	if (ch.getUnreadItemsCount() != 0)
-	    		subs.setFont(fontBold);
-	    	
+	    		subs.setFont(fontBold);	    	
 	    }
 	}
 	
