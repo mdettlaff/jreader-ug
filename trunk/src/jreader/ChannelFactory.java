@@ -227,41 +227,47 @@ public class ChannelFactory extends DefaultHandler {
 			}
 		}
 
+		Channel ch = getChannelFromXML(channelURL.trim());
+
 		// ściągamy ikonę kanału, zapisujemy ją na dysk i dodajemy ścieżkę do niej
 		// do kanału
-		if (iconURL != null && !"".equals(iconURL)) {
-			Channel ch = getChannelFromXML(channelURL.trim());
-			try {
-				// ustalamy nazwę pliku, w którym zapiszemy ikonę
-				String iconFileName = channel.getLink();
-				if (iconFileName.startsWith("http://")) {
-					iconFileName = iconFileName.substring(7);
-				}
-				iconFileName = iconFileName.replaceAll("\\W", " ").trim().
-						replace(" ", "_").concat(".ico");
-				String iconPath = JReader.getConfig().getShortcutIconsDir()
-				 	+ File.separator + iconFileName;
-
-				// zapisujemy ikonę na dysk
-				InputStream inIcon = new URL(iconURL).openStream();
-				OutputStream outIcon = new FileOutputStream(iconPath);
-				// przepisuje bajty z inIcon do outIcon
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = inIcon.read(buf)) > 0) {
-					outIcon.write(buf, 0, len);
-				}
-				inIcon.close();
-				outIcon.close();
-
-				channel.setIconPath(iconPath);
-			} catch (Exception e) {
-				// nie udało się pobrać ikony (np. jest w nierozpoznanym formacie)
-			}
-			return ch;
-		} else {
-			return getChannelFromXML(channelURL.trim());
+		// jeśli nie znaleźliśmy linka do ikony w źródle HTML, dajemy domyślny
+		if (iconURL == null || "".equals(iconURL.trim())) {
+			iconURL = "favicon.ico";
 		}
+		if (siteURL.charAt(siteURL.length()-1) == '/') {
+			iconURL = ch.getLink() + iconURL;
+		} else {
+			iconURL = ch.getLink() + "/" + iconURL;
+		}
+		try {
+			// ustalamy nazwę pliku, w którym zapiszemy ikonę
+			String iconFileName = channel.getLink();
+			if (iconFileName.startsWith("http://")) {
+				iconFileName = iconFileName.substring(7);
+			}
+			iconFileName = iconFileName.replaceAll("\\W", " ").trim().
+					replace(" ", "_").concat(".ico");
+			String iconPath = JReader.getConfig().getShortcutIconsDir()
+				+ File.separator + iconFileName;
+
+			// zapisujemy ikonę na dysk
+			InputStream inIcon = new URL(iconURL).openStream();
+			OutputStream outIcon = new FileOutputStream(iconPath);
+			// przepisuje bajty z inIcon do outIcon
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = inIcon.read(buf)) > 0) {
+				outIcon.write(buf, 0, len);
+			}
+			inIcon.close();
+			outIcon.close();
+
+			channel.setIconPath(iconPath);
+		} catch (Exception e) {
+			// nie udało się pobrać ikony (np. jest w nierozpoznanym formacie)
+		}
+		return ch;
 	}
 
 	/**

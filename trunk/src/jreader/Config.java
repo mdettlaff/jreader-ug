@@ -55,7 +55,7 @@ public class Config implements Serializable {
 			Config.cacheDir.mkdirs();
 		}
 		if(Config.shortcutIconsDir == null) {
-			Config.shortcutIconsDir = new File(Config.configDir.getPath() + File.separator + "shortcut_icons");
+			Config.shortcutIconsDir = new File(Config.cacheDir.getPath() + File.separator + "shortcut_icons");
 			Config.shortcutIconsDir.mkdirs();
 		}
 		if(Config.cd == null) {
