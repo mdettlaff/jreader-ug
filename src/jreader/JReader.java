@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.xml.sax.SAXException;
 
 import jreader.gui.MainSash;
 import jreader.gui.MainToolBar;
@@ -23,7 +24,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
-import org.xml.sax.SAXException;
 
 /**
  * Główna klasa programu. Przechowuje zbiór wszystkich subskrypcji, ustawienia
@@ -65,14 +65,22 @@ public class JReader {
 
 	private static ChannelComparator channelComparator = new ChannelComparator();
 	private static ItemComparator itemComparator = new ItemComparator();
+	/**
+	 * Aktualnie wybrany przez użytkownika filtr elementów.<br>
+	 * Jeśli wybrano kanał, jest równy id tego kanału.<br>
+	 * Jeśli wybrano nieprzeczytane kanały, jest równy "unread".<br>
+	 * Jeśli wybrano wszystkie kanały, jest równy "all".
+	 */
+	private static String currentFilter = "unread";
 
 	/** Nie można tworzyć obiektów tej klasy. */
 	private JReader() {}
 
+	/* Zmienne potrzebne do uruchomienia GUI. */
 	public static final Display display = new Display ();
 	public static String statusText = "Status Line";
 	public static Label statusLine;
-	public static String version = "JReader v. 0.64";
+	public static String version = "JReader 0.76";
 	public static boolean issimple = false;
 	public static Shell shell;
 
@@ -82,36 +90,36 @@ public class JReader {
 		selectTag("all");
 		selectUnread();
 
-		if (args.length > 0 && args[0].contains("-t")) {
+		// opcja "-t" uruchamia tryb tekstowy
+		if (args.length > 0 && args[0].equals("-t")) {
 			TextUI.run();
 		} else {
 			final Image jreader = new Image(display, "c:\\icons\\small\\jreader2.png");
-			
-				shell = new Shell (display);
-				shell.setSize (800, 600);
-				shell.setText(version);
-				shell.setImage(jreader);
-				shell.setLayout(new GridLayout());
-				/* Wysrodkowanie shella */
-				Monitor primary = display.getPrimaryMonitor();
-			    Rectangle bounds = primary.getBounds();
-			    Rectangle rect = shell.getBounds();
-			    int x = bounds.x + (bounds.width - rect.width) / 2;
-			    int y = bounds.y + (bounds.height - rect.height) / 2;
-			    shell.setLocation(x, y);
-				
-				new MenuBar(shell);
-				new MainToolBar(shell);
-				new MainSash(shell);
-				statusLine = new Label(shell, SWT.NONE);
-				statusLine.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-				statusLine.setText(statusText);
-				shell.open ();
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch ()) display.sleep ();
-				}
-				display.dispose ();
-			
+
+			shell = new Shell (display);
+			shell.setSize (800, 600);
+			shell.setText(version);
+			shell.setImage(jreader);
+			shell.setLayout(new GridLayout());
+			/* Wyśrodkowanie shella */
+			Monitor primary = display.getPrimaryMonitor();
+			Rectangle bounds = primary.getBounds();
+			Rectangle rect = shell.getBounds();
+			int x = bounds.x + (bounds.width - rect.width) / 2;
+			int y = bounds.y + (bounds.height - rect.height) / 2;
+			shell.setLocation(x, y);
+
+			new MenuBar(shell);
+			new MainToolBar(shell);
+			new MainSash(shell);
+			statusLine = new Label(shell, SWT.NONE);
+			statusLine.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			statusLine.setText(statusText);
+			shell.open ();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch ()) display.sleep ();
+			}
+			display.dispose ();
 		}
 
 		channels.write();
@@ -307,6 +315,7 @@ public class JReader {
 		items = channels.getItems(visibleChannels.get(index).getId());
 		Collections.sort(items, itemComparator);
 		preview.setCurrent(new Preview(visibleChannels.get(index)));
+		currentFilter = visibleChannels.get(index).getId();
 	}
 
 	/**
@@ -332,6 +341,7 @@ public class JReader {
 			}
 		}
 		Collections.sort(items, itemComparator);
+		currentFilter = "all";
 	}
 
 	/**
@@ -349,6 +359,7 @@ public class JReader {
 			}
 		}
 		Collections.sort(items, itemComparator);
+		currentFilter = "unread";
 	}
 
 	/**
@@ -413,6 +424,7 @@ public class JReader {
 			if (!itemAlreadyExists) {
 				channels.addItem(updatedItem);
 				channel.addItem(updatedItem.getId());
+				updateItemsList(updatedItem);
 				newItemsCount++;
 			}
 		}
@@ -570,6 +582,29 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
+	}
+
+	/**
+	 * Jeśli podany element pasuje do aktualnie wybranego filtra (czyli kanału,
+	 * listy nieprzeczytanych lub wszystkich elementów), zostaje dodany do listy
+	 * elementów do wyświetlenia. Chodzi o to, żeby lista elementów do
+	 * wyświetlenia była uaktualniana na bieżąco podczas aktualizacji kanałów.
+	 *
+	 * @param item Element, który dopiero co został ściągnięty i jest nowy.
+	 */
+	private static void updateItemsList(Item item) {
+		if (currentFilter.equals("unread")) { // wybrano nieprzeczytane elementy
+			if (!item.isRead()) {
+				items.add(item);
+			}
+		} else if (currentFilter.equals("all")) { // wybrano wszystkie elementy
+			items.add(item);
+		} else { // wybrano kanał
+			if (currentFilter.equals(item.getChannelId())) {
+				items.add(item);
+			}
+		}
+		Collections.sort(items, itemComparator);
 	}
 }
 
