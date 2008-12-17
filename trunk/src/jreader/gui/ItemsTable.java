@@ -73,7 +73,6 @@ public class ItemsTable {
 	    openNewTab.setText("Open item in a new tab");
 	    MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
 	    deleteItem.setText("Delete item");
-	    
 	    itemsTable.setMenu(popupMenu);
 		
 	 
@@ -127,6 +126,7 @@ public class ItemsTable {
 				}
 				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
 				SubsList.refresh();
+				Preview.browser.setText(JReader.getPreview().getCurrent().getHTML());
             }
         });
 		
@@ -236,7 +236,8 @@ public class ItemsTable {
 			}
 			if (index%2==0) {
 				item.setBackground(SubsList.gray);
-			}
+			} else
+				item.setBackground(SubsList.white);
 			index++;
 		}
 	}
