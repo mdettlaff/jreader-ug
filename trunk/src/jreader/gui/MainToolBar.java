@@ -1,10 +1,12 @@
 package jreader.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 
 import jreader.Channel;
 import jreader.JReader;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -32,13 +34,13 @@ public class MainToolBar {
 		
 	//	Opcjonalne ikony do przyciskow na ToolBar
 		
-		final Image addIcon = new Image(display, "c:\\icons\\medium\\add.png");
-        final Image syncIcon = new Image(display, "c:\\icons\\medium\\sync.png");
-        final Image backIcon = new Image(display, "c:\\icons\\medium\\back.png");
-        final Image forwardIcon = new Image(display, "c:\\icons\\medium\\forward.png");
-        final Image searchIcon = new Image(display, "c:\\icons\\medium\\search.png");
-        final Image optionsIcon = new Image(display, "c:\\icons\\medium\\options2.png");
-        final Image unreadIcon = new Image(display, "c:\\icons\\medium\\unread.png");
+		final Image addIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "add.png");
+        final Image syncIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "sync.png");
+        final Image backIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "back.png");
+        final Image forwardIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "forward.png");
+        final Image searchIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "search.png");
+        final Image optionsIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "options2.png");
+        final Image unreadIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "unread.png");
         
       //Separator0
         new ToolItem(toolBar, SWT.SEPARATOR);
@@ -96,7 +98,7 @@ public class MainToolBar {
         //Add Subscryption
         addSubToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	JReader.statusLine.setText("Adding Subscryption");
+            	GUI.statusLine.setText("Adding Subscryption");
             	AddSubscriptionShell addShell = new AddSubscriptionShell(shell);
 		   		addShell.open();
                 }
@@ -108,9 +110,9 @@ public class MainToolBar {
                 for (Channel channel : JReader.getVisibleChannels()) {
         			try {
         				if (JReader.updateChannel(channel) > 0) {
-        					JReader.statusLine.setText(channel.getTitle() + " zaktualizowany.");
+        					GUI.statusLine.setText(channel.getTitle() + " zaktualizowany.");
         				} else {
-        					JReader.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
+        					GUI.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
         				}
         				channel.setFail(false);
         			} catch (SAXParseException spe) {
@@ -185,9 +187,9 @@ public class MainToolBar {
               if (item != null && item.getStyle() != SWT.SEPARATOR) {
                 name = item.getToolTipText();
               }
-              if (!JReader.statusText.equals(name)) {
-                JReader.statusLine.setText(name);
-                JReader.statusText = name;
+              if (!GUI.statusText.equals(name)) {
+                GUI.statusLine.setText(name);
+                GUI.statusText = name;
               }
             }
           });

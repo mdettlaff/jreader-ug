@@ -1,6 +1,6 @@
 package jreader.gui;
 
-import jreader.JReader;
+import java.io.File;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -27,10 +27,10 @@ public class Preview {
 	
 	public Preview(final Composite shell) {
 		
-		final Image itemsTab = new Image(shell.getDisplay(), "c:\\icons\\preview\\previewTab.png");
+		final Image itemsTab = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png");
 		
 		folderPreview = new CTabFolder(shell, SWT.BORDER | SWT.MULTI );
-		folderPreview.setSimple(JReader.issimple);
+		folderPreview.setSimple(GUI.issimple);
 		folderPreview.setMaximizeVisible(true);
 		  
 		Device device = Display.getCurrent ();
@@ -89,8 +89,8 @@ public class Preview {
 		/* zmienia treść Status Line */
 		browser.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "Item preview.";
-              JReader.statusLine.setText(JReader.statusText);
+              GUI.statusText = "Item preview.";
+              GUI.statusLine.setText(GUI.statusText);
             }
           });
 		/* Podwójne kliknięcie maksymalizuje lub przywraca rozmiar okna */

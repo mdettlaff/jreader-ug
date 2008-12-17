@@ -1,5 +1,7 @@
 package jreader.gui;
 
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -23,13 +25,13 @@ public class MainCoolBar {
 		
 		//	Opcjonalne ikony do przyciskow na CoolBar (moze dodamy pozniej)
 		
-		final Image addIcon = new Image(display, "c:\\icons\\medium\\add.png");
-        final Image syncIcon = new Image(display, "c:\\icons\\medium\\sync.png");
-        final Image backIcon = new Image(display, "c:\\icons\\medium\\back.png");
-        final Image forwardIcon = new Image(display, "c:\\icons\\medium\\forward.png");
-        final Image searchIcon = new Image(display, "c:\\icons\\medium\\search.png");
-        final Image optionsIcon = new Image(display, "c:\\icons\\medium\\options.png");
-        final Image unreadIcon = new Image(display, "c:\\icons\\medium\\unread.png");
+		final Image addIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "add.png");
+        final Image syncIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "sync.png");
+        final Image backIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "back.png");
+        final Image forwardIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "forward.png");
+        final Image searchIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "search.png");
+        final Image optionsIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "options.png");
+        final Image unreadIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "unread.png");
         
 		
 	//	Subskrypcje - pasek na coolbarze

@@ -1,5 +1,9 @@
 package jreader.gui;
 
+import java.io.File;
+
+import jreader.JReader;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -15,7 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import jreader.JReader;
 
 public class Filters {
 
@@ -30,10 +33,10 @@ public class Filters {
 	public Filters(final Composite shell) {
 		
 		Display display = shell.getDisplay();
-		final Image rssTab = new Image(display, "c:\\icons\\filters\\rss-tab.png");
+		final Image rssTab = new Image(display, "data" + File.separator + "icons" + File.separator + "filters" + File.separator + "rss-tab.png");
 		
 		folderFilter = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
-		folderFilter.setSimple(JReader.issimple);
+		folderFilter.setSimple(GUI.issimple);
 		
 		  
 		Device device = Display.getCurrent ();
@@ -75,8 +78,8 @@ public class Filters {
 		
 		folderFilter.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "Choose the type of messages filter.";
-              JReader.statusLine.setText(JReader.statusText);
+              GUI.statusText = "Choose the type of messages filter.";
+              GUI.statusLine.setText(GUI.statusText);
             }
           });
 		allButton.addListener(SWT.Selection, new Listener() {

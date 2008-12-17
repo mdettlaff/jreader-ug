@@ -1,5 +1,6 @@
 package jreader.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketException;
@@ -28,7 +29,7 @@ public class AddSubscriptionShell {
 	private static Label warning;
 	
 	public AddSubscriptionShell(Shell shell) {
-		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\add.png");
+		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "small" + File.separator + "add.png");
 		addShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		addShell.setText("Add a subscription");
 		//aboutShell.setSize(200, 150);
@@ -71,7 +72,7 @@ public class AddSubscriptionShell {
 	    //OK button
 	    okB.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	JReader.statusLine.setText("");
+            	GUI.statusLine.setText("");
             	System.out.println(url.getText());
             	System.out.println(tag.getText());
 				try {
@@ -109,7 +110,7 @@ public class AddSubscriptionShell {
         });
 	    caB.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	JReader.statusLine.setText("");
+            	GUI.statusLine.setText("");
             	addShell.dispose();
                 }
         });

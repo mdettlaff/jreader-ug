@@ -11,19 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.xml.sax.SAXException;
 
-import jreader.gui.MainSash;
-import jreader.gui.MainToolBar;
-import jreader.gui.MenuBar;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Monitor;
-import org.eclipse.swt.widgets.Shell;
+import jreader.gui.GUI;
 
 /**
  * Główna klasa programu. Przechowuje zbiór wszystkich subskrypcji, ustawienia
@@ -76,50 +64,20 @@ public class JReader {
 	/** Nie można tworzyć obiektów tej klasy. */
 	private JReader() {}
 
-	/* Zmienne potrzebne do uruchomienia GUI. */
-	public static final Display display = new Display ();
-	public static String statusText = "Status Line";
-	public static Label statusLine;
-	public static String version = "JReader 0.76";
-	public static boolean issimple = false;
-	public static Shell shell;
 
+	/**
+	 * Uruchamia program. Opcja "-t" włącza tryb tekstowy.
+	 */
 	public static void main(String[] args) {
 		channels.removeItems();
 		updateTagsList();
 		selectTag("all");
 		selectUnread();
 
-		// opcja "-t" uruchamia tryb tekstowy
 		if (args.length > 0 && args[0].equals("-t")) {
 			TextUI.run();
 		} else {
-			final Image jreader = new Image(display, "c:\\icons\\small\\jreader2.png");
-
-			shell = new Shell (display);
-			shell.setSize (800, 600);
-			shell.setText(version);
-			shell.setImage(jreader);
-			shell.setLayout(new GridLayout());
-			/* Wyśrodkowanie shella */
-			Monitor primary = display.getPrimaryMonitor();
-			Rectangle bounds = primary.getBounds();
-			Rectangle rect = shell.getBounds();
-			int x = bounds.x + (bounds.width - rect.width) / 2;
-			int y = bounds.y + (bounds.height - rect.height) / 2;
-			shell.setLocation(x, y);
-
-			new MenuBar(shell);
-			new MainToolBar(shell);
-			new MainSash(shell);
-			statusLine = new Label(shell, SWT.NONE);
-			statusLine.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-			statusLine.setText(statusText);
-			shell.open ();
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch ()) display.sleep ();
-			}
-			display.dispose ();
+			GUI.run();
 		}
 
 		channels.write();

@@ -1,6 +1,5 @@
 package jreader.gui;
 
-import jreader.JReader;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -92,8 +91,8 @@ public class MainSash {
 		//'wyzerowanie' statusline
 		sashComp.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "";
-              JReader.statusLine.setText(JReader.statusText);
+              GUI.statusText = "";
+              GUI.statusLine.setText(GUI.statusText);
             }
           });
 	}

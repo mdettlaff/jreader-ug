@@ -1,5 +1,7 @@
 package jreader.gui;
 
+import java.io.File;
+
 import jreader.JReader;
 
 import org.eclipse.swt.SWT;
@@ -23,7 +25,7 @@ public class OptionsShell {
 	private static Shell optionsShell;
 	
 	public OptionsShell(Shell shell) {
-		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\small\\options.png");
+		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "small" + File.separator + "options.png");
 		optionsShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL );
 		optionsShell.setText("Preferences");
 		optionsShell.setLayout(new GridLayout(1, false));

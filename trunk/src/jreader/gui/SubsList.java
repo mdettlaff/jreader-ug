@@ -1,5 +1,6 @@
 package jreader.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 
@@ -36,7 +37,7 @@ public class SubsList {
 	public static Table subsList;
 	public static Color gray = new Color (Subscriptions.subComposite.getDisplay(), 240, 250, 250);
 	public static Color white = new Color (Subscriptions.subComposite.getDisplay(), 255, 255, 255);
-	public static Image def = new Image(Subscriptions.subComposite.getDisplay(), "c:\\icons\\unread.png");
+	public static Image def = new Image(Subscriptions.subComposite.getDisplay(), "data" + File.separator + "icons" + File.separator + "unread.png");
 	static Font fontBold;
 	 
 	public SubsList(final Composite comp) {
@@ -115,23 +116,23 @@ public class SubsList {
             	if (indeks == -1) return;
             	try {
             		JReader.updateChannel(JReader.getChannel(indeks));
-					JReader.getChannel(indeks).setFail(false);
-					JReader.statusLine.setText("Kanal zostal zaktualizowany.");//status
+            		JReader.getChannel(indeks).setFail(false);
+					GUI.statusLine.setText("Kanal zostal zaktualizowany.");//status
 				} catch (SAXParseException spe) {
-					JReader.statusLine.setText("Nie mozna zaktualizowac kanalu.");
+					GUI.statusLine.setText("Nie mozna zaktualizowac kanalu.");
 					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
 					System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
 					System.out.println("Szczegoly: " + spe.getLocalizedMessage());
 					JReader.getChannel(indeks).setFail(true);
 				} catch (SAXException saxe) {
-					JReader.statusLine.setText("Nie mozna dodac kanalu.");
+					GUI.statusLine.setText("Nie mozna dodac kanalu.");
 					System.out.println(" Blad parsera XML.");
 				} catch (SocketException se) {
-					JReader.statusLine.setText("Nie mozna zaktualizowac kanalu. Szczegoly:");
+					GUI.statusLine.setText("Nie mozna zaktualizowac kanalu. Szczegoly:");
 					System.out.println(se.getLocalizedMessage());
 					JReader.getChannel(indeks).setFail(true);
 				} catch (IOException ioe) {
-					JReader.statusLine.setText("Nie mozna zaktualizowac kanalu.");
+					GUI.statusLine.setText("Nie mozna zaktualizowac kanalu.");
 					System.out.println(" Brak polaczenia ze strona.");
 					JReader.getChannel(indeks).setFail(true);
 				}

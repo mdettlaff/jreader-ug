@@ -1,6 +1,7 @@
 package jreader.gui;
 
-import jreader.JReader;
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -25,11 +26,11 @@ public class Items {
 	public Items(final Composite shell) {
 		
 		Display display = shell.getDisplay();
-		final Image itemsTab = new Image(display, "c:\\icons\\items\\itemsTab2.png");
+		final Image itemsTab = new Image(display, "data" + File.separator + "icons" + File.separator + "items" + File.separator + "itemsTab2.png");
 			
 		folderItem = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
 		folderItem.setLayout(new FillLayout());
-		folderItem.setSimple(JReader.issimple);
+		folderItem.setSimple(GUI.issimple);
 				
 		Device device = Display.getCurrent ();
 		Color bottom = new Color (device, 156, 156, 213);
@@ -85,8 +86,8 @@ public class Items {
 	   	});
 		folderItem.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "Select the topic you want to read.";
-              JReader.statusLine.setText(JReader.statusText);
+              GUI.statusText = "Select the topic you want to read.";
+              GUI.statusLine.setText(GUI.statusText);
             }
           });
 		
