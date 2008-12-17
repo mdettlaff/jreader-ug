@@ -1,6 +1,7 @@
 package jreader.gui;
 
-import jreader.JReader;
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -13,12 +14,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 
 public class Subscriptions {
 	
@@ -29,11 +24,11 @@ public class Subscriptions {
 	public Subscriptions(final Composite shell) {
 		
 		Display display = shell.getDisplay();
-		final Image rssTab = new Image(display, "c:\\icons\\subscriptions\\subsTab2.png");
+		final Image rssTab = new Image(display, "data" + File.separator + "icons" + File.separator + "subscriptions" + File.separator + "subsTab2.png");
 		
 		folderSubs = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
 		folderSubs.setLayout(new FillLayout());
-		folderSubs.setSimple(JReader.issimple);
+		folderSubs.setSimple(GUI.issimple);
 				  
 		Device device = Display.getCurrent ();
 		Color bottom = new Color (device, 156, 156, 213);
@@ -67,8 +62,8 @@ public class Subscriptions {
 		
 		folderSubs.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "Choose a subscription.";
-              JReader.statusLine.setText(JReader.statusText);
+              GUI.statusText = "Choose a subscription.";
+              GUI.statusLine.setText(GUI.statusText);
             }
           });
 	}

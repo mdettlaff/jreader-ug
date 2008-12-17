@@ -1,6 +1,7 @@
 package jreader.gui;
 
-import jreader.JReader;
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -13,7 +14,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
 
 public class Tags {
 	public static CTabFolder folderTag;
@@ -22,11 +22,11 @@ public class Tags {
 	public Tags(final Composite shell) {
 		
 		Display display = shell.getDisplay();
-		final Image rssTab = new Image(display, "c:\\icons\\tags\\tagTab2.png");
+		final Image rssTab = new Image(display, "data" + File.separator + "icons" + File.separator + "tags" + File.separator + "tagTab2.png");
 		
 		folderTag = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
 		folderTag.setLayout(new FillLayout());
-		folderTag.setSimple(JReader.issimple);
+		folderTag.setSimple(GUI.issimple);
 				  
 		Device device = Display.getCurrent ();
 		Color bottom = new Color (device, 156, 156, 213);
@@ -64,8 +64,8 @@ public class Tags {
 		
 		tagComposite.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "Choose a tag to filtrate.";
-              JReader.statusLine.setText(JReader.statusText);
+              GUI.statusText = "Choose a tag to filtrate.";
+              GUI.statusLine.setText(GUI.statusText);
             }
           });
 	}

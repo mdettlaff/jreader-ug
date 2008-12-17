@@ -1,9 +1,6 @@
 package jreader.gui;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-
-import jreader.Channel;
+import java.io.File;
 import jreader.Item;
 import jreader.JReader;
 
@@ -56,8 +53,8 @@ public class ItemsTable {
 	 * @param comp Kompozyt służący jako <i>parent</i>, w którym ma być umieszczona tabela.  
 	 */
 	public ItemsTable(final Composite comp) {		
-		unread = new Image(comp.getDisplay(), "c:\\icons\\unread.png");
-		read = new Image(comp.getDisplay(), "c:\\icons\\read.png");
+		unread = new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "unread.png");
+		read = new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "read.png");
 		
 		itemsTable = new Table(comp, SWT.SINGLE | SWT.FULL_SELECTION);
 		itemsTable.setLinesVisible(true);
@@ -174,7 +171,7 @@ public class ItemsTable {
 				TableItem[] item = itemsTable.getSelection();
 				CTabItem ctabItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
 				ctabItem.setText(item[0].getText());
-				ctabItem.setImage(new Image(comp.getDisplay(), "c:\\icons\\preview\\previewTab.png"));
+				ctabItem.setImage(new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
 			}
 			public void mouseDown(MouseEvent e) {}
 			public void mouseUp(MouseEvent e) {}
@@ -189,7 +186,7 @@ public class ItemsTable {
             	TableItem[] item = itemsTable.getSelection();
 				CTabItem ctabItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
 				ctabItem.setText(item[0].getText());
-				ctabItem.setImage(new Image(comp.getDisplay(), "c:\\icons\\preview\\previewTab.png"));
+				ctabItem.setImage(new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }

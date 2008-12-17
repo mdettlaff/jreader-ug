@@ -1,6 +1,7 @@
 package jreader.gui;
 
-import jreader.JReader;
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -17,7 +18,7 @@ public class AboutShell {
 	private static Shell aboutShell;
 	
 	public AboutShell(Shell shell) {
-		final Image jreader = new Image(shell.getDisplay(), "c:\\icons\\big\\jreader2.png");
+		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "big" + File.separator + "jreader2.png");
 		aboutShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL |SWT.TOOL);
 		aboutShell.setText("About JReader programm");
 
@@ -42,7 +43,7 @@ public class AboutShell {
 	    Label pic = new Label(aboutShell, SWT.NONE);
 	    pic.setImage(jreader);
 	    Label version = new Label(aboutShell, SWT.NONE);
-	    version.setText(JReader.version);
+	    version.setText(GUI.version);
 	    new Label(aboutShell, SWT.NONE).setText("Feel free to use and have fun kids!");
 	    new Label(aboutShell, SWT.NONE).setText("2008.");
 	    Button okButton = new Button(aboutShell, SWT.PUSH);
