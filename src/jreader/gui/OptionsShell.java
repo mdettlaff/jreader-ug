@@ -1,5 +1,7 @@
 package jreader.gui;
 
+import jreader.JReader;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -36,7 +38,7 @@ public class OptionsShell {
 	
 	//	Checkbox
 		final Button startupSync = new Button(optionsShell, SWT.CHECK);
-		startupSync.setSelection(true);
+		startupSync.setSelection(JReader.getConfig().getUpdateAllOnStartup());
 		startupSync.setText("Synchronize automaticaly when the program starts.");
 	
 		
@@ -46,7 +48,7 @@ public class OptionsShell {
 		new Label(comp1, SWT.NONE).setText("Symchronize every ");
 		final Text autoSync = new Text(comp1, SWT.BORDER);
 		autoSync.setTextLimit(3);
-		autoSync.setText("15");
+		autoSync.setText((new Integer(JReader.getConfig().getAutoUpdateMinutes())).toString());
 		new Label(comp1, SWT.NONE).setText(" minutes.");
 	
 	
@@ -56,7 +58,7 @@ public class OptionsShell {
 		group2.setText("Sorted by:");
 	
 		//Radio
-		Button newest = new Button(group2, SWT.RADIO);
+		final Button newest = new Button(group2, SWT.RADIO);
 		newest.setSelection(true);
 		newest.setText("newest");
 		Button latest = new Button(group2, SWT.RADIO);
@@ -66,7 +68,7 @@ public class OptionsShell {
 		Composite comp2 = new Composite(optionsShell, SWT.NONE);
 		comp2.setLayout(new GridLayout(3, false));
 		new Label(comp2, SWT.NONE).setText("Remove messages older then ");
-		Text remove = new Text(comp2, SWT.BORDER);
+		final Text remove = new Text(comp2, SWT.BORDER);
 		remove.setText("10");
 		remove.setTextLimit(2);
 		new Label(comp2, SWT.NONE).setText(" days.");
@@ -83,18 +85,19 @@ public class OptionsShell {
 	    okButton.setFocus();
 	
 	//	Action Listeners (do wypelnienia pozniej)
-	    
-	    //synchronizacja przy starcie -checkbox
-		startupSync.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				System.out.println("Autostart Synchronization");            
-			}
-		});
-		
+	    		
 		// ok button - powinien zebrac wszystkie wartosc z widgetow i wyslac je do metod
 		okButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				System.out.println("Ok - get data to the method");           
+				System.out.println("Ok - get data to the method");
+				JReader.getConfig().setUpdateAllOnStartup(startupSync.getSelection());
+				JReader.getConfig().setAutoUpdateMinutes(Integer.parseInt(autoSync.getText()));
+				JReader.getConfig().setSortByNewest(newest.getSelection());
+				JReader.getConfig().setDeleteOlderThanDays(Integer.parseInt(remove.getText()));
+				if (!JReader.getConfig().write()) {
+					System.out.println("blad zapisu");
+				}
+				optionsShell.dispose();
 			}
 		});
 		

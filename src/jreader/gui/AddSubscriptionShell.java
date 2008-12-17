@@ -103,6 +103,7 @@ public class AddSubscriptionShell {
 					return;
 				}
 				SubsList.refresh();
+				TagList.refresh();
             	addShell.dispose();
                 }
         });

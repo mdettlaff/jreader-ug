@@ -1,5 +1,9 @@
 package jreader.gui;
 
+import java.io.IOException;
+import java.net.SocketException;
+
+import jreader.Channel;
 import jreader.JReader;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -12,6 +16,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class MainToolBar {
 	
@@ -99,6 +105,39 @@ public class MainToolBar {
         syncToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
                 System.out.println("Synchronize");
+                for (Channel channel : JReader.getVisibleChannels()) {
+        			try {
+        				if (JReader.updateChannel(channel) > 0) {
+        					JReader.statusLine.setText(channel.getTitle() + " zaktualizowany.");
+        				} else {
+        					JReader.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
+        				}
+        				channel.setFail(false);
+        			} catch (SAXParseException spe) {
+        				System.out.println("Nie mozna zaktualizowac kanalu "
+        						+ channel.getTitle() + ".");
+        				System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
+        				System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
+        				System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+        				channel.setFail(true);
+        			} catch (SAXException saxe) {
+        				System.out.print("Nie mozna dodac kanalu.");
+        				System.out.println(" Blad parsera XML.");
+        			} catch (SocketException se) {
+        				System.out.println("Nie mozna zaktualizowac kanalu "
+        						+ channel.getTitle() + ".");
+        				System.out.println("Szczegoly: " + se.getLocalizedMessage());
+        				channel.setFail(true);
+        			} catch (IOException ioe) {
+        				System.out.println("Nie mozna zaktualizowac kanalu "
+        						+ channel.getTitle() + ".");
+        				System.out.println("Brak polaczenia ze strona.");
+        				channel.setFail(true);
+        			}
+        		}
+        		System.out.println("Kanaly zostaly zaktualizowane.");
+        		SubsList.refresh();
+        		ItemsTable.refresh();
                 
             }
         });

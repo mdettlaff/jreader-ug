@@ -13,6 +13,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -39,7 +41,7 @@ public class SubsList {
 	    }
 	    fontBold = new Font(comp.getDisplay(), fontData);
 	    
-	    for (Channel ch : JReader.getVisibleChannels()) {
+	    /*for (Channel ch : JReader.getVisibleChannels()) {
 	    	TableItem item = new TableItem(subsList, SWT.NONE);
 	    	if (ch.getIconPath() == null)
 	    		if (ch.getUnreadItemsCount() == 0)
@@ -51,7 +53,16 @@ public class SubsList {
 	    	if (ch.getUnreadItemsCount() != 0)
 	    		item.setFont(fontBold);
 	    	
-	    }   
+	    }   */
+	    refresh();
+	    
+	    Menu popupMenu = new Menu(subsList);
+	    MenuItem openNewTab = new MenuItem(popupMenu, SWT.NONE);
+	    openNewTab.setText("Open item in a new tab");
+	    MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
+	    deleteItem.setText("Delete item");
+	    
+	    
 	    
 	    subsList.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
