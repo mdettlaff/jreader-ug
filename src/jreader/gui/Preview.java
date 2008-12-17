@@ -1,7 +1,9 @@
 package jreader.gui;
 
 import jreader.JReader;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
@@ -15,14 +17,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
 
 public class Preview {
 
 	public static CTabFolder folderPreview;
 	private Rectangle bounds;
 	private Rectangle tmpBounds = new Rectangle(0, 0, 0, 0);
-	
+	public static Browser browser;
 	
 	public Preview(final Composite shell) {
 		
@@ -40,9 +41,9 @@ public class Preview {
 		final CTabItem item = new CTabItem(folderPreview, SWT.CLOSE);
 		item.setText("Preview");
 		item.setImage(itemsTab);
-		Text text = new Text(folderPreview, SWT.MULTI );
-		text.setText("Text for item lsjklf\nklsdj\nklsdjflkjsdlfj\n");
-		item.setControl(text);
+		browser = new Browser(folderPreview, SWT.NONE);
+		
+		item.setControl(browser);
 		
 		folderPreview.setSelection(item);
 		folderPreview.setSelectionBackground(new Color[]{shell.getDisplay().getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
@@ -86,9 +87,9 @@ public class Preview {
 			}
 	   	});
 		/* zmienia treść Status Line */
-		text.addMouseMoveListener(new MouseMoveListener() {
+		browser.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              JReader.statusText = "Message preview.";
+              JReader.statusText = "Item preview.";
               JReader.statusLine.setText(JReader.statusText);
             }
           });
