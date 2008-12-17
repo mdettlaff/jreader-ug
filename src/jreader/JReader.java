@@ -162,6 +162,10 @@ public class JReader {
 				IOException	{
 		Channel newChannel = ChannelFactory.getChannelFromSite(siteURL);
 		newChannel.setTags(parseTags(channelTags));
+		channels.add(newChannel, ChannelFactory.getDownloadedItems());
+		visibleChannels.add(newChannel);
+		// sortujemy listę kanałów alfabetycznie
+		Collections.sort(visibleChannels, channelComparator);
 		// uzupełniamy listę tagów do wyświetlenia
 		for (String tag : newChannel.getTags()) {
 			if (!tags.contains(tag)) {
@@ -169,10 +173,6 @@ public class JReader {
 			}
 		}
 		Collections.sort(tags);
-		channels.add(newChannel, ChannelFactory.getDownloadedItems());
-		visibleChannels.add(newChannel);
-		// sortujemy listę kanałów alfabetycznie
-		Collections.sort(visibleChannels, channelComparator);
 		channels.write();
 	}
 
@@ -397,12 +397,7 @@ public class JReader {
 	 */
 	public static void editTags(Channel channel, String channelTags) {
 		channel.setTags(parseTags(channelTags));
-		// uzupełniamy listę tagów do wyświetlenia
-		for (String tag : channel.getTags()) {
-			if (!tags.contains(tag)) {
-				tags.add(tag);
-			}
-		}
+		updateTagsList();
 		Collections.sort(tags);
 		channels.write();
 	}
@@ -532,6 +527,7 @@ public class JReader {
 	 * Aktualizuje listę tagów do wyświetlenia w GUI.
 	 */
 	private static void updateTagsList() {
+		tags.clear();
 		for (Channel channel : channels.getChannels()) {
 			for (String tag : channel.getTags()) {
 				if (!tags.contains(tag)) {
