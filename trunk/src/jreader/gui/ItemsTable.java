@@ -71,10 +71,8 @@ public class ItemsTable {
 	    Menu popupMenu = new Menu(itemsTable);
 	    MenuItem openNewTab = new MenuItem(popupMenu, SWT.NONE);
 	    openNewTab.setText("Open item in a new tab");
-	    MenuItem refreshItem = new MenuItem(popupMenu, SWT.NONE);
-	    refreshItem.setText("Refresh");
-	    MenuItem setAsItem = new MenuItem(popupMenu, SWT.NONE);
-	    setAsItem.setText("Mark as unread");
+	    MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
+	    deleteItem.setText("Delete item");
 	    
 	    itemsTable.setMenu(popupMenu);
 		
@@ -121,10 +119,11 @@ public class ItemsTable {
 					for (int i = 0; i < fontData.length; i++) {            	  
 						fontData[i].setStyle(SWT.NORMAL);
 					}
-              
 					Font newFont = new Font(comp.getDisplay(), fontData);
 					item[0].setFont(newFont);
-					item[0].setImage(read);
+					Item it = JReader.getItems().get(itemsTable.getSelectionIndex());
+					if (JReader.getChannel(it.getChannelId()).getIconPath() == null)
+						item[0].setImage(read);
 				}
 				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
 				SubsList.refresh();
@@ -197,26 +196,12 @@ public class ItemsTable {
         });
 		
 		/**
-		 * Obsługuje menuItem "Refresh" w menu pod RMB
-		 */
-		refreshItem.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-            	refresh();
-           }
-            public void widgetDefaultSelected(SelectionEvent e) {                
-           }
-        });
-		
-		/**
 		 * Obsługuje menuItem "setAsUnread" w menu pod RMB
 		 */
-		setAsItem.addSelectionListener(new SelectionListener() {
+		deleteItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	//ta metda markasunread powinna byc zamieniona na tą ktora powstanie w JReader
-            	JReader.getItems().get(itemsTable.getSelectionIndex()).markAsUnread();
-            	
-            	SubsList.refresh();
-            	refresh();
+            	//usuwanie itemu
+            	System.out.println("usuwa item");
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }

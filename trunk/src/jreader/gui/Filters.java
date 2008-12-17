@@ -85,6 +85,8 @@ public class Filters {
 					unreadButton.setSelection(false);
 					allButton.setSelection(true);
 				}
+				JReader.selectAll();
+				ItemsTable.refresh();
 			}
 		});
 		unreadButton.addListener(SWT.Selection, new Listener() {
@@ -93,6 +95,8 @@ public class Filters {
 					allButton.setSelection(false);
 					unreadButton.setSelection(true);
 				}
+				JReader.selectUnread();	
+				ItemsTable.refresh();
 			}
 		});
 	}
