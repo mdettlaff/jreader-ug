@@ -234,11 +234,11 @@ public class ChannelFactory extends DefaultHandler {
 		// jeśli nie znaleźliśmy linka do ikony w źródle HTML, dajemy domyślny
 		if (iconURL == null || "".equals(iconURL.trim())) {
 			iconURL = "favicon.ico";
-		}
-		if (siteURL.charAt(siteURL.length()-1) == '/') {
-			iconURL = ch.getLink() + iconURL;
-		} else {
-			iconURL = ch.getLink() + "/" + iconURL;
+			if (siteURL.charAt(siteURL.length()-1) == '/') {
+				iconURL = ch.getLink() + iconURL;
+			} else {
+				iconURL = ch.getLink() + "/" + iconURL;
+			}
 		}
 		try {
 			// ustalamy nazwę pliku, w którym zapiszemy ikonę
