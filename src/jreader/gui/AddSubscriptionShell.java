@@ -48,7 +48,6 @@ public class AddSubscriptionShell {
 	    final Text url = new Text(addShell, SWT.BORDER);
 	    url.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	    url.setTextLimit(100);
-	    url.setText("http://");
 	    
 	    new Label(addShell, SWT.NONE).setText("Name the tags (optional): ");
 	    final Text tag = new Text(addShell, SWT.BORDER);
