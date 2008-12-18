@@ -31,7 +31,8 @@ public class GUI {
 		final Image jreader = new Image(display, "data" + File.separator + "icons" + File.separator + "small" + File.separator + "jreader2.png");
 
 		shell = new Shell (display);
-		shell.setSize (800, 600);
+		//shell.setSize (800, 600);
+		shell.setMaximized(true);
 		shell.setText(version);
 		shell.setImage(jreader);
 		shell.setLayout(new GridLayout());

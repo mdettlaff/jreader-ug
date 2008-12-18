@@ -41,7 +41,12 @@ public class Preview {
 		final CTabItem item = new CTabItem(folderPreview, SWT.CLOSE);
 		item.setText("Preview");
 		item.setImage(itemsTab);
-		browser = new Browser(folderPreview, SWT.NONE);
+		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
+			browser = new Browser(folderPreview, SWT.MOZILLA);
+		} else {
+			browser = new Browser(folderPreview, SWT.NONE);
+		}
+		
 		
 		item.setControl(browser);
 		
