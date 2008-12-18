@@ -14,6 +14,8 @@ public class Preview {
 	private String description;
 	private String author;
 	private String source;
+	/** Tytuł kanału, z którego pochodzi element. */
+	private String channelTitle;
 	/** Obrazek będący częścią opisu kanału. */
 	private String imageURL;
 	private String imageTitle;
@@ -44,6 +46,7 @@ public class Preview {
 		this.description = item.getDescription();
 		this.author = item.getAuthor();
 		this.source = null;
+		this.channelTitle = JReader.getChannel(item.getChannelId()).getTitle();
 	}
 
 	public String getTitle() { return title; }
@@ -53,6 +56,10 @@ public class Preview {
 	 * Zwraca URL źródła XML kanału lub <code>null</code> dla wiadomości.
 	 */
 	public String getSource() { return source; }
+	/**
+	 * Zwraca tytuł kanału, z którego pochodzi dany element.
+	 */
+	public String getChannelTitle() { return channelTitle; }
 	/**
 	 * Zwraca datę publikacji elementu lub <code>null</code> dla kanału.
 	 */
