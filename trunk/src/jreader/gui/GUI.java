@@ -3,6 +3,7 @@ package jreader.gui;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -18,6 +19,8 @@ import org.eclipse.swt.widgets.Shell;
 public class GUI {
 
 	public static final Display display = new Display ();
+	public static Color gray = new Color (display, 240, 250, 250);
+	public static Color white = new Color (display, 255, 255, 254);
 	public static String statusText = "Status Line";
 	public static Label statusLine;
 	public static String version = "JReader v. 0.81";
