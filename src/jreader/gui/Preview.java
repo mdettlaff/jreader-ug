@@ -23,7 +23,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 
 public class Preview {
 
@@ -33,6 +36,7 @@ public class Preview {
 	public static Browser browser;
 	public static Label title;
 	public static Label author;
+	public static Link titleLink;
 	
 	public Preview(final Composite shell) {
 		
@@ -55,6 +59,7 @@ public class Preview {
 		Composite header = new Composite(comp, SWT.NONE);
 		header.setLayout(new FillLayout(SWT.VERTICAL));
 		header.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		titleLink = new Link(header, SWT.NONE);
 		title = new Label(header, SWT.NONE);
 		author = new Label(header, SWT.NONE);
 		
@@ -176,9 +181,10 @@ public class Preview {
 		Date date = JReader.getPreview().getCurrent().getDate();
 		String authorText = JReader.getPreview().getCurrent().getAuthor();
 		String fromText = JReader.getPreview().getCurrent().getChannelTitle();
+		titleLink.setText("<a>" + titleText + "</a>");
 		
 		browser.setText(JReader.getPreview().getCurrent().getHTML());
-		title.setText(titleText + "\t" + ((date != null) ? date.toString() : " "));
+		title.setText(((date != null) ? date.toString() : " "));
 		if (authorText != null && fromText != null)
 			author.setText("Author: " + authorText + "\tFrom: " + fromText);
 		else if (fromText != null && authorText == null)
@@ -187,5 +193,12 @@ public class Preview {
 			author.setText(authorText);
 		else
 			author.setText("");
+		
+		titleLink.addListener (SWT.Selection, new Listener () {
+			public void handleEvent(Event event) {
+				//System.out.println("Selection: " + event.text);
+				browser.setUrl(JReader.getPreview().getCurrent().getLink());
+			}
+		});
 	}
 }
