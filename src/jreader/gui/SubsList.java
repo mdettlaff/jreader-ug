@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -35,8 +36,6 @@ public class SubsList {
 	 
 	
 	public static Table subsList;
-	public static Color gray = new Color (Subscriptions.subComposite.getDisplay(), 240, 250, 250);
-	public static Color white = new Color (Subscriptions.subComposite.getDisplay(), 255, 255, 255);
 	public static Image def = new Image(Subscriptions.subComposite.getDisplay(), "data" + File.separator + "icons" + File.separator + "unread.png");
 	static Font fontBold;
 	 
@@ -53,19 +52,7 @@ public class SubsList {
 	    }
 	    fontBold = new Font(comp.getDisplay(), fontData);
 	    
-	    /*for (Channel ch : JReader.getVisibleChannels()) {
-	    	TableItem item = new TableItem(subsList, SWT.NONE);
-	    	if (ch.getIconPath() == null)
-	    		if (ch.getUnreadItemsCount() == 0)
-	    			item.setImage(ItemsTable.read);
-	    		else
-	    			item.setImage(def);
-	    	else  	item.setImage(new Image(comp.getDisplay(), ch.getIconPath()));
-	    	item.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + ")");
-	    	if (ch.getUnreadItemsCount() != 0)
-	    		item.setFont(fontBold);
-	    	
-	    }   */
+	   
 	    refresh();
 	    
 	    Menu popupMenu = new Menu(subsList);
@@ -87,6 +74,7 @@ public class SubsList {
 				System.out.println(indeks);
 				JReader.selectChannel(indeks);
 				ItemsTable.refresh();
+				Preview.refresh();
             }
         });
 	    
@@ -214,7 +202,9 @@ public class SubsList {
 	    		else
 	    			subs.setImage(def);
 	    	else {
-	    		subs.setImage(new Image(Subscriptions.subComposite.getDisplay(), ch.getIconPath()));
+	    		ImageData imData = new ImageData(ch.getIconPath());
+				imData = imData.scaledTo(16, 16);
+				subs.setImage(new Image(Subscriptions.subComposite.getDisplay(), imData));
 	    	}
 	    	subs.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + ")");
 	    	if (ch.getUnreadItemsCount() != 0)

@@ -1,6 +1,7 @@
 package jreader.gui;
 
 import java.io.File;
+
 import jreader.Item;
 import jreader.JReader;
 
@@ -17,6 +18,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
@@ -71,7 +73,7 @@ public class ItemsTable {
 	    MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
 	    deleteItem.setText("Delete item");
 	    itemsTable.setMenu(popupMenu);
-		
+		refresh();
 	 
 	    
 	    /** Listeners**/
@@ -123,7 +125,7 @@ public class ItemsTable {
 				}
 				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
 				SubsList.refresh();
-				Preview.browser.setText(JReader.getPreview().getCurrent().getHTML());
+				Preview.refresh();
             }
         });
 		
@@ -193,7 +195,7 @@ public class ItemsTable {
         });
 		
 		/**
-		 * Obsługuje menuItem "setAsUnread" w menu pod RMB
+		 * Obsługuje menuItem "Delete" w menu pod RMB
 		 */
 		deleteItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -224,17 +226,20 @@ public class ItemsTable {
 					item.setImage(read);
 				else
 					item.setImage(unread);
-			else
-				item.setImage(new Image(Items.tableComposite.getDisplay(), JReader.getChannel(it.getChannelId()).getIconPath()));
+			else {
+				ImageData imData = new ImageData(JReader.getChannel(it.getChannelId()).getIconPath());
+				imData = imData.scaledTo(16, 16);
+				item.setImage(new Image(Items.tableComposite.getDisplay(), imData));
+			}
 			item.setText(0, it.getTitle());
 			item.setText(1, it.getDate().toString());
 			if (!it.isRead()) {
 				item.setFont(fontBold);
 			}
 			if (index%2==0) {
-				item.setBackground(SubsList.gray);
+				item.setBackground(GUI.gray);
 			} else
-				item.setBackground(SubsList.white);
+				item.setBackground(GUI.white);
 			index++;
 		}
 	}
