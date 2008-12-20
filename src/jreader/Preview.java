@@ -74,24 +74,22 @@ public class Preview {
 		if (description == null) {
 			return "Brak opisu.";
 		}
-		if (showingItem) {
-			return description;
-		} else { // konstruujemy opis kanału, z obrazkiem jeśli istnieje
-			String HTML = "";
+		String HTML = "";
+		if (!showingItem) { // konstruujemy opis kanału z obrazkiem, jeśli istnieje
 			if (imageURL != null) {
 				if (imageTitle != null) {
 					HTML += "<img alt=\"" + imageTitle + "\" align=\"right\"" +
-						" src=\"" + imageURL + "\">\n";
+						" src=\"" + imageURL + "\">";
 				} else {
-					HTML += "<img align=\"right\"" + " src=\"" + imageURL + "\">\n";
+					HTML += "<img align=\"right\"" + " src=\"" + imageURL + "\">";
 				}
 				if (imageLink != null) {
-					HTML = "<a href=\"" + imageLink + "\">\n" + HTML + "</a>\n";
+					HTML = "<a href=\"" + imageLink + "\">" + HTML + "</a>\n";
 				}
 			}
-			HTML += description;
-			return HTML;
 		}
+		HTML = "<html><body>" + HTML + description + "</body></html>";
+		return HTML;
 	}
 }
 

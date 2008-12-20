@@ -31,10 +31,12 @@ public class TextUI {
 		try {
 			boolean justStarted = true;
 			if (JReader.getConfig().getUpdateAllOnStartup()) {
-				updateVisibleChannels();
+				updateVisibleChannels(); // TODO: usunąć tą linię i odkomentować:
+				//new UpdateThread();
 			}
 			if (JReader.getConfig().getAutoUpdateMinutes() > 0) {
-				new UpdateDaemon();
+				// TODO: odkomentować poniższą linię:
+				//new UpdateDaemon();
 			}
 			while (!(command.equals("quit"))) {
 				if (justStarted) {
@@ -186,7 +188,8 @@ public class TextUI {
 						System.out.println("Nie mozna przejsc dalej.");
 					}
 				} else if (command.equals("update all")) {
-					updateVisibleChannels();
+					updateVisibleChannels(); // TODO: usunąć tą linię i odkomentować:
+					//new UpdateThread();
 				} else if (command.equals("next unread")) {
 					if (!JReader.nextUnread()) {
 						System.out.println("Nie ma nieprzeczytanych wiadomosci.");
@@ -246,6 +249,7 @@ public class TextUI {
 					} catch (SAXException saxe) {
 						System.out.print("Nie mozna dodac kanalu.");
 						System.out.println(" Blad parsera XML.");
+						JReader.getChannel(nr).setFail(true);
 					} catch (SocketException se) {
 						System.out.println("Nie mozna zaktualizowac kanalu. Szczegoly:");
 						System.out.println(se.getLocalizedMessage());
@@ -337,7 +341,8 @@ public class TextUI {
 					System.out.print("Co ile minut aktualizowac kanaly? (0 - wcale): ");
 					int aum = new Integer(in.readLine().trim());
 					if (aum > 0 && JReader.getConfig().getAutoUpdateMinutes() == 0) {
-						new UpdateDaemon();
+						// TODO: odkomentować poniższą linię:
+						//new UpdateDaemon();
 					}
 					JReader.getConfig().setAutoUpdateMinutes(aum);
 					if (!JReader.getConfig().write()) {
@@ -400,6 +405,7 @@ public class TextUI {
 			} catch (SAXException saxe) {
 				System.out.print("Nie mozna dodac kanalu.");
 				System.out.println(" Blad parsera XML.");
+				channel.setFail(true);
 			} catch (SocketException se) {
 				System.out.println("Nie mozna zaktualizowac kanalu "
 						+ channel.getTitle() + ".");
