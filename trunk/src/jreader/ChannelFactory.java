@@ -464,12 +464,7 @@ public class ChannelFactory extends DefaultHandler {
 			// jeśli data nie była określona lub parsowanie nie powiodło się,
 			// stosujemy bieżącą datę
 			if (date == null) {
-				// TODO: poniższe 3 linijki ustawiają przykładową datę zamiast
-				// bieżącej, dla celów testowych. Docelowo zmienić na:
-				//date = new Date(currentUnixTime - counter);
-				try {
-					date = RSSDateFormat.parse("Sun, 9 Nov 2008 19:30:00 +0100");
-				} catch (ParseException pe) { }
+				date = new Date(currentUnixTime - counter);
 			}
 
 			downloadedItems.add(makeNewItem());

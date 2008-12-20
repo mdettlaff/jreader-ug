@@ -62,7 +62,7 @@ public class JReader {
 	private static String currentFilter = "unread";
 
 	/** Nie można tworzyć obiektów tej klasy. */
-	private JReader() {}
+	private JReader() { }
 
 
 	/**
@@ -475,6 +475,28 @@ public class JReader {
 			throws IOException {
 		ImportExport.writeChannelsToFile(new LinkedList<Channel>(
 					channels.getChannels()), fileLocation);
+	}
+
+	/**
+	 * Zwraca ilość nieprzeczytanych elementów na liście kanałów.
+	 */
+	public static int getUnreadItemsCount() {
+		int unreadItemsCount = 0;
+		for (Channel channel : visibleChannels) {
+			unreadItemsCount += channel.getUnreadItemsCount();
+		}
+		return unreadItemsCount;
+	}
+
+	/**
+	 * Zwraca ilość wszystkich elementów na liście kanałów.
+	 */
+	public static int getItemsCount() {
+		int itemsCount = 0;
+		for (Channel channel : visibleChannels) {
+			itemsCount += channel.getItems().size();
+		}
+		return itemsCount;
 	}
 
 

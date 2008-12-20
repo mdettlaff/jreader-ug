@@ -23,7 +23,7 @@ public class UpdateDaemon implements Runnable {
 				TextUI.updateVisibleChannels();
 			}
 		} catch (InterruptedException e) {
-			// watek zostal przerwany
+			// wątek został przerwany
 		}
 	}
 }
