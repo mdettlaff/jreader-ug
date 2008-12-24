@@ -16,6 +16,8 @@ public class Preview {
 	private String source;
 	/** Tytuł kanału, z którego pochodzi element. */
 	private String channelTitle;
+	/** Adres strony, z której pochodzi kanał bądź element. */
+	private String baseURL;
 	/** Obrazek będący częścią opisu kanału. */
 	private String imageURL;
 	private String imageTitle;
@@ -33,6 +35,7 @@ public class Preview {
 		this.imageTitle = ch.getImageTitle();
 		this.imageLink = ch.getImageLink();
 		this.source = ch.getChannelURL();
+		this.baseURL = ch.getLink();
 	}
 
 	/**
@@ -47,48 +50,80 @@ public class Preview {
 		this.author = item.getAuthor();
 		this.source = null;
 		this.channelTitle = JReader.getChannel(item.getChannelId()).getTitle();
+		this.baseURL = JReader.getChannel(item.getChannelId()).getLink();
 	}
 
-	public String getTitle() { return title; }
-	public String getLink() { return link; }
-	public String getAuthor() { return author; }
+
+	/**
+	 * Sprawdza czy jest to podgląd elementu kanału czy opisu kanału.
+	 *
+	 * @return <code>true</code>, jeśli ten obiekt stanowi podgląd elementu,
+	 *         <code>false</code>, jeśli stanowi opis kanału.
+	 */
+	public boolean isShowingItem() {
+		return showingItem;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
 	/**
 	 * Zwraca URL źródła XML kanału lub <code>null</code> dla wiadomości.
 	 */
-	public String getSource() { return source; }
+	public String getSource() {
+		return source;
+	}
+
 	/**
 	 * Zwraca tytuł kanału, z którego pochodzi dany element.
 	 */
-	public String getChannelTitle() { return channelTitle; }
+	public String getChannelTitle() {
+		return channelTitle;
+	}
+
 	/**
 	 * Zwraca datę publikacji elementu lub <code>null</code> dla kanału.
 	 */
-	public Date getDate() { return date; }
+	public Date getDate() {
+		return date;
+	}
 
 	/**
-	 * Zwraca właściwą treść wiadomości lub opis kanału.
+	 * Zwraca właściwą treść elementu lub opis kanału.
 	 *
-	 * @return Opis, w którym mogą pojawić się znaczniki HTML.
+	 * @return Kod HTML zawierający treść elementu lub opis kanału.
 	 */
 	public String getHTML() {
 		if (description == null) {
-			return "Brak opisu.";
+			return "<html><body><i>Brak opisu.</i></body></html>";
 		}
 		String HTML = "";
 		if (!showingItem) { // konstruujemy opis kanału z obrazkiem, jeśli istnieje
 			if (imageURL != null) {
 				if (imageTitle != null) {
-					HTML += "<img alt=\"" + imageTitle + "\" align=\"right\"" +
+					HTML += "<img alt=\"" + imageTitle + "\"" +
 						" src=\"" + imageURL + "\">";
 				} else {
-					HTML += "<img align=\"right\"" + " src=\"" + imageURL + "\">";
+					HTML += "<img src=\"" + imageURL + "\">";
 				}
 				if (imageLink != null) {
-					HTML = "<a href=\"" + imageLink + "\">" + HTML + "</a>\n";
+					HTML = "<br><br><a href=\"" + imageLink + "\">" + HTML + "</a>\n";
+				} else {
+					HTML = "<br><br>" + HTML;
 				}
 			}
 		}
-		HTML = "<html><body>" + HTML + description + "</body></html>";
+		HTML = "<html><head><base href=\"" + baseURL + "\"></head><body>"
+			+ description + HTML + "</body></html>";
 		return HTML;
 	}
 }
