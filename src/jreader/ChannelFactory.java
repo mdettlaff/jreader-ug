@@ -64,6 +64,7 @@ public class ChannelFactory extends DefaultHandler {
 	private boolean insideImage;
 	private boolean insideTextinput;
 	private String currentTag = "";
+	private String currentURI= "";
 	/**
 	 * Licznik, który pozwoli na rozróżnienie dat elementów, dla których data
 	 * nie jest podana w źródle XML i w konsekwencji posortowanie ich według
@@ -113,6 +114,7 @@ public class ChannelFactory extends DefaultHandler {
 		 */
 		String channelURL = "";
 
+		siteURL = siteURL.trim();
 		// dopisujemy na początku protokół (http), jeśli go nie ma
 		if (!siteURL.startsWith("http://")) {
 			siteURL = "http://" + siteURL;
@@ -156,9 +158,22 @@ public class ChannelFactory extends DefaultHandler {
 				// szukamy adresu URL ikony strony (tej którą widać na pasku adresu)
 				if (inputLine.contains("type=\"image/x-icon\"")
 						|| inputLine.contains("rel=\"shortcut icon\"")) {
+					// rozbijamy na mniejsze linie, mniej problematyczne
+					String tmp = new String(inputLine); // żeby nie nadpisać inputLine
+					String[] smallLines = inputLine.replace(">", ">\n").split("\n");
+					for (String smallLine : smallLines) {
+						if (smallLine.contains("type=\"image/x-icon\"")
+								|| smallLine.contains("rel=\"shortcut icon\"")) {
+							tmp = smallLine;
+							break;
+						}
+					}
 					isIconURLFound = true;
-					iconURL = inputLine.replaceAll("^.*href=\"", "");
+					iconURL = tmp.replaceAll("^.*href=\"", "");
 					iconURL = iconURL.replaceAll("\".*", "");
+					tmp = null;
+					String originalSiteURL = new String(siteURL);
+					siteURL = getHome(siteURL);
 					// sklejemy link strony i ikony w razie potrzeby
 					if (iconURL.charAt(0) == '/') {
 						if (siteURL.charAt(siteURL.length()-1) == '/') {
@@ -166,13 +181,14 @@ public class ChannelFactory extends DefaultHandler {
 						} else {
 							iconURL = siteURL + iconURL;
 						}
-					} else {
+					} else if (!iconURL.startsWith("http://")) {
 						if (siteURL.charAt(siteURL.length()-1) == '/') {
 							iconURL = siteURL + iconURL;
 						} else {
 							iconURL = siteURL + "/" + iconURL;
 						}
 					}
+					siteURL = originalSiteURL; // przywracamy URL po okrojeniu
 					if (isChannelURLFound && isIconURLFound) {
 						break;
 					}
@@ -209,6 +225,12 @@ public class ChannelFactory extends DefaultHandler {
 						} else {
 							channelURL = siteURL + channelURL;
 						}
+					} else if (!channelURL.startsWith("http://")) {
+						if (siteURL.charAt(siteURL.length()-1) == '/') {
+							channelURL = siteURL + channelURL;
+						} else {
+							channelURL = siteURL + "/" + channelURL;
+						}
 					}
 					isChannelURLFound = true;
 					if (isChannelURLFound && isIconURLFound) {
@@ -227,22 +249,26 @@ public class ChannelFactory extends DefaultHandler {
 			}
 		}
 
-		Channel ch = getChannelFromXML(channelURL.trim());
+		channel = getChannelFromXML(channelURL.trim());
 
 		// ściągamy ikonę kanału, zapisujemy ją na dysk i dodajemy ścieżkę do niej
 		// do kanału
 		// jeśli nie znaleźliśmy linka do ikony w źródle HTML, dajemy domyślny
 		if (iconURL == null || "".equals(iconURL.trim())) {
 			iconURL = "favicon.ico";
+			if (siteURL.equalsIgnoreCase(channel.getChannelURL())) {
+				siteURL = channel.getLink();
+			}
+			siteURL = getHome(siteURL);
 			if (siteURL.charAt(siteURL.length()-1) == '/') {
-				iconURL = ch.getLink() + iconURL;
+				iconURL = siteURL + iconURL;
 			} else {
-				iconURL = ch.getLink() + "/" + iconURL;
+				iconURL = siteURL + "/" + iconURL;
 			}
 		}
 		try {
 			// ustalamy nazwę pliku, w którym zapiszemy ikonę
-			String iconFileName = channel.getLink();
+			String iconFileName = getHome(channel.getLink());
 			if (iconFileName.startsWith("http://")) {
 				iconFileName = iconFileName.substring(7);
 			}
@@ -267,7 +293,7 @@ public class ChannelFactory extends DefaultHandler {
 		} catch (Exception e) {
 			// nie udało się pobrać ikony (np. jest w nierozpoznanym formacie)
 		}
-		return ch;
+		return channel;
 	}
 
 	/**
@@ -330,8 +356,10 @@ public class ChannelFactory extends DefaultHandler {
 
 		if ("".equals(uri)) {
 			currentTag = qName;
+			currentURI = "";
 		} else {
 			currentTag = name;
+			currentURI = uri;
 		}
 		if (currentTag.equals("item") || currentTag.equals("entry") /* Atom */) {
 			insideItem = true;
@@ -417,7 +445,8 @@ public class ChannelFactory extends DefaultHandler {
 					link = chars;
 				}
 			} else if (currentTag.equals("description") // niżej: Atom
-					|| currentTag.equals("content") || currentTag.equals("summary")) {
+					|| currentTag.equals("content") || currentTag.equals("summary")
+					|| currentURI.contains("content")) {
 				description = chars;
 			} else if (currentTag.equals("author") || currentTag.equals("name")
 					|| currentTag.equals("creator")) {
@@ -502,7 +531,9 @@ public class ChannelFactory extends DefaultHandler {
 		if (guid != null && !"".equals(guid)) {
 			id = guid;
 		} else {
-			if (description.length() > 32) {
+			if (description == null) {
+				id = title.concat(channel.getId());
+			} else if (description.length() > 32) {
 				id = title.concat(channel.getId()).concat(description.substring(0, 32));
 			} else {
 				id = title.concat(channel.getId()).concat(description);
@@ -537,6 +568,21 @@ public class ChannelFactory extends DefaultHandler {
 		channel.addItem(item.getId());
 
 		return item;
+	}
+
+	/**
+	 * Zwraca stronę główną z podanego adresu podstrony.<br>
+	 * Na przykład, jeśli podano "http://delicious.com/network/username", zwraca
+	 * napis "http://delicious.com".
+	 *
+	 * @return Napis będący adresem do strony głównej.
+	 */
+	private static String getHome(String URL) {
+		if (URL.startsWith("http://")) {
+			return "http://" + URL.substring(7).replaceAll("/.*", "");
+		} else {
+			return URL.replaceAll("/.*", "");
+		}
 	}
 }
 
