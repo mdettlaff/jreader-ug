@@ -478,6 +478,62 @@ public class JReader {
 	}
 
 	/**
+	 * Szuka podanego napisu w opisach i tytułach (lub tylko tytułach) elementów.
+	 * Jeśli zostanie znaleziony, na liście elementów pojawią się elementy
+	 * go zawierające.
+	 *
+	 * @param  titlesOnly Jeśli <code>true</code>, przeszukiwane będą same tytuły
+	 *                    elementów; jeśli <code>false</code>, również ich opisy.
+	 * @param  scope      Zasięg szukania:<br>
+	 *                    0 - tylko w elementach z listy elementów.<br>
+	 *                    1 - tylko w elementach kanałów z listy kanałów.<br>
+	 *                    2 - we wszystkich elementach zapamiętanych w programie.
+	 * @param  needle     Szukany napis.
+	 * @return            <code>true</code>, jeśli znaleziono co najmniej jedno
+	 *                    wystąpienie podanego napisu, <code>false</code>
+	 *                    w przeciwnym wypadku.
+	 */
+	public static boolean search(boolean caseSensitive, boolean titlesOnly,
+			int scope, String needle) {
+		List<Item> haystack = new LinkedList<Item>();
+		List<Item> matchingItems = new LinkedList<Item>();
+		String itemContents = "";
+
+		if (scope == 0) {
+			haystack.addAll(items);
+		} else if (scope == 1) {
+			for (Channel channel : visibleChannels) {
+				haystack.addAll(channels.getItems(channel.getId()));
+			}
+		} else if (scope == 2) {
+			for (Channel channel : channels.getChannels()) {
+				haystack.addAll(channels.getItems(channel.getId()));
+			}
+		}
+
+		for (Item item : haystack) {
+			itemContents = item.getTitle();
+			if (!titlesOnly) {
+				if (item.getDescription() != null) {
+					itemContents = itemContents.concat(item.getDescription());
+				}
+			}
+			if (!caseSensitive) {
+				itemContents = itemContents.toLowerCase();
+			}
+			if (itemContents.contains(needle)) {
+				matchingItems.add(item);
+			}
+		}
+
+		if (matchingItems.size() > 0) {
+			items = matchingItems;
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Zwraca ilość nieprzeczytanych elementów na liście kanałów.
 	 */
 	public static int getUnreadItemsCount() {
