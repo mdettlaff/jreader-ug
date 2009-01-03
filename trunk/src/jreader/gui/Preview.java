@@ -37,6 +37,7 @@ public class Preview {
 	public static Label title;
 	public static Label author;
 	public static Link titleLink;
+	public static CTabItem item;
 	
 	public Preview(final Composite shell) {
 		
@@ -51,7 +52,7 @@ public class Preview {
 		Color middle = new Color (device, 190, 190, 213);
 		  
 		  
-		final CTabItem item = new CTabItem(folderPreview, SWT.CLOSE);
+		item = new CTabItem(folderPreview, SWT.NONE);
 		item.setText("Preview");
 		item.setImage(itemsTab);
 		Composite comp = new Composite(folderPreview, SWT.NONE);

@@ -23,7 +23,7 @@ public class GUI {
 	public static Color white = new Color (display, 255, 255, 254);
 	public static String statusText = "Status Line";
 	public static Label statusLine;
-	public static String version = "JReader v. 0.81";
+	public static String version = "JReader v. 0.94";
 	public static boolean issimple = false;
 	public static Shell shell;
 
