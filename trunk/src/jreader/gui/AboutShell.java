@@ -3,6 +3,7 @@ package jreader.gui;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
@@ -16,49 +17,75 @@ import org.eclipse.swt.widgets.Shell;
 public class AboutShell {
 
 	private static Shell aboutShell;
+	private static String about = "<div style='font-size: 11px'><h2>JReader 1.0</h2>" +
+			"RSS and Atom feed reader<br />" +
+			"Copyright © 2009<br /><br />" +
+			"<b>Authors:</b><br />" +
+			"Michał Dettlaff<br />" +
+			"Karol Domagała<br />" +
+			"Łukasz Draba<br />" +
+			"<br />" +
+			"Homepage:<br />" +
+			"<a href='http://code.google.com/p/jreader-ug/'>http://code.google.com/p/jreader-ug/</a>" +
+			"<br /><br />" +
+			"<p>" +
+			"This program is free software: you can redistribute it and/or modify" +
+			"it under the terms of the GNU General Public License as published by" +
+			"the Free Software Foundation, either version 3 of the License, or" +
+			"(at your option) any later version." +
+			"</p>" +
+			"<p>" +
+			"This program is distributed in the hope that it will be useful," +
+			"but WITHOUT ANY WARRANTY; without even the implied warranty of" +
+			"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" +
+			"GNU General Public License for more details." +
+			"</p>" +
+			"<p>" +
+			"You should have received a copy of the GNU General Public License" +
+			"along with this program.  If not, see <a href='http://www.gnu.org/licenses/'>" +
+			"http://www.gnu.org/licenses/</a>" +
+			"</p></div>";
 	
 	public AboutShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "big" + File.separator + "jreader2.png");
-		aboutShell = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL |SWT.TOOL);
-		aboutShell.setText("About JReader programm");
+		aboutShell = new Shell(shell, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.TOOL);
+		aboutShell.setText("About JReader program");
 
 		aboutShell.setImage(jreader);
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
-		rowLayout.pack = true;
-		rowLayout.justify = true;
-		rowLayout.marginWidth = 40;
+		//rowLayout.pack = true;
+		//rowLayout.justify = true;
+		//rowLayout.marginWidth = 40;
 		rowLayout.center = true;
-		rowLayout.spacing = 10;
-		
+		//rowLayout.spacing = 10;
 		aboutShell.setLayout(rowLayout);
 		
 		//Wysrodkowanie shella
 		Monitor primary = shell.getDisplay().getPrimaryMonitor();
 	    Rectangle bounds = primary.getBounds();
-	    int x = bounds.width / 2 - 100;
-	    int y = bounds.height/ 2 - 50;
+	    int x = bounds.width / 2 - 250;
+	    int y = bounds.height/ 2 - 250;
 	    aboutShell.setLocation(x, y);
-	    
 	    
 	    Label pic = new Label(aboutShell, SWT.NONE);
 	    pic.setImage(jreader);
-	    Label version = new Label(aboutShell, SWT.NONE);
-	    version.setText(GUI.version);
-	    new Label(aboutShell, SWT.NONE).setText("Feel free to use and have fun kids!");
-	    new Label(aboutShell, SWT.NONE).setText("2008.");
+	    
+	    Browser browser = new Browser(aboutShell, SWT.NONE);
+	    browser.setText(about);
+	    browser.setBounds(20, 20, 500, 400);
+	    
+	    new Label(aboutShell, SWT.NONE).setText(" ");
+	    
 	    Button okButton = new Button(aboutShell, SWT.PUSH);
 	    okButton.setText("&OK");
 	    
 		okButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				System.out.println("AboutShell: OK was pressed.\nDisposing...");
 				aboutShell.close();
 			}
 		});
-	    
-	    
-	    
-	    aboutShell.pack();
+		
+		aboutShell.pack();
 	  	    
 	}
 	

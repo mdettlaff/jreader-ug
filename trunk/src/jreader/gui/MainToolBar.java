@@ -146,14 +146,14 @@ public class MainToolBar {
         //Back
         backToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                System.out.println("Back");
+            	Preview.browser.back();
                 
             }
         });
         //Forward
         forwardToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                System.out.println("Forward");
+                Preview.browser.forward();
                 
             }
         });
