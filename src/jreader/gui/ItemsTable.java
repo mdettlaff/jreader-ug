@@ -126,6 +126,7 @@ public class ItemsTable {
 				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
 				SubsList.refresh();
 				Preview.refresh();
+				Preview.folderPreview.setSelection(Preview.item);
             }
         });
 		
@@ -171,9 +172,7 @@ public class ItemsTable {
 		MouseListener openListener = new MouseListener(){
 			public void mouseDoubleClick(MouseEvent me) {
 				TableItem[] item = itemsTable.getSelection();
-				CTabItem ctabItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
-				ctabItem.setText(item[0].getText());
-				ctabItem.setImage(new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
+				new PreviewItem(item[0].getText(), new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
 			}
 			public void mouseDown(MouseEvent e) {}
 			public void mouseUp(MouseEvent e) {}
@@ -186,9 +185,7 @@ public class ItemsTable {
 		openNewTab.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
             	TableItem[] item = itemsTable.getSelection();
-				CTabItem ctabItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
-				ctabItem.setText(item[0].getText());
-				ctabItem.setImage(new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
+				new PreviewItem(item[0].getText(), new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
