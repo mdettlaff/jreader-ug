@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Monitor;
@@ -50,10 +51,20 @@ public class GUI {
 		new MainToolBar(shell);
 		new MainSash(shell);
 		new SysTray();
-		statusLine = new Label(shell, SWT.NONE);
-		statusLine.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		Composite status = new Composite(shell, SWT.NONE);
+		status.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
+		GridLayout gridLayout = new GridLayout(2, true);
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginHeight = 0;
+		status.setLayout(gridLayout);
+		statusLine = new Label(status, SWT.NONE);
+		statusLine.setSize(500, 23);
+		statusLine.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
+		
 		statusLine.setText(statusText);
-		shell.open ();
+		new WebProgress(status);
+		
+		shell.open();
 		
 		
 		

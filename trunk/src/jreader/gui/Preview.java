@@ -7,6 +7,8 @@ import jreader.JReader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
@@ -65,11 +67,10 @@ public class Preview {
 		author = new Label(header, SWT.NONE);
 		
 		
-		
 		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
 			browser = new Browser(comp, SWT.MOZILLA | SWT.BORDER);
 		} else {
-			browser = new Browser(comp, SWT.NONE | SWT.BORDER);
+			browser = new Browser(comp, SWT.BORDER);
 		}
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
@@ -117,7 +118,7 @@ public class Preview {
 			}
 	   	});
 		/* zmienia treść Status Line */
-		browser.addMouseMoveListener(new MouseMoveListener() {
+		folderPreview.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Item preview.";
               GUI.statusLine.setText(GUI.statusText);
@@ -166,6 +167,11 @@ public class Preview {
 				
 			}
 		});
+		browser.addStatusTextListener(new StatusTextListener() {
+		      public void changed(StatusTextEvent event) {
+		        GUI.statusLine.setText(event.text); 
+		      }
+		    });
 	}
 	public void setBounds(Rectangle rect) {
 		folderPreview.setBounds(rect);

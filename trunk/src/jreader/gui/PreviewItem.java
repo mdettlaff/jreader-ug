@@ -6,6 +6,8 @@ import jreader.JReader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -16,6 +18,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ProgressBar;
 
 public class PreviewItem {
 
@@ -37,8 +40,6 @@ public class PreviewItem {
 		titleLink = new Link(header, SWT.NONE);
 		title = new Label(header, SWT.NONE);
 		author = new Label(header, SWT.NONE);
-		
-		
 		
 		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
 			browser = new Browser(comp, SWT.MOZILLA | SWT.BORDER);
@@ -74,8 +75,5 @@ public class PreviewItem {
 		}
 		});
 
-	}
-	public Browser getBrowser() {
-		return browser;
 	}
 }
