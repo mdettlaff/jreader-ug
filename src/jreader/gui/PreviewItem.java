@@ -19,14 +19,13 @@ import org.eclipse.swt.widgets.Listener;
 
 public class PreviewItem {
 
-	public static Browser browser;
+	private Browser browser;
 	public static Label title;
 	public static Label author;
 	public static Link titleLink;
 	
-public PreviewItem(String text, Image itemImage) {
-		  
-		  
+	public PreviewItem(String text, Image itemImage) {
+		    
 		final CTabItem previewItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
 		previewItem.setText(text);
 		previewItem.setImage(itemImage);
@@ -50,32 +49,33 @@ public PreviewItem(String text, Image itemImage) {
 		
 		previewItem.setControl(comp);
 		Preview.folderPreview.setSelection(previewItem);
-		refreshItem();
+	
+		String titleText = JReader.getPreview().getCurrent().getTitle();
+		Date date = JReader.getPreview().getCurrent().getDate();
+		String authorText = JReader.getPreview().getCurrent().getAuthor();
+		String fromText = JReader.getPreview().getCurrent().getChannelTitle();
+		final String url = JReader.getPreview().getCurrent().getLink();
 		
-	}
-
-	public static void refreshItem() {
-	String titleText = JReader.getPreview().getCurrent().getTitle();
-	Date date = JReader.getPreview().getCurrent().getDate();
-	String authorText = JReader.getPreview().getCurrent().getAuthor();
-	String fromText = JReader.getPreview().getCurrent().getChannelTitle();
-	titleLink.setText("<a>" + titleText + "</a>");
+		titleLink.setText("<a>" + titleText + "</a>");
+		browser.setText(JReader.getPreview().getCurrent().getHTML());
+		title.setText(((date != null) ? date.toString() : " "));
+		if (authorText != null && fromText != null)
+			author.setText("Author: " + authorText + "\tFrom: " + fromText);
+		else if (fromText != null && authorText == null)
+			author.setText("From: " + fromText);
+		else if (authorText != null)
+			author.setText(authorText);
+		else
+			author.setText("");
 	
-	browser.setText(JReader.getPreview().getCurrent().getHTML());
-	title.setText(((date != null) ? date.toString() : " "));
-	if (authorText != null && fromText != null)
-		author.setText("Author: " + authorText + "\tFrom: " + fromText);
-	else if (fromText != null && authorText == null)
-		author.setText("From: " + fromText);
-	else if (authorText != null)
-		author.setText(authorText);
-	else
-		author.setText("");
-	
-	titleLink.addListener (SWT.Selection, new Listener () {
+		titleLink.addListener (SWT.Selection, new Listener () {
 		public void handleEvent(Event event) {
-			browser.setUrl(JReader.getPreview().getCurrent().getLink());
+			browser.setUrl(url);
 		}
-	});
-}
+		});
+
+	}
+	public Browser getBrowser() {
+		return browser;
+	}
 }
