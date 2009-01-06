@@ -61,18 +61,24 @@ public class OptionsShell {
 	
 		//Radio
 		final Button newest = new Button(group2, SWT.RADIO);
-		newest.setSelection(true);
 		newest.setText("newest");
 		Button latest = new Button(group2, SWT.RADIO);
 		latest.setText("oldest");
+		if (JReader.getConfig().getSortByNewest())
+			newest.setSelection(true);
+		else
+			latest.setSelection(false);
+				
 	
 	//	Label - remove by 
 		Composite comp2 = new Composite(optionsShell, SWT.NONE);
 		comp2.setLayout(new GridLayout(3, false));
 		new Label(comp2, SWT.NONE).setText("Remove messages older then ");
 		final Text remove = new Text(comp2, SWT.BORDER);
-		remove.setText("10");
+		remove.setText(new Integer(JReader.getConfig().getDeleteOlderThanDays()).toString());
 		remove.setTextLimit(2);
+		remove.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		//TODO remove label size
 		new Label(comp2, SWT.NONE).setText(" days.");
 		
 	//	Buttons ok cancel

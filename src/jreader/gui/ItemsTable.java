@@ -106,7 +106,7 @@ public class ItemsTable {
 	      });
 	
 		/**
-		 * Zaznacza wiersze jako przeczytane - zmienia czcionkę z BOLD na normal
+		 * Oznacza wiersz jako przeczytany i wyświetla wiadomość w aktualnej zakładce. 
 		 */
 		itemsTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -171,8 +171,7 @@ public class ItemsTable {
 		 */
 		MouseListener openListener = new MouseListener(){
 			public void mouseDoubleClick(MouseEvent me) {
-				TableItem[] item = itemsTable.getSelection();
-				new PreviewItem(item[0].getText(), new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
+				openTab(comp);
 			}
 			public void mouseDown(MouseEvent e) {}
 			public void mouseUp(MouseEvent e) {}
@@ -184,8 +183,7 @@ public class ItemsTable {
 		 */
 		openNewTab.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	TableItem[] item = itemsTable.getSelection();
-				new PreviewItem(item[0].getText(), new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png"));
+            	openTab(comp);
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
@@ -233,11 +231,20 @@ public class ItemsTable {
 			if (!it.isRead()) {
 				item.setFont(fontBold);
 			}
-			if (index%2==0) {
-				item.setBackground(GUI.gray);
-			} else
-				item.setBackground(GUI.white);
+			if (!System.getProperty("os.name").equalsIgnoreCase("Linux")) {
+				if (index%2==0) {
+					item.setBackground(GUI.gray);
+				} else
+					item.setBackground(GUI.white);
+			}
 			index++;
 		}
+	}
+	/**
+	 * Otawrcie nowej zakładki
+	 */
+	public static void openTab(Composite comp) {
+		TableItem[] item = itemsTable.getSelection();
+		Preview.previewItemList.add(new PreviewItem(item[0].getText(), new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png")));
 	}
 }

@@ -23,10 +23,16 @@ import org.eclipse.swt.widgets.ProgressBar;
 public class PreviewItem {
 
 	private Browser browser;
-	public static Label title;
-	public static Label author;
-	public static Link titleLink;
+	private Label title;
+	private Label author;
+	private Link titleLink;
 	
+	/**
+	 * Tworzy nową zakładkę.
+	 * 
+	 * @param text       Tytuł zakładki.
+	 * @param itemImage  Ikona zakładki.
+	 */
 	public PreviewItem(String text, Image itemImage) {
 		    
 		final CTabItem previewItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
