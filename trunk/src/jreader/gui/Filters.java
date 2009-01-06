@@ -27,8 +27,6 @@ public class Filters {
 	public static Button unreadButton;
 	public String allButtonLabel = "All items ";
 	public String unreadButtonLabel = "Unread items ";
-	public int unread = 0;
-	public int msgs = 0;
 
 	public Filters(final Composite shell) {
 		
@@ -56,11 +54,11 @@ public class Filters {
 		filterComposite.setLayout(new FillLayout(SWT.VERTICAL));
 		allButton = new Button(filterComposite, SWT.TOGGLE | SWT.FLAT);
 		allButton.setAlignment(SWT.LEFT);
-		allButton.setText(allButtonLabel + "(" + msgs + ")");
+		allButton.setText(allButtonLabel + "(" + JReader.getItemsCount() + ")");
 		
 		unreadButton = new Button(filterComposite, SWT.TOGGLE | SWT.FLAT);
 		unreadButton.setAlignment(SWT.LEFT);
-		unreadButton.setText(unreadButtonLabel +  "(" + unread + ")");
+		unreadButton.setText(unreadButtonLabel +  "(" + JReader.getUnreadItemsCount() + ")");
 		unreadButton.setSelection(true);
 		
 		item.setControl(filterComposite);

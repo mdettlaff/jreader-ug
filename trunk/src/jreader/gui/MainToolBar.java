@@ -146,7 +146,9 @@ public class MainToolBar {
         //Back
         backToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	Preview.browser.back();
+            	int index = Preview.folderPreview.getSelectionIndex();
+            	
+            	//Preview.browser.back();
                 
             }
         });

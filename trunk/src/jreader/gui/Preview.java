@@ -2,6 +2,7 @@ package jreader.gui;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 import jreader.JReader;
 
@@ -40,6 +41,8 @@ public class Preview {
 	public static Label author;
 	public static Link titleLink;
 	public static CTabItem item;
+	//lista zakladek w folderPreview
+	public static List<PreviewItem> previewItemList;
 	
 	public Preview(final Composite shell) {
 		
@@ -51,8 +54,7 @@ public class Preview {
 		  
 		Device device = Display.getCurrent ();
 		Color bottom = new Color (device, 156, 156, 213);
-		Color middle = new Color (device, 190, 190, 213);
-		  
+		Color middle = new Color (device, 190, 190, 213);  
 		  
 		item = new CTabItem(folderPreview, SWT.NONE);
 		item.setText("Preview");
