@@ -17,7 +17,9 @@ import org.eclipse.swt.widgets.Shell;
 public class AboutShell {
 
 	private static Shell aboutShell;
-	private static String about = "<div style='font-size: 11px'><h2>JReader 1.0</h2>" +
+	private static String about = "<html>" + 
+			"<body>" +
+			"<div style='font-size: 11px'><h2>JReader 1.0</h2>" +
 			"RSS and Atom feed reader<br />" +
 			"Copyright © 2009<br /><br />" +
 			"<b>Authors:</b><br />" +
@@ -44,7 +46,9 @@ public class AboutShell {
 			"You should have received a copy of the GNU General Public License" +
 			"along with this program.  If not, see <a href='http://www.gnu.org/licenses/'>" +
 			"http://www.gnu.org/licenses/</a>" +
-			"</p></div>";
+			"</p></div>" +
+			"</body>" +
+			"</html>";
 	
 	public AboutShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "big" + File.separator + "jreader2.png");

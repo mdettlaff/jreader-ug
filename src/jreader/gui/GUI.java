@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class GUI {
 
-	public static final Display display = new Display ();
+	public static final Display display = new Display();
 	public static Color gray = new Color (display, 240, 250, 250);
 	public static Color white = new Color (display, 255, 255, 254);
 	public static String statusText = "Status Line";
@@ -44,13 +44,13 @@ public class GUI {
 		shell.setLayout(new GridLayout());
 		/* Wyśrodkowanie shella */
 		Monitor primary = display.getPrimaryMonitor();
-	    Rectangle bounds = primary.getBounds();
-	    Rectangle rect = shell.getBounds();
-	    int x = bounds.x + (bounds.width - rect.width) / 2;
-	    int y = bounds.y + (bounds.height - rect.height) / 2;
-	    shell.setLocation(x, y);
+		Rectangle bounds = primary.getBounds();
+		Rectangle rect = shell.getBounds();
+		int x = bounds.x + (bounds.width - rect.width) / 2;
+		int y = bounds.y + (bounds.height - rect.height) / 2;
+		shell.setLocation(x, y);
 	    
-	    new MenuBar(shell);
+		new MenuBar(shell);
 		new MainToolBar(shell);
 		new MainSash(shell);
 		new SysTray();
@@ -81,6 +81,13 @@ public class GUI {
 		display.dispose();
 		jreader.dispose();
 	}
+	
+	/**
+	 * Tworzy nową zakładkę w Preview
+	 * 
+	 * @param title Tytuł zakładki.
+	 * @return Obiekt PreviewItem.
+	 */
 	public static PreviewItem openTab(String title) {
 		PreviewItem newPreviewItem = new PreviewItem(title, preview);
 		Preview.previewItemList.add(newPreviewItem);
