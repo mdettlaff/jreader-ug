@@ -106,41 +106,7 @@ public class MainToolBar {
         //synchornizuj
         syncToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                System.out.println("Synchronize");
-                for (Channel channel : JReader.getVisibleChannels()) {
-        			try {
-        				if (JReader.updateChannel(channel) > 0) {
-        					GUI.statusLine.setText(channel.getTitle() + " zaktualizowany.");
-        				} else {
-        					GUI.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
-        				}
-        				channel.setFail(false);
-        			} catch (SAXParseException spe) {
-        				System.out.println("Nie mozna zaktualizowac kanalu "
-        						+ channel.getTitle() + ".");
-        				System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
-        				System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
-        				System.out.println("Szczegoly: " + spe.getLocalizedMessage());
-        				channel.setFail(true);
-        			} catch (SAXException saxe) {
-        				System.out.print("Nie mozna dodac kanalu.");
-        				System.out.println(" Blad parsera XML.");
-        			} catch (SocketException se) {
-        				System.out.println("Nie mozna zaktualizowac kanalu "
-        						+ channel.getTitle() + ".");
-        				System.out.println("Szczegoly: " + se.getLocalizedMessage());
-        				channel.setFail(true);
-        			} catch (IOException ioe) {
-        				System.out.println("Nie mozna zaktualizowac kanalu "
-        						+ channel.getTitle() + ".");
-        				System.out.println("Brak polaczenia ze strona.");
-        				channel.setFail(true);
-        			}
-        		}
-        		System.out.println("Kanaly zostaly zaktualizowane.");
-        		SubsList.refresh();
-        		ItemsTable.refresh();
-                
+                GUI.display.asyncExec(new UpdateThread());                
             }
         });
         //Back
@@ -196,8 +162,44 @@ public class MainToolBar {
             }
           });
         
-        toolBar.pack();
-        
+        toolBar.pack();    
+	}
+	
+	synchronized public static void synchronize() {
+		for (Channel channel : JReader.getVisibleChannels()) {
+			try {
+				if (JReader.updateChannel(channel) > 0) {
+					//GUI.statusLine.setText(channel.getTitle() + " zaktualizowany.");
+				} else {
+					//GUI.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
+				}
+				channel.setFail(false);
+			} catch (SAXParseException spe) {
+				System.out.println("Nie mozna zaktualizowac kanalu "
+						+ channel.getTitle() + ".");
+				System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
+				System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
+				System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+				channel.setFail(true);
+			} catch (SAXException saxe) {
+				System.out.print("Nie mozna dodac kanalu.");
+				System.out.println(" Blad parsera XML.");
+			} catch (SocketException se) {
+				System.out.println("Nie mozna zaktualizowac kanalu "
+						+ channel.getTitle() + ".");
+				System.out.println("Szczegoly: " + se.getLocalizedMessage());
+				channel.setFail(true);
+			} catch (IOException ioe) {
+				System.out.println("Nie mozna zaktualizowac kanalu "
+						+ channel.getTitle() + ".");
+				System.out.println("Brak polaczenia ze strona.");
+				channel.setFail(true);
+			}
+		}
+		System.out.println("Kanaly zostaly zaktualizowane.");
+		SubsList.refresh();
+		ItemsTable.refresh();
+		
 	}
 
 	

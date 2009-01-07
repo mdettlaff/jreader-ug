@@ -241,9 +241,6 @@ public class ItemsTable {
 			index++;
 		}
 	}
-	/**
-	 * Otawrcie nowej zakładki
-	 */
 	private void openTab() {
 		TableItem[] item = itemsTable.getSelection();
 		GUI.openTab(item[0].getText()).refresh();
