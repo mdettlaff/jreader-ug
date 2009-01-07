@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Monitor;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -28,6 +29,8 @@ public class GUI {
 	public static boolean issimple = false;
 	public static Shell shell;
 	public static Image jreader = new Image(display, "data" + File.separator + "icons" + File.separator + "small" + File.separator + "jreader2.png");
+	public static Image preview = new Image(display, "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png");
+	public static ProgressBar progressBar;
 
 	/**
 	 * Uruchamia GUI.
@@ -62,7 +65,11 @@ public class GUI {
 		statusLine.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
 		
 		statusLine.setText(statusText);
-		new WebProgress(status);
+		//new WebProgress(status);
+		progressBar = new ProgressBar(status, SWT.SMOOTH);
+		progressBar.setSize(100, 20);
+		progressBar.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+		progressBar.setVisible(false);
 		
 		shell.open();
 		
@@ -73,5 +80,10 @@ public class GUI {
 		}
 		display.dispose();
 		jreader.dispose();
+	}
+	public static PreviewItem openTab(String title) {
+		PreviewItem newPreviewItem = new PreviewItem(title, preview);
+		Preview.previewItemList.add(newPreviewItem);
+		return newPreviewItem;
 	}
 }

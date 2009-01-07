@@ -6,7 +6,6 @@ import jreader.Item;
 import jreader.JReader;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseEvent;
@@ -125,8 +124,10 @@ public class ItemsTable {
 				}
 				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
 				SubsList.refresh();
-				Preview.refresh();
-				Preview.folderPreview.setSelection(Preview.item);
+				if (Preview.folderPreview.getItemCount() != 0)
+					Preview.previewItemList.get((Preview.folderPreview.getSelectionIndex())).refresh();
+				else
+					GUI.openTab(item[0].getText()).refresh();
             }
         });
 		
@@ -171,7 +172,7 @@ public class ItemsTable {
 		 */
 		MouseListener openListener = new MouseListener(){
 			public void mouseDoubleClick(MouseEvent me) {
-				openTab(comp);
+				openTab();
 			}
 			public void mouseDown(MouseEvent e) {}
 			public void mouseUp(MouseEvent e) {}
@@ -183,7 +184,7 @@ public class ItemsTable {
 		 */
 		openNewTab.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	openTab(comp);
+            	openTab();
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
@@ -243,8 +244,8 @@ public class ItemsTable {
 	/**
 	 * Otawrcie nowej zakładki
 	 */
-	public static void openTab(Composite comp) {
+	private void openTab() {
 		TableItem[] item = itemsTable.getSelection();
-		Preview.previewItemList.add(new PreviewItem(item[0].getText(), new Image(comp.getDisplay(), "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png")));
+		GUI.openTab(item[0].getText()).refresh();
 	}
 }
