@@ -8,7 +8,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -18,7 +22,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ProgressBar;
 
 public class PreviewItem {
 
@@ -26,6 +29,7 @@ public class PreviewItem {
 	private Label title;
 	private Label author;
 	private Link titleLink;
+	private CTabItem previewItem;
 	
 	/**
 	 * Tworzy nową zakładkę.
@@ -35,7 +39,7 @@ public class PreviewItem {
 	 */
 	public PreviewItem(String text, Image itemImage) {
 		    
-		final CTabItem previewItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
+		previewItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
 		previewItem.setText(text);
 		previewItem.setImage(itemImage);
 		Composite comp = new Composite(Preview.folderPreview, SWT.NONE);
@@ -56,13 +60,46 @@ public class PreviewItem {
 		
 		previewItem.setControl(comp);
 		Preview.folderPreview.setSelection(previewItem);
-	
+		//refresh();
+
+		/* LISTENERS */
+		
+		// Progress bar listener 
+		browser.addProgressListener(new ProgressListener() {
+			public void changed(ProgressEvent event) {
+				if (event.total == 0) return;                            
+				int ratio = event.current * 100 / event.total;
+				GUI.progressBar.setSelection(ratio);
+				GUI.progressBar.setVisible(true);
+			}
+			public void completed(ProgressEvent event) {
+				GUI.progressBar.setSelection(0);
+				GUI.progressBar.setVisible(false);
+			}
+		});
+		//Status listener
+		browser.addStatusTextListener(new StatusTextListener() {
+		      public void changed(StatusTextEvent event) {
+		        GUI.statusLine.setText(event.text); 
+		      }
+		});
+		previewItem.addDisposeListener(new DisposeListener(){
+			  public void widgetDisposed(DisposeEvent e) {
+				Preview.previewItemList.remove(Preview.folderPreview.getSelectionIndex()+1);
+				System.out.println(Preview.previewItemList.size());
+			  }
+		});
+		
+	}
+	public void refresh() {
 		String titleText = JReader.getPreview().getCurrent().getTitle();
 		Date date = JReader.getPreview().getCurrent().getDate();
 		String authorText = JReader.getPreview().getCurrent().getAuthor();
 		String fromText = JReader.getPreview().getCurrent().getChannelTitle();
 		final String url = JReader.getPreview().getCurrent().getLink();
-		
+
+		if (!previewItem.isDisposed())
+			previewItem.setText((titleText.length() > 20) ? titleText.substring(0,16).concat("...") : titleText);
 		titleLink.setText("<a>" + titleText + "</a>");
 		browser.setText(JReader.getPreview().getCurrent().getHTML());
 		title.setText(((date != null) ? date.toString() : " "));
@@ -80,6 +117,5 @@ public class PreviewItem {
 			browser.setUrl(url);
 		}
 		});
-
 	}
 }

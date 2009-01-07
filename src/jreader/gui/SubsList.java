@@ -70,10 +70,13 @@ public class SubsList {
 	    subsList.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				int indeks = subsList.getSelectionIndex();
-				System.out.println(indeks);
 				JReader.selectChannel(indeks);
 				ItemsTable.refresh();
-				Preview.refresh();
+				System.out.println(Preview.previewItemList.size());
+				if (Preview.folderPreview.getItemCount() != 0)
+					Preview.previewItemList.get((Preview.folderPreview.getSelectionIndex())).refresh();
+				else
+					GUI.openTab(JReader.getChannel(indeks).getTitle()).refresh();
             }
         });
 	    
