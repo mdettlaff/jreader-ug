@@ -1,0 +1,19 @@
+#labels Phase-Implementation
+#Rzeczy które pozostały jeszcze do zrobienia.
+
+Wspólnie:
+  * Przyciski "Następna nieprzeczytana" oraz Wstecz i Dalej
+  * Usunąć błąd związany z UpdateThread i UpdateDaemon w GUI.
+  * Import/Export
+  * Szukanie
+
+Karol:
+  * Podświetlenie elementów w Linuksie nie działa w ogóle.
+  * Format daty YYYY-MM-DD HH:mm w Items i Preview.
+  * Zawiesza się po dwukrotnym kliknięciu na puste miejsce w ItemsTable.
+  * Zatwierdzanie przy pomocy entera, a nie tylko przycisku OK.
+  * Odnośnik do źródła w ogólnym opisie kanałów.
+
+Łukasz:
+  * Binarki natywne dla Windowsa i Linuksa.
+  * Instrukcja obsługi (do okienka 'help' i dokumentacji).
