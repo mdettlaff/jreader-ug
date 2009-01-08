@@ -163,6 +163,13 @@ public class SubsList {
         				changeShell.close();
         			}
         		});
+            	tags.addListener(SWT.DefaultSelection, new Listener() {
+        	        public void handleEvent(Event e) {
+        	        	JReader.editTags(JReader.getChannel(indeks), tags.getText());
+        				TagList.refresh();
+        				changeShell.close();
+        	        }
+        	      });
             	
             	changeShell.pack();
             	changeShell.open();
