@@ -243,6 +243,7 @@ public class ItemsTable {
 	}
 	private void openTab() {
 		TableItem[] item = itemsTable.getSelection();
-		GUI.openTab(item[0].getText()).refresh();
+		if (item != null)
+			GUI.openTab(item[0].getText()).refresh();
 	}
 }
