@@ -124,6 +124,7 @@ public class ItemsTable {
 				}
 				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
 				SubsList.refresh();
+				Filters.refresh();
 				if (Preview.folderPreview.getItemCount() != 0)
 					Preview.previewItemList.get((Preview.folderPreview.getSelectionIndex())).refresh();
 				else

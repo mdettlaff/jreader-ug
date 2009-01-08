@@ -199,6 +199,7 @@ public class MainToolBar {
 		System.out.println("Kanaly zostaly zaktualizowane.");
 		SubsList.refresh();
 		ItemsTable.refresh();
+		Filters.refresh();
 		
 	}
 
