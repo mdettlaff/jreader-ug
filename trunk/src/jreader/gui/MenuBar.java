@@ -1,5 +1,7 @@
 package jreader.gui;
 
+import java.sql.Date;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -81,19 +83,19 @@ public class MenuBar {
         importMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 System.out.println("Import");
-                FileDialog dialog = new FileDialog (shell, SWT.OPEN | SWT.MULTI);
+                FileDialog dialog = new FileDialog (shell, SWT.OPEN);
     			dialog.setFileName("*.xml");
-    			dialog.setFilterNames (new String[] {"Text files", "Doc files", "All files"});
-    			dialog.setFilterExtensions (new String[] {"*.txt", "*.doc", "*" });
+    			dialog.setFilterNames (new String[] {"*.xml", "*.txt", "All"});
+    			dialog.setFilterExtensions (new String[] {"*.xml", "*.txt", "*" });
     			dialog.setText("Import a subscryption");
     			String result = dialog.open();
     			
-    			if ((dialog.getStyle () & SWT.MULTI) != 0) {
+    			/*if ((dialog.getStyle () & SWT.MULTI) != 0) {
     				String [] files = dialog.getFileNames ();
     				for (int i=0; i<files.length; i++) {
     					System.out.println("\t" + files [i] + Text.DELIMITER);
     				}
-    			}
+    			}*/
     			System.out.println(result);
     		
     			return;
@@ -105,6 +107,18 @@ public class MenuBar {
         exportMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 System.out.println("Export");
+                FileDialog dialog = new FileDialog (shell, SWT.SAVE);
+                String date = new java.util.Date().toLocaleString().substring(0, 10);
+    			dialog.setFileName("SubscryptionList_" + date + ".xml");
+    			dialog.setFilterNames (new String[] {"*.xml", "All"});
+    			dialog.setFilterExtensions (new String[] {"*.xml", "*" });
+    			dialog.setText("Export a subscryption");
+    			String result = dialog.open();
+    			
+    			
+    			System.out.println(result);
+    		
+    			return;
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
