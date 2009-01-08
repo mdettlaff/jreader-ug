@@ -60,7 +60,6 @@ public class PreviewItem {
 		
 		previewItem.setControl(comp);
 		Preview.folderPreview.setSelection(previewItem);
-		//refresh();
 
 		/* LISTENERS */
 		
@@ -79,14 +78,16 @@ public class PreviewItem {
 		});
 		//Status listener
 		browser.addStatusTextListener(new StatusTextListener() {
-		      public void changed(StatusTextEvent event) {
+			public void changed(StatusTextEvent event) {
 		        GUI.statusLine.setText(event.text); 
 		      }
 		});
 		previewItem.addDisposeListener(new DisposeListener(){
-			  public void widgetDisposed(DisposeEvent e) {
-				Preview.previewItemList.remove(Preview.folderPreview.getSelectionIndex()+1);
-				System.out.println(Preview.previewItemList.size());
+			public void widgetDisposed(DisposeEvent e) {
+				if (Preview.folderPreview.getSelectionIndex() != -1)
+					Preview.previewItemList.remove(Preview.folderPreview.getSelectionIndex());
+				else
+					Preview.previewItemList.remove(0);
 			  }
 		});
 		
