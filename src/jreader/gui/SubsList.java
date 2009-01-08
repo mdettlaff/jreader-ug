@@ -91,6 +91,7 @@ public class SubsList {
             	JReader.markChannelAsRead(JReader.getChannel(indeks));
             	SubsList.refresh();
             	ItemsTable.refresh();
+            	Filters.refresh();
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
@@ -128,6 +129,7 @@ public class SubsList {
 				}
             	SubsList.refresh();
             	ItemsTable.refresh();
+            	Filters.refresh();
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
@@ -215,7 +217,7 @@ public class SubsList {
 				imData = imData.scaledTo(16, 16);
 				subs.setImage(new Image(Subscriptions.subComposite.getDisplay(), imData));
 	    	}
-	    	subs.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + ")");
+	    	subs.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + "/" + ch.getItems().size() + ")");
 	    	if (ch.getUnreadItemsCount() != 0)
 	    		subs.setFont(fontBold);
 	    }

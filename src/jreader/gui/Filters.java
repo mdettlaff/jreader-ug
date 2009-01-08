@@ -25,8 +25,8 @@ public class Filters {
 	public static CTabFolder folderFilter;
 	public static Button allButton;
 	public static Button unreadButton;
-	public String allButtonLabel = "All items ";
-	public String unreadButtonLabel = "Unread items ";
+	public static String allButtonLabel = "All items ";
+	public static String unreadButtonLabel = "Unread items ";
 
 	public Filters(final Composite shell) {
 		
@@ -110,5 +110,9 @@ public class Filters {
 	}
 	public void setVisible(boolean bol) {
 		folderFilter.setVisible(bol);
+	}
+	public static void refresh() {
+		allButton.setText(allButtonLabel + "(" + JReader.getItemsCount() + ")");
+		unreadButton.setText(unreadButtonLabel +  "(" + JReader.getUnreadItemsCount() + ")");
 	}
 }
