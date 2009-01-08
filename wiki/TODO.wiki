@@ -2,17 +2,20 @@
 #labels Phase-Implementation
 
 Wspólnie:
-  * Przyciski "Następna nieprzeczytana" oraz Wstecz i Dalej
-  * Usunąć błąd związany z UpdateThread i UpdateDaemon w GUI.
+  * Przycisk Next unread
+  * Przyciski Wstecz i Dalej
+  * Usunąć błąd związany z {{{UpdateThread}}} i {{{UpdateDaemon}}} w GUI.
   * Import/Export
-  * Szukanie
+  * Szukanie wiadomości
 
 Karol:
-  * Podświetlenie elementów w Linuksie nie działa w ogóle.
+  * Okienko do opcji Szukaj
+  * Okienko do opcji Export
+  * Odświeżanie przycisków All items i Unread items
   * Format daty YYYY-MM-DD HH:mm w Items i Preview.
-  * Zawiesza się po dwukrotnym kliknięciu na puste miejsce w ItemsTable.
   * Zatwierdzanie przy pomocy entera, a nie tylko przycisku OK.
-  * Odnośnik do źródła w ogólnym opisie kanałów.
+  * Odnośnik do źródła kanału w ogólnym opisie kanałów.
+  * Dodanie brakujących spacji w opisie w okienku About.
 
 Łukasz:
   * Binarki natywne dla Windowsa i Linuksa.
