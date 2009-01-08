@@ -1,5 +1,5 @@
+#summary Rzeczy które pozostały jeszcze do zrobienia.
 #labels Phase-Implementation
-#Rzeczy które pozostały jeszcze do zrobienia.
 
 Wspólnie:
   * Przyciski "Następna nieprzeczytana" oraz Wstecz i Dalej
