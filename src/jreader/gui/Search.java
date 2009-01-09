@@ -58,7 +58,7 @@ private static Shell searchShell;
 		final Button radio0 = new Button(scope, SWT.RADIO);
 		radio0.setText("Items list");
 		Button radio1 = new Button(scope, SWT.RADIO);
-		radio1.setText("Subscryptions list");
+		radio1.setText("Subscriptions list");
 		Button radio2 = new Button(scope, SWT.RADIO);
 		radio2.setText("All");
 		
