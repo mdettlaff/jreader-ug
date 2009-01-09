@@ -1,6 +1,10 @@
 package jreader.gui;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import jreader.JReader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -25,12 +29,14 @@ public class GUI {
 	public static Color white = new Color (display, 255, 255, 254);
 	public static String statusText = "Status Line";
 	public static Label statusLine;
-	public static String version = "JReader v. 0.94";
+	public static String version = "JReader 1.0";
 	public static boolean issimple = false;
 	public static Shell shell;
 	public static Image jreader = new Image(display, "data" + File.separator + "icons" + File.separator + "small" + File.separator + "jreader2.png");
 	public static Image preview = new Image(display, "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png");
 	public static ProgressBar progressBar;
+	public static final DateFormat shortDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
 
 	/**
 	 * Uruchamia GUI.
@@ -72,8 +78,18 @@ public class GUI {
 		progressBar.setVisible(false);
 		
 		shell.open();
-		
-		
+
+		// Aktualizowanie wszystkich kanałów przy starcie, jeśli wybrano
+		// taką opcję
+		if (JReader.getConfig().getUpdateAllOnStartup()) {
+			new UpdateThread();
+		}
+
+		// Automatyczne aktualizowanie kanałów co określoną ilość minut,
+		// jeśli wybrano taką opcję
+		if (JReader.getConfig().getAutoUpdateMinutes() > 0) {
+			new UpdateDaemon();
+		}
 		
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();

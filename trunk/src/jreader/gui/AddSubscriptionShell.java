@@ -104,10 +104,10 @@ public class AddSubscriptionShell {
 		try {
 			JReader.addChannel(url.getText(), tag.getText());
 		} catch (LinkNotFoundException lnfe) {
-			warning.setText("Rss not found on this site.");
+			warning.setText("No channels found on this site.");
 			return;
 		} catch (MalformedURLException mue) {
-			warning.setText("Wrong URL.");
+			warning.setText("Invalid URL.");
 			return;
 		} catch (SAXParseException spe) {
 			warn = "Source is not a valid XML file.\n";
@@ -116,11 +116,11 @@ public class AddSubscriptionShell {
 			warning.setText(warn);
 			return;
 		} catch (SAXException saxe) {
-			warn = "XML's parser error.\n";
+			warn = "XML parser error.\n";
 			warning.setText(warn);
 			return;
 		} catch (SocketException se) {
-			warn = "Cannot add the channel.\n";
+			warn = "Cannot add channel.\n";
 			warn += "Detail: " + se.getLocalizedMessage();
 			warning.setText(warn);
 			return;
@@ -129,7 +129,7 @@ public class AddSubscriptionShell {
 			warning.setText(warn);
 			return;
 		} catch (IllegalArgumentException iae) {
-			warn = "Wrong URL";
+			warn = "Invalid URL";
 			warning.setText(warn);
 			return;
 		}

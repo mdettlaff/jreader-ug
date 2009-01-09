@@ -77,7 +77,7 @@ public class Filters {
 		
 		folderFilter.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              GUI.statusText = "Choose the type of messages filter.";
+              GUI.statusText = "Choose a type of items filter.";
               GUI.statusLine.setText(GUI.statusText);
             }
           });
@@ -126,7 +126,11 @@ public class Filters {
 		folderFilter.setVisible(bol);
 	}
 	public static void refresh() {
-		allButton.setText(allButtonLabel + "(" + JReader.getItemsCount() + ")");
-		unreadButton.setText(unreadButtonLabel +  "(" + JReader.getUnreadItemsCount() + ")");
+		GUI.display.asyncExec(new Runnable() {
+			public void run() {
+				allButton.setText(allButtonLabel + "(" + JReader.getItemsCount() + ")");
+				unreadButton.setText(unreadButtonLabel +  "(" + JReader.getUnreadItemsCount() + ")");
+			}
+		});
 	}
 }

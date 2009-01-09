@@ -8,6 +8,7 @@ import jreader.Channel;
 import jreader.JReader;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -112,23 +113,23 @@ public class SubsList {
             	try {
             		JReader.updateChannel(JReader.getChannel(indeks));
             		JReader.getChannel(indeks).setFail(false);
-					GUI.statusLine.setText("Kanal zostal zaktualizowany.");//status
+					GUI.statusLine.setText("Channel has been updated.");//status
 				} catch (SAXParseException spe) {
-					GUI.statusLine.setText("Nie mozna zaktualizowac kanalu.");
-					System.out.println(" Zrodlo nie jest prawidlowym plikiem XML.");
-					System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
-					System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+					GUI.statusLine.setText("Failed to update channel.");
+					System.out.println(" Source is not a valid XML.");
+					System.out.print("Error in line " + spe.getLineNumber() + ". ");
+					System.out.println("Details: " + spe.getLocalizedMessage());
 					JReader.getChannel(indeks).setFail(true);
 				} catch (SAXException saxe) {
-					GUI.statusLine.setText("Nie mozna dodac kanalu.");
-					System.out.println(" Blad parsera XML.");
+					GUI.statusLine.setText("Failed to update channel.");
+					System.out.println(" XML parser error has occured.");
 				} catch (SocketException se) {
-					GUI.statusLine.setText("Nie mozna zaktualizowac kanalu. Szczegoly:");
+					GUI.statusLine.setText("Failed to update channel. Details:");
 					System.out.println(se.getLocalizedMessage());
 					JReader.getChannel(indeks).setFail(true);
 				} catch (IOException ioe) {
-					GUI.statusLine.setText("Nie mozna zaktualizowac kanalu.");
-					System.out.println(" Brak polaczenia ze strona.");
+					GUI.statusLine.setText("Failed to update channel.");
+					System.out.println(" Unable to connect to the site.");
 					JReader.getChannel(indeks).setFail(true);
 				}
             	SubsList.refresh();
@@ -210,27 +211,38 @@ public class SubsList {
 	 * Odświeża listę subskrypcji
 	 */
 	public static void refresh() {
-		subsList.removeAll();
-		for (Channel ch : JReader.getVisibleChannels()) {
-	    	TableItem subs = new TableItem(SubsList.subsList, SWT.NONE);
-	    	if (ch.getIconPath() == null)
-	    		if (ch.getUnreadItemsCount() == 0)
-	    			subs.setImage(ItemsTable.read);
-	    		else
-	    			subs.setImage(def);
-	    	else {
-	    		ImageData imData = new ImageData(ch.getIconPath());
-				imData = imData.scaledTo(16, 16);
-				subs.setImage(new Image(Subscriptions.subComposite.getDisplay(), imData));
-	    	}
-	    	subs.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + "/" + ch.getItems().size() + ")");
-	    	if (ch.getUnreadItemsCount() != 0)
-	    		subs.setFont(fontBold);
-	    	if (ch.isFail())
-	    		subs.setForeground(new Color(Display.getCurrent(), 255, 0, 0));
-	    	else
-	    		subs.setForeground(new Color(Display.getCurrent(), 0, 0, 0));
-	    }
+		GUI.display.asyncExec(new Runnable() {
+			public void run() {
+				subsList.removeAll();
+				for (Channel ch : JReader.getVisibleChannels()) {
+					TableItem subs = new TableItem(SubsList.subsList, SWT.NONE);
+					if (ch.getIconPath() == null)
+						if (ch.getUnreadItemsCount() == 0)
+							subs.setImage(ItemsTable.read);
+						else
+							subs.setImage(def);
+					else {
+						try {
+						ImageData imData = new ImageData(ch.getIconPath());
+						imData = imData.scaledTo(16, 16);
+						subs.setImage(new Image(Subscriptions.subComposite.getDisplay(), imData));
+						} catch (SWTException swte) {
+							if (ch.getUnreadItemsCount() == 0)
+								subs.setImage(ItemsTable.read);
+							else
+								subs.setImage(def);
+						}
+					}
+					subs.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + "/" + ch.getItems().size() + ")");
+					if (ch.getUnreadItemsCount() != 0)
+						subs.setFont(fontBold);
+					if (ch.isFail())
+						subs.setForeground(new Color(Display.getCurrent(), 255, 0, 0));
+					else
+						subs.setForeground(new Color(Display.getCurrent(), 0, 0, 0));
+				}
+			}
+		});
 	}
 	
 	
