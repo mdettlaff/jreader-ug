@@ -2,17 +2,20 @@
 #labels Phase-Implementation
 
 Wspólnie:
-  * Usunąć błąd związany z {{{UpdateThread}}} i {{{UpdateDaemon}}} w GUI.
-  * Przycisk Next unread
-  * Przyciski Wstecz i Dalej
+  * Next unread item
+  * Next item oraz Previous item
   * Import/Export
   * Szukanie wiadomości
 
 Karol:
-  * Format daty _YYYY-MM-DD HH:mm_ w Items i Preview.
   * Odnośnik do źródła kanału w ogólnym opisie kanałów.
   * Browser w okienku About wyświetla się za mały w Linuksie.
   * Usunięcie niepotrzebnych opcji z menu (typu Copy/Paste)
+  * Uaktualnianie przycisków All items i Unread items podczas klikania na tagi.
+  * Wyskakujące okienka w wypadku błędu przy synchronizacji kanału po wybraniu opcji synchronize z menu kontekstowego po kliknięciu na kanał prawym przyciskiem.
+  * Obsługa wielolinijkowych ostrzeżeń przy dodawaniu kanału.
+  * Większa czcionka dla tytułu kanału wewnątrz zakładki.
+  * Komentarz ogólny Javadoc do każdej klasy w jreader.gui
 
 Łukasz:
   * Binarki natywne dla Windowsa i Linuksa.
