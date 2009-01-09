@@ -72,12 +72,12 @@ public class AboutShell {
 	    
 	    Browser browser = new Browser(aboutShell, SWT.NONE);
 	    browser.setText(about);
-	    browser.setBounds(20, 20, 500, 400);
+	    browser.setSize(500, 400);
 	    
 	    new Label(aboutShell, SWT.NONE).setText(" ");
 	    
 	    Button okButton = new Button(aboutShell, SWT.PUSH);
-	    okButton.setText("&OK");
+	    okButton.setText("  &OK  ");
 	    
 		okButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -85,7 +85,7 @@ public class AboutShell {
 			}
 		});
 		
-		aboutShell.pack();
+		aboutShell.setSize(510, 550);
 	  	    
 	}
 	
