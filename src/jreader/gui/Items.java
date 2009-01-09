@@ -8,6 +8,7 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -32,15 +33,9 @@ public class Items {
 		folderItem.setLayout(new FillLayout());
 		folderItem.setSimple(GUI.issimple);
 				
-		Device device = Display.getCurrent ();
-		Color bottom = new Color (device, 156, 156, 213);
-		Color middle = new Color (device, 190, 190, 213);
-		  
-		  
 		final CTabItem item = new CTabItem(folderItem, SWT.NONE);
 		item.setText("Items");
 		item.setImage(itemsTab);
-
 		
 		/*
 		 * Zawartosc ctaba
@@ -56,41 +51,27 @@ public class Items {
 		 * koniec zawartosci ctaba
 		 */
 		folderItem.setSelection(item);
-		folderItem.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
+		folderItem.setSelectionBackground(new Color[]{Focus.white, Focus.midgray, Focus.gray, Focus.gray},
 				new int[] {20, 40, 100}, true);
 
 	//	LISTENERS
 		
 			
-		folderItem.addCTabFolder2Listener(new CTabFolder2Adapter() {
-			
-		
-			//maxmize, minimize, restore
-			public void minimize(CTabFolderEvent event) {
-				folderItem.setMinimized(true);
-				shell.layout(true);
-			}
-
-			public void maximize(CTabFolderEvent event) {
-				folderItem.setMaximized(true);
-				
-				shell.layout(true);
-			}
-
-			public void restore(CTabFolderEvent event) {
-				folderItem.setMinimized(false);
-				folderItem.setMaximized(false);
-				
-				shell.layout(true);
-			}
-	   	});
 		folderItem.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Select the topic you want to read.";
               GUI.statusLine.setText(GUI.statusText);
             }
           });
-		
+		folderItem.addMouseListener(new MouseListener() {
+	        public void mouseDown(MouseEvent e) {
+	            folderItem.setFocus();
+	          }
+			public void mouseDoubleClick(MouseEvent arg0) {
+			}
+			public void mouseUp(MouseEvent arg0) {
+			}
+	    });
 	}
 	
 	public void setBounds(Rectangle rect) {

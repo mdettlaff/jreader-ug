@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -28,9 +29,6 @@ public class Tags {
 		folderTag.setLayout(new FillLayout());
 		folderTag.setSimple(GUI.issimple);
 				  
-		Device device = Display.getCurrent ();
-		Color bottom = new Color (device, 156, 156, 213);
-		Color middle = new Color (device, 190, 190, 213);
 		  
 		//wlasciwy Ctab 
 		final CTabItem item = new CTabItem(folderTag, SWT.NONE);
@@ -42,21 +40,14 @@ public class Tags {
 		 */
 		Composite tagComposite = new Composite(folderTag, SWT.NONE);
 		tagComposite.setLayoutData(new FillLayout());
-		tagComposite.setLayout(new FillLayout(SWT.VERTICAL));
-		
+		tagComposite.setLayout(new FillLayout(SWT.VERTICAL));		
 		tagList = new TagList(tagComposite);
-		
-	
 		item.setControl(tagComposite);
-		
 		/*
 		 * koniec tresci ctaba
 		 */
-		
-		
-		
 		folderTag.setSelection(item);
-		folderTag.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
+		folderTag.setSelectionBackground(new Color[]{Focus.white, Focus.midgray, Focus.gray, Focus.gray},
 				new int[] {20, 40, 100}, true);
 
 		  
@@ -68,6 +59,16 @@ public class Tags {
               GUI.statusLine.setText(GUI.statusText);
             }
           });
+		
+		folderTag.addMouseListener(new MouseListener() {
+	        public void mouseDown(MouseEvent e) {
+	            folderTag.setFocus();
+	          }
+			public void mouseDoubleClick(MouseEvent arg0) {
+			}
+			public void mouseUp(MouseEvent arg0) {
+			}
+	    });
 	}
 	
 	public void setBounds(Rectangle rect) {

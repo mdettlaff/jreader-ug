@@ -37,12 +37,8 @@ public class Preview {
 		folderPreview = new CTabFolder(shell, SWT.BORDER | SWT.MULTI );
 		folderPreview.setSimple(GUI.issimple);
 		folderPreview.setMaximizeVisible(true);
-		  
-		Device device = Display.getCurrent ();
-		Color bottom = new Color (device, 156, 156, 213);
-		Color middle = new Color (device, 190, 190, 213);  
-		  
-		folderPreview.setSelectionBackground(new Color[]{shell.getDisplay().getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
+		
+		folderPreview.setSelectionBackground(new Color[]{Focus.white, Focus.midgray, Focus.gray, Focus.gray},
 				new int[] {20, 40, 100}, true);
 
 	//	LISTENERS
@@ -123,13 +119,10 @@ public class Preview {
 				}
 			}
 			public void mouseDown(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
+				folderPreview.setFocus();				
 			}
 			
 			public void mouseUp(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 	}

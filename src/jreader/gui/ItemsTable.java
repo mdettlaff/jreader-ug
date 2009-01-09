@@ -202,6 +202,8 @@ public class ItemsTable {
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
         });
+		
+		itemsTable.addFocusListener(Focus.setFocus((Items.folderItem)));
 	}
 	
 	/**
