@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -29,43 +30,40 @@ public class Subscriptions {
 		folderSubs = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
 		folderSubs.setLayout(new FillLayout());
 		folderSubs.setSimple(GUI.issimple);
-				  
-		Device device = Display.getCurrent ();
-		Color bottom = new Color (device, 156, 156, 213);
-		Color middle = new Color (device, 190, 190, 213);
-		  
-		//wlasciwy Ctab 
+		   
 		final CTabItem item = new CTabItem(folderSubs, SWT.NONE);
 		item.setText("Subscriptions");
 		item.setImage(rssTab);
-		/*
-		 * Tresc ctaba
-		 */
+
 		subComposite = new Composite(folderSubs, SWT.NONE);
 		subComposite.setLayoutData(new FillLayout());
 		subComposite.setLayout(new FillLayout(SWT.VERTICAL));
-		
 		lista = new SubsList(subComposite);
-		
 		item.setControl(subComposite);
-		/*
-		 * koniec zawartosci ctaba
-		 */
-		
-		folderSubs.setSelection(item);
-		folderSubs.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
-				new int[] {20, 40, 100}, true);
 
-		  
-//		LISTENERS
+		folderSubs.setSelection(item);
+		folderSubs.setSelectionBackground(new Color[]{Focus.white, Focus.midgray, Focus.gray, Focus.gray},
+				new int[] {20, 40, 100}, true); 
 		
+		//LISTENERS
 		
+		/*status text*/
 		folderSubs.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Choose a subscription.";
               GUI.statusLine.setText(GUI.statusText);
             }
           });
+		
+	    folderSubs.addMouseListener(new MouseListener() {
+	        public void mouseDown(MouseEvent e) {
+	            folderSubs.setFocus();
+	          }
+			public void mouseDoubleClick(MouseEvent arg0) {
+			}
+			public void mouseUp(MouseEvent arg0) {
+			}
+	    });
 	}
 	
 	public void setBounds(Rectangle rect) {

@@ -8,8 +8,12 @@ import jreader.Channel;
 import jreader.JReader;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -17,6 +21,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -72,7 +77,6 @@ public class SubsList {
 				int indeks = subsList.getSelectionIndex();
 				JReader.selectChannel(indeks);
 				ItemsTable.refresh();
-				System.out.println(Preview.previewItemList.size());
 				if (Preview.folderPreview.getItemCount() != 0)
 					Preview.previewItemList.get((Preview.folderPreview.getSelectionIndex())).refresh();
 				else
@@ -196,7 +200,9 @@ public class SubsList {
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
         });
-	
+		 
+	    /* Zmienia kolor folderu gdy zostanie zaznaczony */
+	    subsList.addFocusListener(Focus.setFocus((Subscriptions.folderSubs)));
 	
 	}
 	

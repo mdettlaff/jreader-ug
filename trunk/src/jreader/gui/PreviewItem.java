@@ -13,6 +13,9 @@ import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -91,6 +94,20 @@ public class PreviewItem {
 			  }
 		});
 		
+		browser.addMouseListener(new MouseListener() {
+	        public void mouseDown(MouseEvent e) {
+	            Preview.folderPreview.setFocus();
+	        }
+			public void mouseDoubleClick(MouseEvent arg0) {
+				Preview.folderPreview.setFocus();
+			}
+			public void mouseUp(MouseEvent arg0) {
+				Preview.folderPreview.setFocus();
+			}
+	    });
+		
+		browser.addFocusListener(Focus.setFocus((Preview.folderPreview)));
+		titleLink.addFocusListener(Focus.setFocus((Preview.folderPreview)));
 	}
 	public void refresh() {
 		String titleText = JReader.getPreview().getCurrent().getTitle();
@@ -114,9 +131,9 @@ public class PreviewItem {
 			author.setText("");
 	
 		titleLink.addListener (SWT.Selection, new Listener () {
-		public void handleEvent(Event event) {
-			browser.setUrl(url);
-		}
+			public void handleEvent(Event event) {
+				browser.setUrl(url);
+			}
 		});
 	}
 }

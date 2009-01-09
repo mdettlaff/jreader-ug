@@ -18,24 +18,20 @@ public class TagList {
 		refresh();
 		
 		tagList.addListener(SWT.Selection, new Listener() {
-		public void handleEvent(Event e) {
-			int indeks = tagList.getSelectionIndex();
-			if (indeks == 0)
-				JReader.selectTag("all");
-			else if (indeks == 1)
-				JReader.selectTag("");
-			else {
-				JReader.selectTag(tagList.getItem(indeks).getText());
-			}
-			SubsList.refresh();
-        }
+			public void handleEvent(Event e) {
+				int indeks = tagList.getSelectionIndex();
+				if (indeks == 0)
+					JReader.selectTag("all");
+				else if (indeks == 1)
+					JReader.selectTag("");
+				else {
+					JReader.selectTag(tagList.getItem(indeks).getText());
+				}
+				SubsList.refresh();
+	        }
 		});
-		
-		
+		tagList.addFocusListener(Focus.setFocus((Tags.folderTag)));
 	}
-
-
-	
 	
 	public static void refresh() {
 		tagList.removeAll();

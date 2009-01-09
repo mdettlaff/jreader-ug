@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -68,8 +69,8 @@ public class Filters {
 		
 		
 		folderFilter.setSelection(item);
-		folderFilter.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_WHITE), middle, bottom, bottom},
-				new int[] {20, 40, 100}, true);
+		folderFilter.setSelectionBackground(new Color[]{Focus.white, Focus.midgray, Focus.gray, Focus.gray},
+		new int[] {20, 40, 100}, true);
 
 		  
 //		LISTENERS
@@ -80,6 +81,19 @@ public class Filters {
               GUI.statusLine.setText(GUI.statusText);
             }
           });
+		
+		folderFilter.addMouseListener(new MouseListener() {
+	        public void mouseDown(MouseEvent e) {
+	            folderFilter.setFocus();
+	          }
+			public void mouseDoubleClick(MouseEvent arg0) {
+			}
+			public void mouseUp(MouseEvent arg0) {
+			}
+	    });
+		allButton.addFocusListener(Focus.setFocus((Filters.folderFilter)));
+		unreadButton.addFocusListener(Focus.setFocus((Filters.folderFilter)));
+		
 		allButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (allButton.getSelection()) {
