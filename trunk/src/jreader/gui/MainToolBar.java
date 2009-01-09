@@ -93,7 +93,9 @@ public class MainToolBar {
         //optionsToolItem.setText("Options");
         optionsToolItem.setToolTipText("Preferences");
         
-    //	TollBar listeners (do wypelnienia pozniej)
+    
+        
+        //TollBar listeners (do wypelnienia pozniej)
         
         //Add Subscryption
         addSubToolItem.addListener(SWT.Selection, new Listener() {
@@ -135,6 +137,8 @@ public class MainToolBar {
         //Search
         searchToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
+            	Search searchShell = new Search();
+            	searchShell.open();
                 System.out.println("Search message");
                 
             }
