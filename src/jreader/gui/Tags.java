@@ -55,7 +55,7 @@ public class Tags {
 		
 		tagComposite.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
-              GUI.statusText = "Choose a tag to filtrate.";
+              GUI.statusText = "Choose a tag to filter.";
               GUI.statusLine.setText(GUI.statusText);
             }
           });

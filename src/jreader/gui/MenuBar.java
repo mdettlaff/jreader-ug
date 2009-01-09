@@ -1,6 +1,7 @@
 package jreader.gui;
 
-import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,10 +31,10 @@ public class MenuBar {
         file.setMenu(filemenu);
         
         final MenuItem importMenuItem = new MenuItem(filemenu, SWT.PUSH);
-        importMenuItem.setText("&Import a Subscription List\tCTRL+I");
+        importMenuItem.setText("&Import subscriptions\tCTRL+I");
         importMenuItem.setAccelerator(SWT.CTRL+'I');
         final MenuItem exportMenuItem = new MenuItem(filemenu, SWT.PUSH);
-        exportMenuItem.setText("&Export a Subscription List\tCTRL+E");
+        exportMenuItem.setText("&Export subscriptions\tCTRL+E");
         exportMenuItem.setAccelerator(SWT.CTRL+'E');
         final MenuItem separator = new MenuItem(filemenu, SWT.SEPARATOR);
         final MenuItem exitMenuItem = new MenuItem(filemenu, SWT.PUSH);
@@ -85,9 +86,9 @@ public class MenuBar {
                 System.out.println("Import");
                 FileDialog dialog = new FileDialog (shell, SWT.OPEN);
     			dialog.setFileName("*.xml");
-    			dialog.setFilterNames (new String[] {"*.xml", "*.txt", "All"});
-    			dialog.setFilterExtensions (new String[] {"*.xml", "*.txt", "*" });
-    			dialog.setText("Import a subscryption");
+    			dialog.setFilterNames (new String[] {"*.xml", "*.opml", "*.txt", "All"});
+    			dialog.setFilterExtensions (new String[] {"*.xml", "*.opml", "*.txt", "*" });
+    			dialog.setText("Import subscriptions");
     			String result = dialog.open();
     			
     			/*if ((dialog.getStyle () & SWT.MULTI) != 0) {
@@ -108,11 +109,11 @@ public class MenuBar {
             public void widgetSelected(SelectionEvent e) {
                 System.out.println("Export");
                 FileDialog dialog = new FileDialog (shell, SWT.SAVE);
-                String date = new java.util.Date().toLocaleString().substring(0, 10);
-    			dialog.setFileName("SubscryptionList_" + date + ".xml");
+                String date = new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
+    			dialog.setFileName("jreader_subscriptions_" + date + ".xml");
     			dialog.setFilterNames (new String[] {"*.xml", "All"});
     			dialog.setFilterExtensions (new String[] {"*.xml", "*" });
-    			dialog.setText("Export a subscryption");
+    			dialog.setText("Export subscriptions");
     			String result = dialog.open();
     			
     			

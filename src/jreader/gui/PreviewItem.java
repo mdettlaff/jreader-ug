@@ -1,5 +1,7 @@
 package jreader.gui;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jreader.JReader;
@@ -120,7 +122,7 @@ public class PreviewItem {
 			previewItem.setText((titleText.length() > 20) ? titleText.substring(0,16).concat("...") : titleText);
 		titleLink.setText("<a>" + titleText + "</a>");
 		browser.setText(JReader.getPreview().getCurrent().getHTML());
-		title.setText(((date != null) ? date.toString() : " "));
+		title.setText(((date != null) ? GUI.shortDateFormat.format(date) : " "));
 		if (authorText != null && fromText != null)
 			author.setText("Author: " + authorText + "\tFrom: " + fromText);
 		else if (fromText != null && authorText == null)

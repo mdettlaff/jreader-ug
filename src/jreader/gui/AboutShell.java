@@ -53,7 +53,7 @@ public class AboutShell {
 	public AboutShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "big" + File.separator + "jreader2.png");
 		aboutShell = new Shell(shell, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.TOOL);
-		aboutShell.setText("About JReader program");
+		aboutShell.setText("About JReader");
 
 		aboutShell.setImage(jreader);
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);

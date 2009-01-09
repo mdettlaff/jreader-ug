@@ -61,7 +61,7 @@ public class MainToolBar {
         final ToolItem unreadToolItem = new ToolItem(toolBar, SWT.PUSH);
         unreadToolItem.setImage(unreadIcon);
         //unreadToolItem.setText("Next msg");
-        unreadToolItem.setToolTipText("Next unread message");
+        unreadToolItem.setToolTipText("Next unread item");
        
         //separator 1
         new ToolItem(toolBar, SWT.SEPARATOR );
@@ -70,13 +70,13 @@ public class MainToolBar {
         final ToolItem backToolItem = new ToolItem(toolBar, SWT.PUSH);
         backToolItem.setImage(backIcon);
         //backToolItem.setText("Back");
-        backToolItem.setToolTipText("Back");
+        backToolItem.setToolTipText("Previous item");
         
       //Forward
         final ToolItem forwardToolItem = new ToolItem(toolBar, SWT.PUSH);
         forwardToolItem.setImage(forwardIcon);
         //forwardToolItem.setText("Forward");
-        forwardToolItem.setToolTipText("Next");
+        forwardToolItem.setToolTipText("Next item");
         
         //separator 2
         new ToolItem(toolBar, SWT.SEPARATOR);
@@ -85,7 +85,7 @@ public class MainToolBar {
         final ToolItem searchToolItem = new ToolItem(toolBar, SWT.PUSH);
         searchToolItem.setImage(searchIcon);
         //searchToolItem.setText("Search");
-        searchToolItem.setToolTipText("Search a message");
+        searchToolItem.setToolTipText("Search");
         
       //Opcje
         final ToolItem optionsToolItem = new ToolItem(toolBar, SWT.PUSH);
@@ -108,7 +108,7 @@ public class MainToolBar {
         //synchornizuj
         syncToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                GUI.display.asyncExec(new UpdateThread());                
+                new UpdateThread();                
             }
         });
         //Back
@@ -123,15 +123,14 @@ public class MainToolBar {
         //Forward
         forwardToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                Preview.browser.forward();
+                //Preview.browser.forward();
                 
             }
         });
         //Next unread message
         unreadToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                System.out.println("Next unread message");
-                
+                System.out.println("Next unread item");
             }
         });
         //Search
@@ -139,7 +138,7 @@ public class MainToolBar {
             public void handleEvent(Event event) {
             	Search searchShell = new Search();
             	searchShell.open();
-                System.out.println("Search message");
+                System.out.println("Search");
                 
             }
         });
@@ -168,44 +167,88 @@ public class MainToolBar {
         
         toolBar.pack();    
 	}
+
+	/*
+	 * Dane tymczasowe potrzebne do wątków uruchamianych w metodzie
+	 * synchronize poniżej.
+	 */
+	private static Channel asyncChannel;
+	private static String errorMessage;
+	private static int errorLine;
 	
+	/**
+	 * Aktualizuje wszystkie kanały z listy kanałów.
+	 */
 	synchronized public static void synchronize() {
 		for (Channel channel : JReader.getVisibleChannels()) {
 			try {
+				asyncChannel = channel;
 				if (JReader.updateChannel(channel) > 0) {
-					GUI.statusLine.setText(channel.getTitle() + " zaktualizowany.");
+					GUI.display.asyncExec(new Runnable() {
+						public void run() {
+							GUI.statusLine.setText(asyncChannel.getTitle() + " updated.");
+						}
+					});
 				} else {
-					GUI.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
+					GUI.display.asyncExec(new Runnable() {
+						public void run() {
+							GUI.statusLine.setText(asyncChannel.getTitle() + " has not changed.");
+						}
+					});
 				}
 				channel.setFail(false);
 			} catch (SAXParseException spe) {
-				System.out.println("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println("Zrodlo nie jest prawidlowym plikiem XML.");
-				System.out.print("Blad w linii " + spe.getLineNumber() + ". ");
-				System.out.println("Szczegoly: " + spe.getLocalizedMessage());
+				asyncChannel = channel;
+				errorLine = spe.getLineNumber();
+				errorMessage = spe.getLocalizedMessage();
+				GUI.display.asyncExec(new Runnable() {
+					public void run() {
+						GUI.statusLine.setText("Failed to update channel "
+								+ asyncChannel.getTitle() + "."
+								+ " Source is not a valid XML."
+								+ " Error in line " + errorLine + "."
+								+ " Details: " + errorMessage);
+					}
+				});
 				channel.setFail(true);
 			} catch (SAXException saxe) {
-				System.out.print("Nie mozna dodac kanalu.");
-				System.out.println(" Blad parsera XML.");
+				GUI.display.asyncExec(new Runnable() {
+					public void run() {
+						GUI.statusLine.setText("Failed to update channel."
+								+ " XML parser error has occured.");
+					}
+				});
 			} catch (SocketException se) {
-				System.out.println("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println("Szczegoly: " + se.getLocalizedMessage());
+				asyncChannel = channel;
+				errorMessage = se.getLocalizedMessage();
+				GUI.display.asyncExec(new Runnable() {
+					public void run() {
+						GUI.statusLine.setText("Failed to update channel "
+						+ asyncChannel.getTitle() + "."
+						+ " Details: " + errorMessage);
+					}
+				});
 				channel.setFail(true);
 			} catch (IOException ioe) {
-				System.out.println("Nie mozna zaktualizowac kanalu "
-						+ channel.getTitle() + ".");
-				System.out.println("Brak polaczenia ze strona.");
+				asyncChannel = channel;
+				GUI.display.asyncExec(new Runnable() {
+					public void run() {
+						GUI.statusLine.setText("Failed to update channel "
+								+ asyncChannel.getTitle() + "."
+								+ " Unable to connect to the site.");
+					}
+				});
 				channel.setFail(true);
 			}
 		}
-		System.out.println("Kanaly zostaly zaktualizowane.");
+		GUI.display.asyncExec(new Runnable() {
+			public void run() {
+				GUI.statusLine.setText("All channels have been updated.");
+			}
+		});
 		SubsList.refresh();
 		ItemsTable.refresh();
 		Filters.refresh();
 		
 	}
-
-	
 }

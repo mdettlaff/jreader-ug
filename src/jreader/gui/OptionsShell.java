@@ -41,23 +41,23 @@ public class OptionsShell {
 	//	Checkbox
 		final Button startupSync = new Button(optionsShell, SWT.CHECK);
 		startupSync.setSelection(JReader.getConfig().getUpdateAllOnStartup());
-		startupSync.setText("Synchronize automaticaly when the program starts.");
+		startupSync.setText("Synchronize automatically when the program starts.");
 	
 		
 	//	Label Synchronizjacja co ile minut
 		Composite comp1 = new Composite(optionsShell, SWT.NONE);
 		comp1.setLayout(new GridLayout(3, false));
-		new Label(comp1, SWT.NONE).setText("Symchronize every ");
+		new Label(comp1, SWT.NONE).setText("Synchronize every ");
 		final Text autoSync = new Text(comp1, SWT.BORDER);
 		autoSync.setTextLimit(3);
 		autoSync.setText((new Integer(JReader.getConfig().getAutoUpdateMinutes())).toString());
-		new Label(comp1, SWT.NONE).setText(" minutes.");
+		new Label(comp1, SWT.NONE).setText(" minutes (0 - never).");
 	
 	
 	//	Group SortBy
 		Group group2 = new Group(optionsShell, SWT.SHADOW_NONE);
 		group2.setLayout(new RowLayout(SWT.VERTICAL));
-		group2.setText("Sorted by:");
+		group2.setText("Sort by:");
 	
 		//Radio
 		final Button newest = new Button(group2, SWT.RADIO);
@@ -73,13 +73,13 @@ public class OptionsShell {
 	//	Label - remove by 
 		Composite comp2 = new Composite(optionsShell, SWT.NONE);
 		comp2.setLayout(new GridLayout(3, false));
-		new Label(comp2, SWT.NONE).setText("Remove messages older then ");
+		new Label(comp2, SWT.NONE).setText("Remove items older than ");
 		final Text remove = new Text(comp2, SWT.BORDER);
 		remove.setText(new Integer(JReader.getConfig().getDeleteOlderThanDays()).toString());
 		remove.setTextLimit(2);
 		remove.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		//TODO remove label size
-		new Label(comp2, SWT.NONE).setText(" days.");
+		new Label(comp2, SWT.NONE).setText(" days (0 - never).");
 		
 	//	Buttons ok cancel
 		Composite comp3 = new Composite(optionsShell, SWT.NONE);
@@ -97,13 +97,12 @@ public class OptionsShell {
 		// ok button - powinien zebrac wszystkie wartosc z widgetow i wyslac je do metod
 		okButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				System.out.println("Ok - get data to the method");
 				JReader.getConfig().setUpdateAllOnStartup(startupSync.getSelection());
 				JReader.getConfig().setAutoUpdateMinutes(Integer.parseInt(autoSync.getText()));
 				JReader.getConfig().setSortByNewest(newest.getSelection());
 				JReader.getConfig().setDeleteOlderThanDays(Integer.parseInt(remove.getText()));
 				if (!JReader.getConfig().write()) {
-					System.out.println("blad zapisu");
+					System.out.println("Write error");
 				}
 				optionsShell.dispose();
 			}
@@ -112,7 +111,6 @@ public class OptionsShell {
 		// cancel button
 		cancelButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				System.out.println("Cancel was pressed.\nDisposing...");
 				optionsShell.close();
 			}
 		});
