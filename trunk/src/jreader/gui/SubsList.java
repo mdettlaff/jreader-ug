@@ -226,6 +226,10 @@ public class SubsList {
 	    	subs.setText(ch.getTitle() + " (" + ch.getUnreadItemsCount() + "/" + ch.getItems().size() + ")");
 	    	if (ch.getUnreadItemsCount() != 0)
 	    		subs.setFont(fontBold);
+	    	if (ch.isFail())
+	    		subs.setForeground(new Color(Display.getCurrent(), 255, 0, 0));
+	    	else
+	    		subs.setForeground(new Color(Display.getCurrent(), 0, 0, 0));
 	    }
 	}
 	

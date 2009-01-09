@@ -57,11 +57,7 @@ public class AboutShell {
 
 		aboutShell.setImage(jreader);
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
-		//rowLayout.pack = true;
-		//rowLayout.justify = true;
-		//rowLayout.marginWidth = 40;
 		rowLayout.center = true;
-		//rowLayout.spacing = 10;
 		aboutShell.setLayout(rowLayout);
 		
 		//Wysrodkowanie shella
