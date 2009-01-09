@@ -157,13 +157,13 @@ public class ChannelFactory extends DefaultHandler {
 			while ((inputLine = in.readLine()) != null) {
 				// szukamy adresu URL ikony strony (tej którą widać na pasku adresu)
 				if (inputLine.contains("type=\"image/x-icon\"")
-						|| inputLine.contains("rel=\"shortcut icon\"")) {
+						|| inputLine.toLowerCase().contains("rel=\"shortcut icon\"")) {
 					// rozbijamy na mniejsze linie, mniej problematyczne
 					String tmp = new String(inputLine); // żeby nie nadpisać inputLine
 					String[] smallLines = inputLine.replace(">", ">\n").split("\n");
 					for (String smallLine : smallLines) {
 						if (smallLine.contains("type=\"image/x-icon\"")
-								|| smallLine.contains("rel=\"shortcut icon\"")) {
+								|| smallLine.toLowerCase().contains("rel=\"shortcut icon\"")) {
 							tmp = smallLine;
 							break;
 						}
