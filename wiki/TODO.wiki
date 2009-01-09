@@ -10,12 +10,10 @@ Wspólnie:
 
 Karol:
   * Okienko do opcji Szukaj
-  * Okienko do opcji Export
-  * Odświeżanie przycisków All items i Unread items
-  * Format daty YYYY-MM-DD HH:mm w Items i Preview.
-  * Zatwierdzanie przy pomocy entera, a nie tylko przycisku OK.
+  * Format daty _YYYY-MM-DD HH:mm_ w Items i Preview.
   * Odnośnik do źródła kanału w ogólnym opisie kanałów.
-  * Dodanie brakujących spacji w opisie w okienku About.
+  * Okienko About wyświetla się za małe w Linuksie.
+  * Zaznaczanie na czerwono kanałów w których {{{isFail() == true}}}
 
 Łukasz:
   * Binarki natywne dla Windowsa i Linuksa.
