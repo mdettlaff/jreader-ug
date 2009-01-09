@@ -169,9 +169,9 @@ public class MainToolBar {
 		for (Channel channel : JReader.getVisibleChannels()) {
 			try {
 				if (JReader.updateChannel(channel) > 0) {
-					//GUI.statusLine.setText(channel.getTitle() + " zaktualizowany.");
+					GUI.statusLine.setText(channel.getTitle() + " zaktualizowany.");
 				} else {
-					//GUI.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
+					GUI.statusLine.setText(channel.getTitle() + " nie zmienil sie.");
 				}
 				channel.setFail(false);
 			} catch (SAXParseException spe) {
