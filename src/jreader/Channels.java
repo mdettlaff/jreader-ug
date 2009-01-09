@@ -172,8 +172,12 @@ public class Channels implements Serializable {
 				itemDate.setTime(item.getCreationDate());
 				itemDate.set(Calendar.DATE, itemDate.get(
 						Calendar.DATE) + config.getDeleteOlderThanDays());
-				if(currentDate.compareTo(itemDate) > 0)
-					removeItems.add(item);
+				if(currentDate.compareTo(itemDate) > 0) {
+					// nie usuwamy nieprzeczytanych wiadomości
+					if (item.isRead()) {
+						removeItems.add(item);
+					}
+				}
 			}
 			for(Item item: removeItems) {
 				try {
