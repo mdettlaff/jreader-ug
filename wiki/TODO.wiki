@@ -2,18 +2,17 @@
 #labels Phase-Implementation
 
 Wspólnie:
+  * Usunąć błąd związany z {{{UpdateThread}}} i {{{UpdateDaemon}}} w GUI.
   * Przycisk Next unread
   * Przyciski Wstecz i Dalej
-  * Usunąć błąd związany z {{{UpdateThread}}} i {{{UpdateDaemon}}} w GUI.
   * Import/Export
   * Szukanie wiadomości
 
 Karol:
-  * Okienko do opcji Szukaj
   * Format daty _YYYY-MM-DD HH:mm_ w Items i Preview.
   * Odnośnik do źródła kanału w ogólnym opisie kanałów.
-  * Okienko About wyświetla się za małe w Linuksie.
-  * Zaznaczanie na czerwono kanałów w których {{{isFail() == true}}}
+  * Browser w okienku About wyświetla się za mały w Linuksie.
+  * Usunięcie niepotrzebnych opcji z menu (typu Copy/Paste)
 
 Łukasz:
   * Binarki natywne dla Windowsa i Linuksa.
