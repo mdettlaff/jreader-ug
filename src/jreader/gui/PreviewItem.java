@@ -1,7 +1,5 @@
 package jreader.gui;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jreader.JReader;
@@ -18,7 +16,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -38,6 +37,7 @@ public class PreviewItem {
 	private Link source;
 	private CTabItem previewItem;
 	private Composite header;
+	private Font fontBold;
 	
 	/**
 	 * Tworzy nową zakładkę.
@@ -46,7 +46,9 @@ public class PreviewItem {
 	 * @param itemImage  Ikona zakładki.
 	 */
 	public PreviewItem(String text, Image itemImage) {
-		    
+		
+		fontBold = new Font(GUI.display, new FontData("Arila", 8, SWT.BOLD));
+		
 		previewItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
 		previewItem.setText(text);
 		previewItem.setImage(itemImage);
@@ -55,7 +57,7 @@ public class PreviewItem {
 		header = new Composite(comp, SWT.NONE);
 		header.setLayout(new FillLayout(SWT.VERTICAL));
 		header.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		titleLink = new Link(header, SWT.NONE);
+		titleLink = new Link(header, SWT.WRAP);
 		title = new Label(header, SWT.NONE);
 		author = new Label(header, SWT.NONE);
 		source = new Link(header, SWT.NONE);
@@ -127,7 +129,7 @@ public class PreviewItem {
 			previewItem.setText((titleText.length() > 20) ? titleText.substring(0,16).concat("...") : titleText);
 		
 		titleLink.setText("<a>" + titleText + "</a>");
-		titleLink.setFont(SubsList.fontBold);
+		titleLink.setFont(fontBold);
 		
 		browser.setText(JReader.getPreview().getCurrent().getHTML());
 		title.setText(((date != null) ? GUI.shortDateFormat.format(date) : " "));
