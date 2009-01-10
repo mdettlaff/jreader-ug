@@ -31,8 +31,7 @@ import org.eclipse.swt.widgets.Listener;
 public class PreviewItem {
 
 	private Browser browser;
-	private Label title;
-	private Label author;
+	private Label info;
 	private Link titleLink;
 	private Link source;
 	private CTabItem previewItem;
@@ -47,7 +46,11 @@ public class PreviewItem {
 	 */
 	public PreviewItem(String text, Image itemImage) {
 		
-		fontBold = new Font(GUI.display, new FontData("Arila", 8, SWT.BOLD));
+		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
+			fontBold = new Font(GUI.display, new FontData("Arila", 12, SWT.BOLD));
+		} else {
+			fontBold = new Font(GUI.display, new FontData("Arila", 8, SWT.BOLD));
+		}
 		
 		previewItem = new CTabItem(Preview.folderPreview, SWT.CLOSE);
 		previewItem.setText(text);
@@ -58,9 +61,8 @@ public class PreviewItem {
 		header.setLayout(new FillLayout(SWT.VERTICAL));
 		header.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		titleLink = new Link(header, SWT.WRAP);
-		title = new Label(header, SWT.NONE);
-		author = new Label(header, SWT.NONE);
 		source = new Link(header, SWT.NONE);
+		info = new Label(header, SWT.NONE);
 		
 		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
 			browser = new Browser(comp, SWT.MOZILLA | SWT.BORDER);
@@ -118,12 +120,13 @@ public class PreviewItem {
 		titleLink.addFocusListener(Focus.setFocus((Preview.folderPreview)));
 	}
 	public void refresh() {
-		String titleText = JReader.getPreview().getCurrent().getTitle();
-		Date date = JReader.getPreview().getCurrent().getDate();
-		String authorText = JReader.getPreview().getCurrent().getAuthor();
-		String fromText = JReader.getPreview().getCurrent().getChannelTitle();
+		int tabIndex = Preview.folderPreview.getSelectionIndex();
+		String titleText = JReader.getPreview(tabIndex).getCurrent().getTitle();
+		Date date = JReader.getPreview(tabIndex).getCurrent().getDate();
+		String authorText = JReader.getPreview(tabIndex).getCurrent().getAuthor();
+		String fromText = JReader.getPreview(tabIndex).getCurrent().getChannelTitle();
 		String sourceText = "View channel source (XML)";
-		final String url = JReader.getPreview().getCurrent().getLink();
+		final String url = JReader.getPreview(tabIndex).getCurrent().getLink();
 
 		if (!previewItem.isDisposed())
 			previewItem.setText((titleText.length() > 20) ? titleText.substring(0,16).concat("...") : titleText);
@@ -131,22 +134,22 @@ public class PreviewItem {
 		titleLink.setText("<a>" + titleText + "</a>");
 		titleLink.setFont(fontBold);
 		
-		browser.setText(JReader.getPreview().getCurrent().getHTML());
-		title.setText(((date != null) ? GUI.shortDateFormat.format(date) : " "));
-	
-		if (authorText != null && fromText != null)
-			author.setText("Author: " + authorText + "\tFrom: " + fromText);
-		else if (fromText != null && authorText == null)
-			author.setText("From: " + fromText);
-		else if (authorText != null)
-			author.setText(authorText);
-		else
-			author.setText("");
+		browser.setText(JReader.getPreview(tabIndex).getCurrent().getHTML());
 		
-		if (!JReader.getPreview().getCurrent().isShowingItem()) {
-			source.setText("<a>" + sourceText + "</a>");
-		} else
+		if (JReader.getPreview(tabIndex).getCurrent().isShowingItem()) {
+			String infoText = "";
+			if (date != null)
+				infoText = GUI.shortDateFormat.format(date) + "     ";
+			if (authorText != null)
+				infoText += "Author: " + authorText + "\t";
+			if (fromText != null)
+				infoText += "From: " + fromText;
+			info.setText(infoText);
 			source.setText("");
+		} else {
+			info.setText("");
+			source.setText("<a>" + sourceText + "</a>");
+		}
 		
 		titleLink.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
@@ -155,18 +158,20 @@ public class PreviewItem {
 		});
 		source.addListener(SWT.Selection, new Listener () {
 			public void handleEvent(Event e) {
-				if (JReader.getPreview().getCurrent().getSource() != null)
-					browser.setUrl(JReader.getPreview().getCurrent().getSource());
+				int tabIndex = Preview.folderPreview.getSelectionIndex();
+				if (JReader.getPreview(tabIndex).getCurrent().getSource() != null)
+					browser.setUrl(JReader.getPreview(tabIndex).getCurrent().getSource());
 				else
 					browser.setText("<b>Source not found.</b>");
 			}
 		});
 		source.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove (MouseEvent e) {
-				String text = JReader.getPreview().getCurrent().getSource();
+				int tabIndex = Preview.folderPreview.getSelectionIndex();
+				String text = JReader.getPreview(tabIndex).getCurrent().getSource();
 				if (text != null) {
 					GUI.statusLine.setText(text);
-					GUI.statusText = JReader.getPreview().getCurrent().getSource();
+					GUI.statusText = JReader.getPreview(tabIndex).getCurrent().getSource();
 				}
 			}
 		});

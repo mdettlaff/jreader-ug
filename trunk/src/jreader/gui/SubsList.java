@@ -74,12 +74,14 @@ public class SubsList {
 	    subsList.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				int indeks = subsList.getSelectionIndex();
-				JReader.selectChannel(indeks);
 				ItemsTable.refresh();
-				if (Preview.folderPreview.getItemCount() != 0)
-					Preview.previewItemList.get((Preview.folderPreview.getSelectionIndex())).refresh();
-				else
+				if (Preview.folderPreview.getItemCount() != 0) {
+					JReader.selectChannel(indeks, Preview.folderPreview.getSelectionIndex());
+					Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+				} else {
+					JReader.selectChannel(indeks, 0);
 					GUI.openTab(JReader.getChannel(indeks).getTitle()).refresh();
+				}
             }
         });
 	    

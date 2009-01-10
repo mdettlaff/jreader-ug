@@ -41,11 +41,11 @@ public class JReader {
 	 */
 	private static List<Item> items = new ArrayList<Item>();
 	/**
-	 * Lista treści wiadomości lub informacji o kanale do wyświetlenia w GUI.
-	 * Przy pomocy przycisków Wstecz i Dalej można nawigować po liście.
+	 * Lista zawierająca historię przeglądanych elementów dla każdej zakładki.
+	 * Przy pomocy przycisków Wstecz i Dalej można nawigować po historii.
 	 */
-	private static HistoryList<Preview> preview =
-			new HistoryList<Preview>(HISTORY_SIZE);
+	private static List<HistoryList<Preview>> previewTabs =
+			new ArrayList<HistoryList<Preview>>(HISTORY_SIZE);
 	/**
 	 * Lista tagów do wyświetlenia w GUI.
 	 */
@@ -69,6 +69,7 @@ public class JReader {
 	 * Uruchamia program. Opcja "-t" włącza tryb tekstowy.
 	 */
 	public static void main(String[] args) {
+		addNewPreviewTab();
 		channels.removeItems();
 		updateTagsList();
 		selectTag("all");
@@ -124,10 +125,10 @@ public class JReader {
 	}
 
 	/**
-	 * Zwraca historię wyświetlanych wiadomości.
+	 * Zwraca historię wyświetlanych wiadomości dla zakładki o podanym indeksie.
 	 */
-	public static HistoryList<Preview> getPreview() {
-		return preview;
+	public static HistoryList<Preview> getPreview(int tabIndex) {
+		return previewTabs.get(tabIndex);
 	}
 
 	/**
@@ -179,11 +180,12 @@ public class JReader {
 	/**
 	 * Ustawia poprzedni element z historii jako bieżący.
 	 *
+	 * @param  tabIndex Indeks zakładki której historię przeglądamy.
 	 * @return <code>null</code>, jeśli nie można wrócić, w przeciwnym
 	 *         wypadku podgląd elementu.
 	 */
-	public static Preview previousItem() {
-		return preview.previous();
+	public static Preview previousItem(int tabIndex) {
+		return previewTabs.get(tabIndex).previous();
 	}
 
 	/**
@@ -192,8 +194,8 @@ public class JReader {
 	 * @return <code>null</code>, jeśli nie można przejść dalej, w przeciwnym
 	 *         wypadku podgląd elementu.
 	 */
-	public static Preview nextItem() {
-		return preview.next();
+	public static Preview nextItem(int tabIndex) {
+		return previewTabs.get(tabIndex).next();
 	}
 
 	/**
@@ -204,7 +206,7 @@ public class JReader {
 	 * @return <code>false</code>, jeśli nie ma więcej nieprzeczytanych
 	 *         wiadomości, <code>true</code> w przeciwnym wypadku.
 	 */
-	public static boolean nextUnread() {
+	public static boolean nextUnread(int tabIndex) {
 		Item nextUnreadItem = new Item("", "");
 		Date beginningOfTime = new Date(0); // 1 stycznia 1970
 		Date endOfTime = new Date();
@@ -243,7 +245,7 @@ public class JReader {
 		}
 		nextUnreadItem.markAsRead();
 		updateUnreadItemsCount(channels.getChannel(nextUnreadItem.getChannelId()));
-		preview.setCurrent(new Preview(nextUnreadItem));
+		previewTabs.get(tabIndex).setCurrent(new Preview(nextUnreadItem));
 		channels.write();
 		return true;
 	}
@@ -253,9 +255,9 @@ public class JReader {
 	 * oznaczony jako przeczytany, a ilość elementów nieprzeczytanych kanału
 	 * z którego pochodzi zostaje zaktualizowana.
 	 */
-	public static void selectItem(Item item) {
+	public static void selectItem(Item item, int tabIndex) {
 		item.markAsRead();
-		preview.setCurrent(new Preview(item));
+		previewTabs.get(tabIndex).setCurrent(new Preview(item));
 		// aktualizujemy ilość nieprzeczytanych elementów kanału, z którego
 		// pochodzi wybrany item
 		if (updateUnreadItemsCount(channels.getChannel(item.getChannelId()))) {
@@ -269,10 +271,10 @@ public class JReader {
 	 *
 	 * @param index Indeks kanału na liście kanałów do wyświetlenia.
 	 */
-	public static void selectChannel(int index) {
+	public static void selectChannel(int index, int tabIndex) {
 		items = channels.getItems(visibleChannels.get(index).getId());
 		Collections.sort(items, itemComparator);
-		preview.setCurrent(new Preview(visibleChannels.get(index)));
+		previewTabs.get(tabIndex).setCurrent(new Preview(visibleChannels.get(index)));
 		currentFilter = visibleChannels.get(index).getId();
 	}
 
@@ -435,6 +437,19 @@ public class JReader {
 	}
 
 	/**
+	 * Usuwa pojedynczy element. Usuwany jest też jego id z kanału, do którego
+	 * należy.
+	 * 
+	 * @param item Element, który chcemy usunąć.
+	 */
+	public static void removeItem(Item item) {
+		items.remove(item);
+    	// usuwamy id tego elementu z kanału, do którego należy
+    	getChannel(item.getChannelId()).getItems().remove(item.getId());
+    	channels.removeItem(item.getId());
+	}
+
+	/**
 	 * Importuje listę kanałów z pliku. Kanały są dodawane na koniec listy
 	 * wyświetlanych subskrypcji.
 	 *
@@ -553,6 +568,10 @@ public class JReader {
 			itemsCount += channel.getItems().size();
 		}
 		return itemsCount;
+	}
+
+	public static void addNewPreviewTab() {
+		previewTabs.add(new HistoryList<Preview>(HISTORY_SIZE));
 	}
 
 
