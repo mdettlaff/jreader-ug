@@ -2,11 +2,8 @@
 #labels Phase-Implementation
 
 Wspólnie:
-  * Next unread item
-  * Next item oraz Previous item
   * Import/Export
   * Szukanie wiadomości
-  * Usuwanie pojedynczych wiadomości
 
 Karol:
   * Możliwość otwierania linków w zewnętrznej przeglądarce (jako opcja w menu kontekstowym).
