@@ -17,6 +17,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,6 +35,7 @@ public class PreviewItem {
 	private Label title;
 	private Label author;
 	private Link titleLink;
+	private Link source;
 	private CTabItem previewItem;
 	
 	/**
@@ -55,6 +57,7 @@ public class PreviewItem {
 		titleLink = new Link(header, SWT.NONE);
 		title = new Label(header, SWT.NONE);
 		author = new Label(header, SWT.NONE);
+		source = new Link(header, SWT.NONE);
 		
 		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
 			browser = new Browser(comp, SWT.MOZILLA | SWT.BORDER);
@@ -116,6 +119,7 @@ public class PreviewItem {
 		Date date = JReader.getPreview().getCurrent().getDate();
 		String authorText = JReader.getPreview().getCurrent().getAuthor();
 		String fromText = JReader.getPreview().getCurrent().getChannelTitle();
+		String sourceText = "Channel source view (XML)";
 		final String url = JReader.getPreview().getCurrent().getLink();
 
 		if (!previewItem.isDisposed())
@@ -131,10 +135,25 @@ public class PreviewItem {
 			author.setText(authorText);
 		else
 			author.setText("");
-	
+		source.setText("<a>" + sourceText + "</a>");
+		
 		titleLink.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
 				browser.setUrl(url);
+			}
+		});
+		source.addListener(SWT.Selection, new Listener () {
+			public void handleEvent(Event e) {
+				if (JReader.getPreview().getCurrent().getSource() != null)
+					browser.setUrl(JReader.getPreview().getCurrent().getSource());
+				else
+					browser.setText("<b>Source not found.</b>");
+			}
+		});
+		source.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove (MouseEvent e) {
+				GUI.statusLine.setText(JReader.getPreview().getCurrent().getSource());
+                GUI.statusText = JReader.getPreview().getCurrent().getSource();
 			}
 		});
 	}

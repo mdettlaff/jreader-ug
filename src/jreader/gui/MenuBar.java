@@ -40,29 +40,17 @@ public class MenuBar {
         final MenuItem exitMenuItem = new MenuItem(filemenu, SWT.PUSH);
         exitMenuItem.setText("E&xit");
         
-     // Edit menu
-        final MenuItem edit = new MenuItem(menu, SWT.CASCADE);
-        edit.setText("&Edit");
-        final Menu editmenu = new Menu(shell, SWT.DROP_DOWN);
-        edit.setMenu(editmenu);
-        final MenuItem cutMenuItem = new MenuItem(editmenu, SWT.PUSH);
-        cutMenuItem.setText("&Cut");
-        final MenuItem copyMenuItem = new MenuItem(editmenu, SWT.PUSH);
-        copyMenuItem.setText("Co&py");
-        final MenuItem pasteMenuItem = new MenuItem(editmenu, SWT.PUSH);
-        pasteMenuItem.setText("&Paste");
-        
      // Window menu
         final MenuItem window = new MenuItem(menu, SWT.CASCADE);
         window.setText("&Window");
         final Menu windowmenu = new Menu(shell, SWT.DROP_DOWN);
         window.setMenu(windowmenu);
         final MenuItem maxMenuItem = new MenuItem(windowmenu, SWT.PUSH);
-        maxMenuItem.setText("Ma&ximize");
+        maxMenuItem.setText("&Restore");
         final MenuItem minMenuItem = new MenuItem(windowmenu, SWT.PUSH);
         minMenuItem.setText("Mi&nimize");
         final MenuItem simpleView = new MenuItem(windowmenu, SWT.CHECK);
-        simpleView.setText("Simple windows");
+        simpleView.setText("&Simple windows");
         simpleView.setSelection(false);
         
         
@@ -132,32 +120,7 @@ public class MenuBar {
             public void widgetDefaultSelected(SelectionEvent e) {                
             }
         });
-        
-        //Edit menu listeners
-        cutMenuItem.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                System.out.println("Cut");
-            }
-            public void widgetDefaultSelected(SelectionEvent e) {                
-            }
-        });
-    
-        copyMenuItem.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                System.out.println("Copy");
-            }
-            public void widgetDefaultSelected(SelectionEvent e) {               
-            }
-        });
-    
-        pasteMenuItem.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                System.out.println("Paste");
-            }
-            public void widgetDefaultSelected(SelectionEvent e) {                
-            }
-        });
-        
+              
         //Window menu listeners
         maxMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {

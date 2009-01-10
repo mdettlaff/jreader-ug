@@ -97,8 +97,6 @@ private static Shell searchShell;
 		// ok button - powinien zebrac wszystkie wartosc z widgetow i wyslac je do metod
 		okButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				System.out.println("Ok - get data to the method");
-			
 				searchShell.dispose();
 			}
 		});
@@ -106,7 +104,6 @@ private static Shell searchShell;
 		// cancel button
 		cancelButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				System.out.println("Cancel was pressed.\nDisposing...");
 				searchShell.close();
 			}
 		});
