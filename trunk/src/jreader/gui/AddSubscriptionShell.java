@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
@@ -31,6 +32,8 @@ public class AddSubscriptionShell {
 	private static Label warning;
 	private static Text url;
 	private static Text tag;
+	private static Link details;
+	private static String warn = new String();
 	
 	public AddSubscriptionShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "small" + File.separator + "add.png");
@@ -58,14 +61,15 @@ public class AddSubscriptionShell {
 	    tag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	    tag.setTextLimit(100);
 	    
-	    warning = new Label(addShell, SWT.WRAP | SWT.SHADOW_IN);
-	    warning.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 2));
+	    warning = new Label(addShell, SWT.WRAP);
+	    warning.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    warning.setForeground(new Color(Display.getCurrent(), 255, 0, 0));
-	    warning.setText("dsfsdf\n sdfsd\n sdfsd");
+	    details = new Link(addShell, SWT.NONE);
+	    details.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    
 	    Button okB = new Button(addShell, SWT.PUSH);
 	    okB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-	    okB.setText("OK");
+	    okB.setText("  Ok  ");
 	    Button caB = new Button(addShell, SWT.PUSH);
 	    caB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 	    caB.setText("Cancel");
@@ -96,12 +100,16 @@ public class AddSubscriptionShell {
 	        	addUrl();
 	        }
 	      });
+	    details.addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		errorDialog(warn);
+	    	}
+	    });
 	    
 	    addShell.pack();
 	}
 
 	public static void addUrl() {
-		String warn = new String();
 		try {
 			JReader.addChannel(url.getText(), tag.getText());
 		} catch (LinkNotFoundException lnfe) {
@@ -114,7 +122,8 @@ public class AddSubscriptionShell {
 			warn = "Source is not a valid XML file.\n";
 			warn += "Error at line " + spe.getLineNumber() + ".\n";
 			warn += "Details: " + spe.getLocalizedMessage() + ".\n";
-			warning.setText(warn);
+			warning.setText("Source is not a valid XML file.");
+			details.setText("<a>Show details</a>");
 			return;
 		} catch (SAXException saxe) {
 			warn = "XML parser error.\n";
@@ -123,10 +132,11 @@ public class AddSubscriptionShell {
 		} catch (SocketException se) {
 			warn = "Cannot add channel.\n";
 			warn += "Detail: " + se.getLocalizedMessage();
-			warning.setText(warn);
+			warning.setText("cannot add channel.");
+			details.setText("<a>Show details...</a>");
 			return;
 		} catch (IOException ioe) {
-			warn = "Site download failed.\n sdfd \n sdfsdf";
+			warn = "Site download failed.";
 			warning.setText(warn);
 			return;
 		} catch (IllegalArgumentException iae) {
@@ -141,5 +151,26 @@ public class AddSubscriptionShell {
 	
 	public void open() {
 		addShell.open();
+	}
+	
+	private void errorDialog(String err) {
+		final Shell messageBox = new Shell(GUI.display, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.TOOL);
+		messageBox.setText("Error view");
+		messageBox.setLayout(new GridLayout());
+		Text error = new Text(messageBox, SWT.MULTI | SWT.BORDER);
+		error.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		error.setEditable(false);
+	    error.setText(err);
+	    Button okB = new Button(messageBox, SWT.PUSH);
+	    okB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+	    okB.setText("   OK   ");
+	    
+	    okB.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+            		messageBox.close();
+                }
+        });
+	    messageBox.setBounds(400, 300, 200, 100);
+	    messageBox.open();
 	}
 }
