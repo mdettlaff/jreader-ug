@@ -6,6 +6,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
@@ -49,6 +52,7 @@ public class AboutShell {
 			"</p></div>" +
 			"</body>" +
 			"</html>";
+	private Browser browser;
 	
 	public AboutShell(Shell shell) {
 		final Image jreader = new Image(shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "big" + File.separator + "jreader2.png");
@@ -56,9 +60,9 @@ public class AboutShell {
 		aboutShell.setText("About JReader");
 
 		aboutShell.setImage(jreader);
-		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
-		rowLayout.center = true;
-		aboutShell.setLayout(rowLayout);
+		//RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
+		//rowLayout.center = true;
+		aboutShell.setLayout(new GridLayout());
 		
 		//Wysrodkowanie shella
 		Monitor primary = shell.getDisplay().getPrimaryMonitor();
@@ -69,15 +73,22 @@ public class AboutShell {
 	    
 	    Label pic = new Label(aboutShell, SWT.NONE);
 	    pic.setImage(jreader);
+	    pic.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 	    
-	    Browser browser = new Browser(aboutShell, SWT.NONE);
+	    if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
+			browser = new Browser(aboutShell, SWT.MOZILLA);
+		} else {
+			browser = new Browser(aboutShell, SWT.NONE);
+		}
 	    browser.setText(about);
-	    browser.setSize(500, 400);
+	   // browser.setSize(500, 400);
+	    browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    
 	    new Label(aboutShell, SWT.NONE).setText(" ");
 	    
 	    Button okButton = new Button(aboutShell, SWT.PUSH);
 	    okButton.setText("  &OK  ");
+	    okButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 	    
 		okButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {

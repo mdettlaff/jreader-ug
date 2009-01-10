@@ -28,6 +28,7 @@ public class TagList {
 					JReader.selectTag(tagList.getItem(indeks).getText());
 				}
 				SubsList.refresh();
+				Filters.refresh();
 	        }
 		});
 		tagList.addFocusListener(Focus.setFocus((Tags.folderTag)));
