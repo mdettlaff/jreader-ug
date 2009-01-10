@@ -9,12 +9,9 @@ import jreader.JReader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -28,6 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -116,20 +114,25 @@ public class SubsList {
 					GUI.statusLine.setText("Channel has been updated.");//status
 				} catch (SAXParseException spe) {
 					GUI.statusLine.setText("Failed to update channel.");
-					System.out.println(" Source is not a valid XML.");
-					System.out.print("Error in line " + spe.getLineNumber() + ". ");
-					System.out.println("Details: " + spe.getLocalizedMessage());
+					errorDialog("Failed to update channel.\n" +
+							" Source is not a valid XML.\n" +
+							"Error in line " + spe.getLineNumber() + ".\n" +
+									"Details: " + spe.getLocalizedMessage());
 					JReader.getChannel(indeks).setFail(true);
 				} catch (SAXException saxe) {
 					GUI.statusLine.setText("Failed to update channel.");
-					System.out.println(" XML parser error has occured.");
+					errorDialog("Failed to update channel.\n" +
+								" XML parser error has occured.");
+					JReader.getChannel(indeks).setFail(true);
 				} catch (SocketException se) {
-					GUI.statusLine.setText("Failed to update channel. Details:");
-					System.out.println(se.getLocalizedMessage());
+					GUI.statusLine.setText("Failed to update channel.");
+					errorDialog("Failed to update channel.\n" +
+							se.getLocalizedMessage());
 					JReader.getChannel(indeks).setFail(true);
 				} catch (IOException ioe) {
 					GUI.statusLine.setText("Failed to update channel.");
-					System.out.println(" Unable to connect to the site.");
+					errorDialog("Failed to update channel.\n" +
+							" Unable to connect to the site.");
 					JReader.getChannel(indeks).setFail(true);
 				}
             	SubsList.refresh();
@@ -245,6 +248,11 @@ public class SubsList {
 		});
 	}
 	
-	
+	private void errorDialog(String err) {
+		MessageBox messageBox = new MessageBox(GUI.shell, SWT.ICON_ERROR | SWT.OK);
+		messageBox.setText("Error");
+	    messageBox.setMessage(err);
+	    messageBox.open();
+	}
 	
 }

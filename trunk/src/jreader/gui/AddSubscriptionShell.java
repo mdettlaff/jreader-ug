@@ -58,9 +58,10 @@ public class AddSubscriptionShell {
 	    tag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	    tag.setTextLimit(100);
 	    
-	    warning = new Label(addShell, SWT.NONE);
-	    warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+	    warning = new Label(addShell, SWT.WRAP | SWT.SHADOW_IN);
+	    warning.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 2));
 	    warning.setForeground(new Color(Display.getCurrent(), 255, 0, 0));
+	    warning.setText("dsfsdf\n sdfsd\n sdfsd");
 	    
 	    Button okB = new Button(addShell, SWT.PUSH);
 	    okB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
@@ -125,7 +126,7 @@ public class AddSubscriptionShell {
 			warning.setText(warn);
 			return;
 		} catch (IOException ioe) {
-			warn = "Site download failed.";
+			warn = "Site download failed.\n sdfd \n sdfsdf";
 			warning.setText(warn);
 			return;
 		} catch (IllegalArgumentException iae) {
