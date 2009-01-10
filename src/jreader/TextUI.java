@@ -122,21 +122,21 @@ public class TextUI {
 						}
 					}
 				} else if (command.equals("show preview")) {
-					if (JReader.getPreview().getCurrent() == null) {
+					if (JReader.getPreview(0).getCurrent() == null) {
 						System.out.println("Nie wybrano zadnej wiadomosci.");
 					} else {
-						System.out.println(JReader.getPreview().getCurrent().getTitle());
-						System.out.println("Link: " + JReader.getPreview().
+						System.out.println(JReader.getPreview(0).getCurrent().getTitle());
+						System.out.println("Link: " + JReader.getPreview(0).
 								getCurrent().getLink());
-						if (JReader.getPreview().getCurrent().getAuthor() != null) {
-							System.out.println("Autor: " + JReader.getPreview().
+						if (JReader.getPreview(0).getCurrent().getAuthor() != null) {
+							System.out.println("Autor: " + JReader.getPreview(0).
 									getCurrent().getAuthor());
 						}
-						if (JReader.getPreview().getCurrent().getSource() != null) {
-							System.out.println("Zrodlo: " + JReader.getPreview().
+						if (JReader.getPreview(0).getCurrent().getSource() != null) {
+							System.out.println("Zrodlo: " + JReader.getPreview(0).
 									getCurrent().getSource());
 						}
-						System.out.println("Opis: " + JReader.getPreview().
+						System.out.println("Opis: " + JReader.getPreview(0).
 								getCurrent().getHTML());
 					}
 				} else if (command.equals("show tags")) {
@@ -180,25 +180,25 @@ public class TextUI {
 						System.out.println(" Pobieranie strony nie powiodlo sie.");
 					}
 				} else if (command.equals("previous item")) {
-					if (JReader.previousItem() == null) {
+					if (JReader.previousItem(0) == null) {
 						System.out.println("Nie mozna sie cofnac.");
 					}
 				} else if (command.equals("next item")) {
-					if (JReader.nextItem() == null) {
+					if (JReader.nextItem(0) == null) {
 						System.out.println("Nie mozna przejsc dalej.");
 					}
 				} else if (command.equals("update all")) {
 					updateVisibleChannels(); // TODO: usunąć tą linię i odkomentować:
 					//new UpdateThread();
 				} else if (command.equals("next unread")) {
-					if (!JReader.nextUnread()) {
+					if (!JReader.nextUnread(0)) {
 						System.out.println("Nie ma nieprzeczytanych wiadomosci.");
 					}
 				} else if (command.equals("select item")) {
 					try {
 						System.out.print("Podaj numer elementu: ");
 						int nr = new Integer(in.readLine()) - 1;
-						JReader.selectItem(JReader.getItems().get(nr));
+						JReader.selectItem(JReader.getItems().get(nr), 0);
 					} catch (NumberFormatException nfe) {
 						System.out.println("Musisz podac liczbe calkowita.");
 					} catch (IndexOutOfBoundsException ioobe) {
@@ -208,7 +208,7 @@ public class TextUI {
 					try {
 						System.out.print("Podaj numer kanalu: ");
 						int nr = new Integer(in.readLine()) - 1;
-						JReader.selectChannel(nr);
+						JReader.selectChannel(nr, 0);
 					} catch (NumberFormatException nfe) {
 						System.out.println("Musisz podac liczbe calkowita.");
 					} catch (IndexOutOfBoundsException ioobe) {

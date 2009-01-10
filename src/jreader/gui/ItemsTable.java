@@ -1,9 +1,6 @@
 package jreader.gui;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import jreader.Item;
 import jreader.JReader;
 
@@ -125,14 +122,17 @@ public class ItemsTable {
 					if (JReader.getChannel(it.getChannelId()).getIconPath() == null)
 						item[0].setImage(read);
 				}
-				JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
+				if (Preview.folderPreview.getItemCount() != 0) {
+					JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()),
+							Preview.folderPreview.getSelectionIndex());
+					Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+				} else {
+					JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()), 0);
+					GUI.openTab(item[0].getText()).refresh();
+				}
 				SubsList.refresh();
 				Filters.refresh();
-				if (Preview.folderPreview.getItemCount() != 0)
-					Preview.previewItemList.get((Preview.folderPreview.getSelectionIndex())).refresh();
-				else
-					GUI.openTab(item[0].getText()).refresh();
-            }
+			}
         });
 		
 		/**
@@ -199,8 +199,10 @@ public class ItemsTable {
 		 */
 		deleteItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	//usuwanie itemu
-            	System.out.println("usuwa item");
+            	JReader.removeItem(JReader.getItems().get(itemsTable.getSelectionIndex()));
+            	Filters.refresh();
+            	SubsList.refresh();
+            	refresh();
            }
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
@@ -261,7 +263,13 @@ public class ItemsTable {
 
 	private void openTab() {
 		TableItem[] item = itemsTable.getSelection();
-		if (item != null)
-			GUI.openTab(item[0].getText()).refresh();
+		if (item != null) {
+			JReader.addNewPreviewTab();
+			// zaznaczamy wybrany element w nowo utworzonym previewTabie
+			PreviewItem previewItem = GUI.openTab(item[0].getText());
+			JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()),
+					Preview.folderPreview.getSelectionIndex());
+			previewItem.refresh();
+		}
 	}
 }

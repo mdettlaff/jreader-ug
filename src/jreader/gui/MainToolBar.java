@@ -95,9 +95,9 @@ public class MainToolBar {
         
     
         
-        //TollBar listeners (do wypelnienia pozniej)
+        //TollBar listeners
         
-        //Add Subscryption
+        //Add Subscription
         addSubToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
             	GUI.statusLine.setText("Adding Subscryption");
@@ -114,23 +114,28 @@ public class MainToolBar {
         //Back
         backToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	int index = Preview.folderPreview.getSelectionIndex();
-            	
-            	//Preview.browser.back();
-                
+            	int tabIndex = Preview.folderPreview.getSelectionIndex();
+            	JReader.previousItem(tabIndex);
+            	Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
             }
         });
         //Forward
         forwardToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                //Preview.browser.forward();
-                
+            	int tabIndex = Preview.folderPreview.getSelectionIndex();
+            	JReader.nextItem(tabIndex);
+            	Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
             }
         });
-        //Next unread message
+        //Next unread item
         unreadToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                System.out.println("Next unread item");
+            	int tabIndex = Preview.folderPreview.getSelectionIndex();
+                JReader.nextUnread(tabIndex);
+            	Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+				SubsList.refresh();
+				Filters.refresh();
+				ItemsTable.refresh();
             }
         });
         //Search
@@ -149,7 +154,7 @@ public class MainToolBar {
 		   		optionsShell.open();
             }
         });   
-        //Listener do wskaznika myszy - zmienia status line
+        //Listener do wskaźnika myszy - zmienia status line
         
         toolBar.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
