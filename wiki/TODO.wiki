@@ -6,9 +6,9 @@ Wspólnie:
   * Next item oraz Previous item
   * Import/Export
   * Szukanie wiadomości
+  * Usuwanie pojedynczych wiadomości
 
 Karol:
-  * Obsługa wielolinijkowych ostrzeżeń przy dodawaniu kanału.
   * Możliwość otwierania linków w zewnętrznej przeglądarce (jako opcja w menu kontekstowym).
   * Komentarz ogólny Javadoc do każdej klasy w jreader.gui
 
