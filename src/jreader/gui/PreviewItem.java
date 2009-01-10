@@ -37,6 +37,7 @@ public class PreviewItem {
 	private Link titleLink;
 	private Link source;
 	private CTabItem previewItem;
+	private Composite header;
 	
 	/**
 	 * Tworzy nową zakładkę.
@@ -51,7 +52,7 @@ public class PreviewItem {
 		previewItem.setImage(itemImage);
 		Composite comp = new Composite(Preview.folderPreview, SWT.NONE);
 		comp.setLayout(new GridLayout());
-		Composite header = new Composite(comp, SWT.NONE);
+		header = new Composite(comp, SWT.NONE);
 		header.setLayout(new FillLayout(SWT.VERTICAL));
 		header.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		titleLink = new Link(header, SWT.NONE);
@@ -101,13 +102,13 @@ public class PreviewItem {
 		
 		browser.addMouseListener(new MouseListener() {
 	        public void mouseDown(MouseEvent e) {
-	            Preview.folderPreview.setFocus();
+	            //Preview.folderPreview.setFocus();
 	        }
 			public void mouseDoubleClick(MouseEvent arg0) {
 				Preview.folderPreview.setFocus();
 			}
 			public void mouseUp(MouseEvent arg0) {
-				Preview.folderPreview.setFocus();
+				//Preview.folderPreview.setFocus();
 			}
 	    });
 		
@@ -119,14 +120,18 @@ public class PreviewItem {
 		Date date = JReader.getPreview().getCurrent().getDate();
 		String authorText = JReader.getPreview().getCurrent().getAuthor();
 		String fromText = JReader.getPreview().getCurrent().getChannelTitle();
-		String sourceText = "Channel source view (XML)";
+		String sourceText = "View channel source (XML)";
 		final String url = JReader.getPreview().getCurrent().getLink();
 
 		if (!previewItem.isDisposed())
 			previewItem.setText((titleText.length() > 20) ? titleText.substring(0,16).concat("...") : titleText);
+		
 		titleLink.setText("<a>" + titleText + "</a>");
+		titleLink.setFont(SubsList.fontBold);
+		
 		browser.setText(JReader.getPreview().getCurrent().getHTML());
 		title.setText(((date != null) ? GUI.shortDateFormat.format(date) : " "));
+	
 		if (authorText != null && fromText != null)
 			author.setText("Author: " + authorText + "\tFrom: " + fromText);
 		else if (fromText != null && authorText == null)
@@ -135,7 +140,11 @@ public class PreviewItem {
 			author.setText(authorText);
 		else
 			author.setText("");
-		source.setText("<a>" + sourceText + "</a>");
+		
+		if (!JReader.getPreview().getCurrent().isShowingItem()) {
+			source.setText("<a>" + sourceText + "</a>");
+		} else
+			source.setText("");
 		
 		titleLink.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
@@ -152,8 +161,11 @@ public class PreviewItem {
 		});
 		source.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove (MouseEvent e) {
-				GUI.statusLine.setText(JReader.getPreview().getCurrent().getSource());
-                GUI.statusText = JReader.getPreview().getCurrent().getSource();
+				String text = JReader.getPreview().getCurrent().getSource();
+				if (text != null) {
+					GUI.statusLine.setText(text);
+					GUI.statusText = JReader.getPreview().getCurrent().getSource();
+				}
 			}
 		});
 	}
