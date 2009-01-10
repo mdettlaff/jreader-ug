@@ -1,4 +1,4 @@
-#summary Lista rzeczy które pozostały jeszcze do zrobienia.
+#summary Lista rzeczy które zostały jeszcze do zrobienia.
 #labels Phase-Implementation
 
 Wspólnie:
@@ -8,10 +8,8 @@ Wspólnie:
   * Szukanie wiadomości
 
 Karol:
-  * Odnośnik do źródła XML kanału - niech się pokazuje tylko po kliknięciu na kanał, nie na wiadomość.
-  * Wyskakujące okienka w wypadku błędu przy synchronizacji kanału po wybraniu opcji synchronize z menu kontekstowego po kliknięciu na kanał prawym przyciskiem.
   * Obsługa wielolinijkowych ostrzeżeń przy dodawaniu kanału.
-  * Większa czcionka dla tytułu kanału wewnątrz zakładki.
+  * Możliwość otwierania linków w zewnętrznej przeglądarce (jako opcja w menu kontekstowym).
   * Komentarz ogólny Javadoc do każdej klasy w jreader.gui
 
 Łukasz:
