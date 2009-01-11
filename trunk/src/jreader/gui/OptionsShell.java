@@ -67,7 +67,7 @@ public class OptionsShell {
 		if (JReader.getConfig().getSortByNewest())
 			newest.setSelection(true);
 		else
-			latest.setSelection(false);
+			latest.setSelection(true);
 				
 	
 	//	Label - remove by 
