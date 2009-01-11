@@ -115,24 +115,35 @@ public class MainToolBar {
         backToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
             	int tabIndex = Preview.folderPreview.getSelectionIndex();
-            	JReader.previousItem(tabIndex);
-            	Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+            	if (Preview.folderPreview.getItemCount() != 0) {
+            		JReader.previousItem(tabIndex);
+            		Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+            	}
             }
         });
         //Forward
         forwardToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
             	int tabIndex = Preview.folderPreview.getSelectionIndex();
-            	JReader.nextItem(tabIndex);
-            	Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+            	if (Preview.folderPreview.getItemCount() != 0) {
+            		JReader.nextItem(tabIndex);
+            		Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+            	}
             }
         });
         //Next unread item
         unreadToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
             	int tabIndex = Preview.folderPreview.getSelectionIndex();
-                JReader.nextUnread(tabIndex);
-            	Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+
+            	if (Preview.folderPreview.getItemCount() != 0) {
+	                JReader.nextUnread(tabIndex);
+					Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+				} else if (JReader.getUnreadItemsCount() != 0) {
+					JReader.addNewPreviewTab();
+	                JReader.nextUnread(0);
+					GUI.openTab(JReader.getPreview(0).getCurrent().getTitle()).refresh();
+				}
 				SubsList.refresh();
 				Filters.refresh();
 				ItemsTable.refresh();
