@@ -64,7 +64,7 @@ public class SubsList {
 	    MenuItem synchronize = new MenuItem(popupMenu, SWT.NONE);
 	    synchronize.setText("Synchronize");
 	    MenuItem changeTag = new MenuItem(popupMenu, SWT.NONE);
-	    changeTag.setText("Change tag");
+	    changeTag.setText("Edit tags");
 	    MenuItem delete = new MenuItem(popupMenu, SWT.NONE);
 	    delete.setText("Delete");
 	    subsList.setMenu(popupMenu);
@@ -79,6 +79,7 @@ public class SubsList {
 					JReader.selectChannel(indeks, Preview.folderPreview.getSelectionIndex());
 					Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
 				} else {
+					JReader.addNewPreviewTab();
 					JReader.selectChannel(indeks, 0);
 					GUI.openTab(JReader.getChannel(indeks).getTitle()).refresh();
 				}
@@ -154,7 +155,7 @@ public class SubsList {
             	final int indeks = subsList.getSelectionIndex();
             	if (indeks == -1) return;
             	final Shell changeShell = new Shell(comp.getDisplay(), SWT.DIALOG_TRIM);
-            	changeShell.setText("Change tag: " + subsList.getItem(indeks).getText());
+            	changeShell.setText("Edit tags: " + subsList.getItem(indeks).getText());
             	RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
         		rowLayout.pack = true;
         		rowLayout.justify = true;
@@ -163,7 +164,7 @@ public class SubsList {
         		rowLayout.spacing = 10;
         		changeShell.setLayout(rowLayout);
             	
-            	new Label(changeShell, SWT.NONE).setText("Give the tags: ");
+            	new Label(changeShell, SWT.NONE).setText("Enter tags: ");
             	final Text tags = new Text(changeShell, SWT.BORDER);
             	tags.setText(JReader.getChannel(indeks).getTagsAsString());
             	Button okBut = new Button(changeShell, SWT.PUSH);
