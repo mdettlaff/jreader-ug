@@ -80,7 +80,7 @@ public class PreviewItem {
 		
 		Menu popupMenu = new Menu(titleLink);
 	    MenuItem openBrowser = new MenuItem(popupMenu, SWT.NONE);
-	    openBrowser.setText("Open item in system browser");
+	    openBrowser.setText("Open link in external browser");
 	    titleLink.setMenu(popupMenu);
 
 		/* LISTENERS */

@@ -11,13 +11,13 @@ public class BrowserControl {
 	// flaga z jąką wyświetlna jest url (win)
 	private static final String WIN_FLAG = "url.dll,FileProtocolHandler";
 	// domyślna przeglądarka pod unixem
-	private static final String UNIX_PATH = "netscape";
+	private static final String UNIX_PATH = "firefox";
 	// flaga z jąką wyświetlna jest url (unix)
-	private static final String UNIX_FLAG = "-remote openURL";
+	private static final String UNIX_FLAG = "";
 	
 	
 	/**
-	* Otwiera link w domyślnej przeglądarce sytemu operaccyjnego. 
+	* Otwiera link w domyślnej przeglądarce systemu operacyjnego. 
 	*
 	* @param url link do strony (musi zaczynać się od "http://" lub "file://"
 	*/
@@ -32,22 +32,20 @@ public class BrowserControl {
 				Process p = Runtime.getRuntime().exec(cmd);
 			}
 			else {
-				// Pod linuxem, Netscape musi być odpalany z "-remote"
-				// żeby działać. Wysylam comende (cmd)
-				// i sprawdzam wartosc na wyjsciu. Jesli jest 0
-				// to działa jeśli nie to trzeba odpalić przeglądare.
-				// cmd = 'netscape -remote openURL(http://www.javaworld.com)'
-				cmd = UNIX_PATH + " " + UNIX_FLAG + "(" + url + ")";
+				// Domyślnie próbuję odpalić w Firefoksie.
+				// Wysyłam komendę (cmd) i sprawdzam wartość na wyjściu.
+				// Jeśli jest 0 to działa jeśli nie to trzeba odpalić
+				// inną przeglądarkę.
+				cmd = UNIX_PATH + " " + UNIX_FLAG + url;
 				Process p = Runtime.getRuntime().exec(cmd);
 				
 				try	{
-					// czekam na 0 -- jeśli jest 0 to działa
-					// jeśli nie to odpala przeglądarkę.
+					// Czekam na 0 - jeśli jest 0 to działa,
+					// jeśli nie to próbuję inaczej.
 					int exitCode = p.waitFor();
 					if (exitCode != 0) {
-						// nie udało się, odpalam ręcznie
-						// cmd = 'netscape http://www.javaworld.com'
-						cmd = UNIX_PATH + " " + url;
+						// nie udało się, próbuję z Operą
+						cmd = "opera" + " " + url;
 						p = Runtime.getRuntime().exec(cmd);
 					}
 				}
