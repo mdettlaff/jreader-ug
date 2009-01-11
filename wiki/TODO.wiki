@@ -6,9 +6,8 @@ Wspólnie:
   * Szukanie wiadomości
 
 Karol:
-  * Możliwość otwierania linków w zewnętrznej przeglądarce (jako opcja w menu kontekstowym).
   * Komentarz ogólny Javadoc do każdej klasy w jreader.gui
 
 Łukasz:
   * Binarki natywne dla Windowsa i Linuksa.
-  * Instrukcja obsługi (do okienka 'help' i dokumentacji).
+  * Instrukcja użytkowania (do okienka 'help' i dokumentacji).
