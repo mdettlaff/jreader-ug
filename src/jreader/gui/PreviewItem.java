@@ -16,6 +16,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -27,6 +29,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 public class PreviewItem {
 
@@ -60,7 +64,7 @@ public class PreviewItem {
 		header = new Composite(comp, SWT.NONE);
 		header.setLayout(new FillLayout(SWT.VERTICAL));
 		header.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		titleLink = new Link(header, SWT.WRAP);
+		titleLink = new Link(header, SWT.NONE);
 		source = new Link(header, SWT.NONE);
 		info = new Label(header, SWT.NONE);
 		
@@ -73,9 +77,23 @@ public class PreviewItem {
 		
 		previewItem.setControl(comp);
 		Preview.folderPreview.setSelection(previewItem);
+		
+		Menu popupMenu = new Menu(titleLink);
+	    MenuItem openBrowser = new MenuItem(popupMenu, SWT.NONE);
+	    openBrowser.setText("Open item in system browser");
+	    titleLink.setMenu(popupMenu);
 
 		/* LISTENERS */
-		
+		//open Browser
+	    openBrowser.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+            	int tabIndex = Preview.folderPreview.getSelectionIndex();
+            	BrowserControl.displayURL(JReader.getPreview(tabIndex).getCurrent().getLink());
+           }
+            public void widgetDefaultSelected(SelectionEvent e) {                
+           }
+        });
+	    
 		// Progress bar listener 
 		browser.addProgressListener(new ProgressListener() {
 			public void changed(ProgressEvent event) {
@@ -174,7 +192,17 @@ public class PreviewItem {
 				String text = JReader.getPreview(tabIndex).getCurrent().getSource();
 				if (text != null) {
 					GUI.statusLine.setText(text);
-					GUI.statusText = JReader.getPreview(tabIndex).getCurrent().getSource();
+					GUI.statusText = text;
+				}
+			}
+		});
+		titleLink.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove (MouseEvent e) {
+				int tabIndex = Preview.folderPreview.getSelectionIndex();
+				String text = JReader.getPreview(tabIndex).getCurrent().getLink();
+				if (text != null) {
+					GUI.statusLine.setText(text);
+					GUI.statusText = text;
 				}
 			}
 		});
