@@ -3,19 +3,22 @@ package jreader.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import jreader.JReader;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
@@ -37,6 +40,7 @@ public class Preview {
 		folderPreview = new CTabFolder(shell, SWT.BORDER | SWT.MULTI );
 		folderPreview.setSimple(GUI.issimple);
 		folderPreview.setMaximizeVisible(true);
+		folderPreview.setUnselectedCloseVisible(false); 
 		
 		folderPreview.setSelectionBackground(new Color[]{Focus.white, Focus.midgray, Focus.gray, Focus.gray},
 				new int[] {20, 40, 100}, true);
@@ -125,6 +129,22 @@ public class Preview {
 			public void mouseUp(MouseEvent e) {
 			}
 		});
+		
+		/*zamykanie zakladek */
+		folderPreview.addCTabFolder2Listener(new CTabFolder2Listener() {
+		      public void close(CTabFolderEvent e) {
+		    	  previewItemList.remove(folderPreview.getSelectionIndex());
+		    	  JReader.removePreviewTab(folderPreview.getSelectionIndex());
+		      }
+		      public void minimize(CTabFolderEvent arg0) {
+		      }
+		      public void maximize(CTabFolderEvent arg0) {
+		      }
+		      public void restore(CTabFolderEvent arg0) {
+		      }
+		      public void showList(CTabFolderEvent arg0) {
+		      }
+	    });
 	}
 	public void setBounds(Rectangle rect) {
 		folderPreview.setBounds(rect);

@@ -113,18 +113,7 @@ public class PreviewItem {
 		        GUI.statusLine.setText(event.text); 
 		      }
 		});
-		previewItem.addDisposeListener(new DisposeListener(){
-			public void widgetDisposed(DisposeEvent e) {
-				if (Preview.folderPreview.getSelectionIndex() != -1) {
-					Preview.previewItemList.remove(Preview.folderPreview.getSelectionIndex());
-					JReader.removePreviewTab(Preview.folderPreview.getSelectionIndex());
-				} else {
-					Preview.previewItemList.remove(0);
-					JReader.removePreviewTab(0);
-				}
-			  }
-		});
-		
+		//Focus na previwItem
 		browser.addMouseListener(new MouseListener() {
 	        public void mouseDown(MouseEvent e) {
 	            //Preview.folderPreview.setFocus();
