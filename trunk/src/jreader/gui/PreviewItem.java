@@ -97,10 +97,13 @@ public class PreviewItem {
 		});
 		previewItem.addDisposeListener(new DisposeListener(){
 			public void widgetDisposed(DisposeEvent e) {
-				if (Preview.folderPreview.getSelectionIndex() != -1)
+				if (Preview.folderPreview.getSelectionIndex() != -1) {
 					Preview.previewItemList.remove(Preview.folderPreview.getSelectionIndex());
-				else
+					JReader.removePreviewTab(Preview.folderPreview.getSelectionIndex());
+				} else {
 					Preview.previewItemList.remove(0);
+					JReader.removePreviewTab(0);
+				}
 			  }
 		});
 		

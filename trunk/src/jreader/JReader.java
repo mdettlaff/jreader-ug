@@ -21,7 +21,7 @@ import jreader.gui.GUI;
  */
 public class JReader {
 	/** Ilość podglądów kanałów lub wiadomości o jaką można się cofnąć. */
-	public static final int HISTORY_SIZE = 10;
+	public static final int HISTORY_SIZE = 25;
 
 	/**
 	 * Ustawienia programu wybrane przez użytkownika.
@@ -572,6 +572,10 @@ public class JReader {
 
 	public static void addNewPreviewTab() {
 		previewTabs.add(new HistoryList<Preview>(HISTORY_SIZE));
+	}
+
+	public static void removePreviewTab(int tabIndex) {
+		previewTabs.remove(tabIndex);
 	}
 
 
