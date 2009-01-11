@@ -127,6 +127,7 @@ public class ItemsTable {
 							Preview.folderPreview.getSelectionIndex());
 					Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
 				} else {
+					JReader.addNewPreviewTab();
 					JReader.selectItem(JReader.getItems().get(itemsTable.getSelectionIndex()), 0);
 					GUI.openTab(item[0].getText()).refresh();
 				}
