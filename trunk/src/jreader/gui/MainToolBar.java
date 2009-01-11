@@ -159,7 +159,8 @@ public class MainToolBar {
         //New Tab
         newTabItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                GUI.openTab("No title");                
+								JReader.addNewPreviewTab();
+                GUI.openTab("Untitled");
             }
         });
         //Search
