@@ -41,6 +41,7 @@ public class MainToolBar {
         final Image searchIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "search.png");
         final Image optionsIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "options2.png");
         final Image unreadIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "unread.png");
+        final Image newTabIcon = new Image(display, "data" + File.separator + "icons" + File.separator + "medium" + File.separator + "newTab2.png");
         
       //Separator0
         new ToolItem(toolBar, SWT.SEPARATOR);
@@ -78,6 +79,12 @@ public class MainToolBar {
         //forwardToolItem.setText("Forward");
         forwardToolItem.setToolTipText("Next item");
         
+      //New Tab
+        final ToolItem newTabItem = new ToolItem(toolBar, SWT.PUSH);
+        newTabItem.setImage(newTabIcon);
+        //forwardToolItem.setText("Forward");
+        newTabItem.setToolTipText("New tab");
+        
         //separator 2
         new ToolItem(toolBar, SWT.SEPARATOR);
         
@@ -95,7 +102,7 @@ public class MainToolBar {
         
     
         
-        //TollBar listeners
+        /*TollBar listeners*/
         
         //Add Subscription
         addSubToolItem.addListener(SWT.Selection, new Listener() {
@@ -147,6 +154,12 @@ public class MainToolBar {
 				SubsList.refresh();
 				Filters.refresh();
 				ItemsTable.refresh();
+            }
+        });
+        //New Tab
+        newTabItem.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+                GUI.openTab("No title");                
             }
         });
         //Search
