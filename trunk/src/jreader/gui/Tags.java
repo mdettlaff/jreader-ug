@@ -53,12 +53,12 @@ public class Tags {
 		  
 //		LISTENERS
 		
-		tagComposite.addMouseMoveListener(new MouseMoveListener() {
+		/*tagComposite.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Choose a tag to filter.";
               GUI.statusLine.setText(GUI.statusText);
             }
-          });
+          });*/
 		
 		folderTag.addMouseListener(new MouseListener() {
 	        public void mouseDown(MouseEvent e) {

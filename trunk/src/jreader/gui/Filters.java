@@ -75,12 +75,12 @@ public class Filters {
 		  
 //		LISTENERS
 		
-		folderFilter.addMouseMoveListener(new MouseMoveListener() {
+		/*folderFilter.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Choose a type of items filter.";
               GUI.statusLine.setText(GUI.statusText);
             }
-          });
+          });*/
 		
 		folderFilter.addMouseListener(new MouseListener() {
 	        public void mouseDown(MouseEvent e) {

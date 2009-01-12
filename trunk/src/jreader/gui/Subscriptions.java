@@ -48,12 +48,12 @@ public class Subscriptions {
 		//LISTENERS
 		
 		/*status text*/
-		folderSubs.addMouseMoveListener(new MouseMoveListener() {
+		/*folderSubs.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Choose a subscription.";
               GUI.statusLine.setText(GUI.statusText);
             }
-          });
+          });*/
 		
 	    folderSubs.addMouseListener(new MouseListener() {
 	        public void mouseDown(MouseEvent e) {

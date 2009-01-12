@@ -75,6 +75,7 @@ public class SysTray {
 	        });
 	    synchronize.addListener(SWT.Selection, new Listener() {
 	          public void handleEvent(Event event) {
+	        	  new UpdateThread();
 	          }
 	        });
 	    close.addListener(SWT.Selection, new Listener() {

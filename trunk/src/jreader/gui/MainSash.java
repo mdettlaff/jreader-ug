@@ -88,13 +88,13 @@ public class MainSash {
 				resized ();
 			}
 		});
-		//'wyzerowanie' statusline
+		/*//'wyzerowanie' statusline
 		sashComp.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "";
               GUI.statusLine.setText(GUI.statusText);
             }
-          });
+          });*/
 	}
 		
 	void layout () {
