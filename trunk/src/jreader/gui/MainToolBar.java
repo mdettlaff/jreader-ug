@@ -8,6 +8,8 @@ import jreader.Channel;
 import jreader.JReader;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Image;
@@ -141,19 +143,7 @@ public class MainToolBar {
         //Next unread item
         unreadToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	int tabIndex = Preview.folderPreview.getSelectionIndex();
-
-            	if (Preview.folderPreview.getItemCount() != 0) {
-	                JReader.nextUnread(tabIndex);
-					Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
-				} else if (JReader.getUnreadItemsCount() != 0) {
-					JReader.addNewPreviewTab();
-	                JReader.nextUnread(0);
-					GUI.openTab(JReader.getPreview(0).getCurrent().getTitle()).refresh();
-				}
-				SubsList.refresh();
-				Filters.refresh();
-				ItemsTable.refresh();
+            	showNextUnread();
             }
         });
         //New Tab
@@ -280,5 +270,21 @@ public class MainToolBar {
 		ItemsTable.refresh();
 		Filters.refresh();
 		
+	}
+	
+	public static void showNextUnread() {
+		int tabIndex = Preview.folderPreview.getSelectionIndex();
+
+    	if (Preview.folderPreview.getItemCount() != 0) {
+            JReader.nextUnread(tabIndex);
+			Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
+		} else if (JReader.getUnreadItemsCount() != 0) {
+			JReader.addNewPreviewTab();
+            JReader.nextUnread(0);
+			GUI.openTab(JReader.getPreview(0).getCurrent().getTitle()).refresh();
+		}
+		SubsList.refresh();
+		Filters.refresh();
+		ItemsTable.refresh();
 	}
 }
