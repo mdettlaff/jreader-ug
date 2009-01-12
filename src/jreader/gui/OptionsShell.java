@@ -46,12 +46,18 @@ public class OptionsShell {
 		
 	//	Label Synchronizjacja co ile minut
 		Composite comp1 = new Composite(optionsShell, SWT.NONE);
+		comp1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		comp1.setLayout(new GridLayout(3, false));
-		new Label(comp1, SWT.NONE).setText("Synchronize every ");
+		Label lab1 = new Label(comp1, SWT.NONE);
+		lab1.setText("Synchronize every ");
+		lab1.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false));
 		final Text autoSync = new Text(comp1, SWT.BORDER);
 		autoSync.setTextLimit(3);
+		autoSync.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		autoSync.setText((new Integer(JReader.getConfig().getAutoUpdateMinutes())).toString());
-		new Label(comp1, SWT.NONE).setText(" minutes (0 - never).");
+		Label lab2 = new Label(comp1, SWT.NONE);
+		lab2.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false));
+		lab2.setText(" minutes (0 - never).");
 	
 	
 	//	Group SortBy
@@ -72,14 +78,18 @@ public class OptionsShell {
 	
 	//	Label - remove by 
 		Composite comp2 = new Composite(optionsShell, SWT.NONE);
+		comp2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		comp2.setLayout(new GridLayout(3, false));
-		new Label(comp2, SWT.NONE).setText("Remove items older than ");
+		Label lab3 = new Label(comp2, SWT.NONE);
+		lab3.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false));
+		lab3.setText("Remove items older than ");
 		final Text remove = new Text(comp2, SWT.BORDER);
 		remove.setText(new Integer(JReader.getConfig().getDeleteOlderThanDays()).toString());
 		remove.setTextLimit(2);
 		remove.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		//TODO remove label size
-		new Label(comp2, SWT.NONE).setText(" days (0 - never).");
+		Label lab4 = new Label(comp2, SWT.NONE);
+		lab4.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false));
+		lab4.setText(" days (0 - never).");
 		
 	//	Buttons ok cancel
 		Composite comp3 = new Composite(optionsShell, SWT.NONE);
