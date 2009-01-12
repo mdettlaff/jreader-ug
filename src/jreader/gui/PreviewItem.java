@@ -84,7 +84,7 @@ public class PreviewItem {
 	    titleLink.setMenu(popupMenu);
 
 		/* LISTENERS */
-		//open Browser
+		//open system Browser
 	    openBrowser.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
             	int tabIndex = Preview.folderPreview.getSelectionIndex();
@@ -93,7 +93,15 @@ public class PreviewItem {
             public void widgetDefaultSelected(SelectionEvent e) {                
            }
         });
-	    
+	    //browser refresh
+	    browser.addListener(SWT.KeyUp, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.keyCode == 16777230) {
+					browser.refresh();
+					System.out.println("browser refresh");
+				}
+			}
+		});
 		// Progress bar listener 
 		browser.addProgressListener(new ProgressListener() {
 			public void changed(ProgressEvent event) {
@@ -181,7 +189,6 @@ public class PreviewItem {
 				String text = JReader.getPreview(tabIndex).getCurrent().getSource();
 				if (text != null) {
 					GUI.statusLine.setText(text);
-					GUI.statusText = text;
 				}
 			}
 		});
@@ -191,7 +198,6 @@ public class PreviewItem {
 				String text = JReader.getPreview(tabIndex).getCurrent().getLink();
 				if (text != null) {
 					GUI.statusLine.setText(text);
-					GUI.statusText = text;
 				}
 			}
 		});

@@ -29,7 +29,6 @@ public class GUI {
 	public static final Display display = new Display();
 	public static Color gray = new Color (display, 240, 250, 250);
 	public static Color white = new Color (display, 255, 255, 254);
-	public static String statusText = "Status Line";
 	public static Label statusLine;
 	public static String version = "JReader 1.0";
 	public static boolean issimple = false;
@@ -46,7 +45,7 @@ public class GUI {
 	public static void run() { 
 
 		shell = new Shell (display);
-		shell.setMaximized(true);
+		//shell.setMaximized(true);
 		shell.setText(version);
 		shell.setImage(jreader);
 		shell.setLayout(new GridLayout());
@@ -72,7 +71,6 @@ public class GUI {
 		statusLine.setSize(500, 23);
 		statusLine.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
 		
-		statusLine.setText(statusText);
 		//new WebProgress(status);
 		progressBar = new ProgressBar(status, SWT.SMOOTH);
 		progressBar.setSize(100, 20);
@@ -82,12 +80,37 @@ public class GUI {
 		shell.open();
 
 		//Listenery do skrótów klawiaturówych
-		shell.getDisplay().addFilter(SWT.KeyUp, new Listener() {
+		/*shell.getDisplay().addFilter(SWT.KeyUp, new Listener() {
 			public void handleEvent(Event event) {
-				//System.out.println(event.keyCode);
+				System.out.println(event.keyCode);
+				
+				}
+			}
+		});*/
+		shell.getDisplay().addFilter(SWT.KeyDown, new Listener() {
+			public void handleEvent(Event event) {
+				//search
+				if (event.stateMask == SWT.CTRL && event.keyCode == 102) {
+					Search searchShell = new Search();
+	            	searchShell.open();
+				}
+				//new tab
+				if (event.stateMask == SWT.CTRL && event.keyCode == 116) {
+					JReader.addNewPreviewTab();
+					openTab("Untitled");
+				}
+				//add sub
+				if (event.stateMask == SWT.CTRL && event.keyCode == 97) {
+					AddSubscriptionShell addShell = new AddSubscriptionShell(shell);
+			   		addShell.open();
+				}
+				//next unread
 				if (event.character == 'n') {
-					System.out.println("next unread");
 					MainToolBar.showNextUnread();
+				}
+				//synchronize
+				if (event.character == 'r') {
+					new UpdateThread();
 				}
 			}
 		});

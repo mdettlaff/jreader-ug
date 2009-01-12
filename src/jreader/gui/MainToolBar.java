@@ -109,7 +109,6 @@ public class MainToolBar {
         //Add Subscription
         addSubToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-            	GUI.statusLine.setText("Adding Subscryption");
             	AddSubscriptionShell addShell = new AddSubscriptionShell(shell);
 		   		addShell.open();
                 }
@@ -170,7 +169,7 @@ public class MainToolBar {
             }
         });   
         //Listener do wskaźnika myszy - zmienia status line
-        
+  /*      
         toolBar.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               ToolItem item = toolBar.getItem(new Point(e.x, e.y));
@@ -183,7 +182,7 @@ public class MainToolBar {
                 GUI.statusText = name;
               }
             }
-          });
+          });*/
         
         toolBar.pack();    
 	}
@@ -200,6 +199,11 @@ public class MainToolBar {
 	 * Aktualizuje wszystkie kanały z listy kanałów.
 	 */
 	synchronized public static void synchronize() {
+		GUI.display.asyncExec(new Runnable() {
+			public void run() {
+				GUI.statusLine.setText("Synchronizing...");
+			}
+		});
 		for (Channel channel : JReader.getVisibleChannels()) {
 			try {
 				asyncChannel = channel;

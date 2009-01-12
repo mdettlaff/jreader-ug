@@ -57,12 +57,12 @@ public class Items {
 	//	LISTENERS
 		
 			
-		folderItem.addMouseMoveListener(new MouseMoveListener() {
+		/*folderItem.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Select the topic you want to read.";
               GUI.statusLine.setText(GUI.statusText);
             }
-          });
+          });*/
 		folderItem.addMouseListener(new MouseListener() {
 	        public void mouseDown(MouseEvent e) {
 	            folderItem.setFocus();

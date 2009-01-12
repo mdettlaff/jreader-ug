@@ -163,6 +163,7 @@ public class SubsList {
         		rowLayout.center = true;
         		rowLayout.spacing = 10;
         		changeShell.setLayout(rowLayout);
+        		changeShell.setLocation(300, 300);
             	
             	new Label(changeShell, SWT.NONE).setText("Enter tags: ");
             	final Text tags = new Text(changeShell, SWT.BORDER);

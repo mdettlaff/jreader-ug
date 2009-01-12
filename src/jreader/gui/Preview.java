@@ -83,12 +83,12 @@ public class Preview {
 			}
 	   	});
 		/* zmienia treść Status Line */
-		folderPreview.addMouseMoveListener(new MouseMoveListener() {
+		/*folderPreview.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
               GUI.statusText = "Item preview.";
               GUI.statusLine.setText(GUI.statusText);
             }
-          });
+          });*/
 		/* Podwójne kliknięcie maksymalizuje lub przywraca rozmiar okna */
 		folderPreview.addMouseListener(new MouseListener() {
 			public void mouseDoubleClick(MouseEvent me) {
