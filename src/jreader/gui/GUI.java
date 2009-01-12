@@ -14,7 +14,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
@@ -79,6 +81,19 @@ public class GUI {
 		
 		shell.open();
 
+		//Listenery do skrótów klawiaturówych
+		shell.getDisplay().addFilter(SWT.KeyUp, new Listener() {
+			public void handleEvent(Event event) {
+				//System.out.println(event.keyCode);
+				if (event.character == 'n') {
+					System.out.println("next unread");
+					MainToolBar.showNextUnread();
+				}
+			}
+		});
+		
+		
+		
 		// Aktualizowanie wszystkich kanałów przy starcie, jeśli wybrano
 		// taką opcję
 		if (JReader.getConfig().getUpdateAllOnStartup()) {
