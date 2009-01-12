@@ -50,7 +50,7 @@ public class AddSubscriptionShell {
 	    addShell.setLocation(x, y);
 	    
 	    
-	    new Label(addShell, SWT.NONE).setText("Give the URL address: ");
+	    new Label(addShell, SWT.NONE).setText("Enter the URL address: ");
 	    url = new Text(addShell, SWT.BORDER);
 	    url.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	    url.setTextLimit(100);
@@ -113,7 +113,7 @@ public class AddSubscriptionShell {
 		try {
 			JReader.addChannel(url.getText(), tag.getText());
 		} catch (LinkNotFoundException lnfe) {
-			warning.setText("No channels found on this site.");
+			warning.setText("No channels were found.");
 			return;
 		} catch (MalformedURLException mue) {
 			warning.setText("Invalid URL.");

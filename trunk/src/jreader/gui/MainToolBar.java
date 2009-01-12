@@ -122,7 +122,7 @@ public class MainToolBar {
         backToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
             	int tabIndex = Preview.folderPreview.getSelectionIndex();
-            	if (Preview.folderPreview.getItemCount() != 0) {
+            	if (Preview.folderPreview.getItemCount() != 0 && JReader.getPreview(tabIndex).getCurrent() != null) {
             		JReader.previousItem(tabIndex);
             		Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
             	}
@@ -132,7 +132,7 @@ public class MainToolBar {
         forwardToolItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
             	int tabIndex = Preview.folderPreview.getSelectionIndex();
-            	if (Preview.folderPreview.getItemCount() != 0) {
+            	if (Preview.folderPreview.getItemCount() != 0 && JReader.getPreview(tabIndex).getCurrent() != null) {
             		JReader.nextItem(tabIndex);
             		Preview.previewItemList.get(Preview.folderPreview.getSelectionIndex()).refresh();
             	}
@@ -159,8 +159,8 @@ public class MainToolBar {
         //New Tab
         newTabItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-								JReader.addNewPreviewTab();
-                GUI.openTab("Untitled");
+				JReader.addNewPreviewTab();
+				GUI.openTab("Untitled");
             }
         });
         //Search
