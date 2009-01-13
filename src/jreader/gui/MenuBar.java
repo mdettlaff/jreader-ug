@@ -1,7 +1,10 @@
 package jreader.gui;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import jreader.JReader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -11,6 +14,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.xml.sax.SAXException;
 /**
  * Tworzy menu programu z elementami: File, Edit, Window, Help
  */
@@ -79,14 +83,19 @@ public class MenuBar {
     			dialog.setText("Import subscriptions");
     			String result = dialog.open();
     			
-    			/*if ((dialog.getStyle () & SWT.MULTI) != 0) {
-    				String [] files = dialog.getFileNames ();
-    				for (int i=0; i<files.length; i++) {
-    					System.out.println("\t" + files [i] + Text.DELIMITER);
-    				}
-    			}*/
-    			System.out.println(result);
-    		
+    			try {
+					JReader.importChannelList(result);
+					SubsList.refresh();
+					Filters.refresh();
+					TagList.refresh();
+				} catch (IOException e1) {
+					// TODO okienko z trescia: brak pliku
+					e1.printStackTrace();
+				} catch (SAXException e1) {
+					// TODO okienko z treścią: plik jest niepoprawny
+					e1.printStackTrace();
+				}
+			
     			return;
             }
             public void widgetDefaultSelected(SelectionEvent e) {                
@@ -104,8 +113,13 @@ public class MenuBar {
     			dialog.setText("Export subscriptions");
     			String result = dialog.open();
     			
-    			
-    			System.out.println(result);
+    			try {
+					JReader.exportChannelList(result);
+					GUI.statusLine.setText("Channels list exported to " + result + ".xml");
+				} catch (IOException e1) {
+					// TODO tresc: nie mozna zapisac pliku
+					e1.printStackTrace();
+				}
     		
     			return;
            }
