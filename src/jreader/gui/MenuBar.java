@@ -11,6 +11,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.xml.sax.SAXException;
@@ -88,10 +89,14 @@ public class MenuBar {
 					Filters.refresh();
 					TagList.refresh();
 				} catch (IOException e1) {
-					// TODO okienko z trescia: brak pliku
+					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
+					error.setText("Import");
+					error.setMessage("No such file!");
 					e1.printStackTrace();
 				} catch (SAXException e1) {
-					// TODO okienko z treścią: plik jest niepoprawny
+					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
+					error.setText("Import");
+					error.setMessage("Wrong file!");
 					e1.printStackTrace();
 				}
 			
@@ -116,7 +121,9 @@ public class MenuBar {
 					JReader.exportChannelList(result);
 					GUI.statusLine.setText("Channels list exported to " + result + ".xml");
 				} catch (IOException e1) {
-					// TODO tresc: nie mozna zapisac pliku
+					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
+					error.setText("Export");
+					error.setMessage("Could not write the file!");
 					e1.printStackTrace();
 				}
     		
