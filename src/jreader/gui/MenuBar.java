@@ -65,7 +65,7 @@ public class MenuBar {
         final MenuItem aboutMenuItem = new MenuItem(helpmenu, SWT.PUSH);
         aboutMenuItem.setText("&About");    
         final MenuItem helpMenuItem = new MenuItem(helpmenu, SWT.PUSH);
-        helpMenuItem.setText("&Help");
+        helpMenuItem.setText("&Help\tF1");
         helpMenuItem.setAccelerator(SWT.F1);
         
         
