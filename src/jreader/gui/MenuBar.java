@@ -1,7 +1,6 @@
 package jreader.gui;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import jreader.JReader;
@@ -16,7 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.xml.sax.SAXException;
 /**
- * Tworzy menu programu z elementami: File, Edit, Window, Help
+ * Tworzy menu programu z elementami: File, Window, Help
  */
 public class MenuBar {
 
@@ -40,7 +39,7 @@ public class MenuBar {
         final MenuItem exportMenuItem = new MenuItem(filemenu, SWT.PUSH);
         exportMenuItem.setText("&Export subscriptions\tCTRL+E");
         exportMenuItem.setAccelerator(SWT.CTRL+'E');
-        final MenuItem separator = new MenuItem(filemenu, SWT.SEPARATOR);
+        new MenuItem(filemenu, SWT.SEPARATOR);
         final MenuItem exitMenuItem = new MenuItem(filemenu, SWT.PUSH);
         exitMenuItem.setText("E&xit");
         
@@ -70,7 +69,7 @@ public class MenuBar {
         helpMenuItem.setAccelerator(SWT.F1);
         
         
-     // ActionListeners do MenuItems (do wypelnienia pozniej)
+     // ActionListeners do MenuItems
         
         //File menu listeners
         importMenuItem.addSelectionListener(new SelectionListener() {

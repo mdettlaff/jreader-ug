@@ -33,11 +33,17 @@ import org.eclipse.swt.widgets.Text;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-
-
+/**
+ * Tworzy listę subskrypcji.
+ * 
+ * @author Karol
+ *
+ */
 public class SubsList {
 	 
-	
+	/**
+	 * Lista subskrypcji.
+	 */
 	public static Table subsList;
 	public static Image def = new Image(Subscriptions.subComposite.getDisplay(), "data" + File.separator + "icons" + File.separator + "unread.png");
 	static Font fontBold;
@@ -215,7 +221,7 @@ public class SubsList {
 	}
 	
 	/**
-	 * Odświeża listę subskrypcji
+	 * Odświeża listę subskrypcji.
 	 */
 	public static void refresh() {
 		GUI.display.asyncExec(new Runnable() {

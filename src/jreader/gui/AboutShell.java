@@ -6,10 +6,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -17,6 +15,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * Tworzy okno 'About'
+ * 
+ * @author Karol
+ *
+ */
 public class AboutShell {
 
 	private static Shell aboutShell;
@@ -100,6 +104,9 @@ public class AboutShell {
 	  	    
 	}
 	
+	/**
+	 * Otwiera okno
+	 */
 	public void open() {
 		aboutShell.open();
 	}

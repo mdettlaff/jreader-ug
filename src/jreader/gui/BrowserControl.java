@@ -2,6 +2,11 @@ package jreader.gui;
 
 import java.io.IOException;
 
+/**
+ * Klasa służąca do otwierania zewnętrznej przeglądarki internetowej.
+ * @author Karol
+ *
+ */
 public class BrowserControl {
 
 	// zmienna dla windowsa
@@ -19,7 +24,7 @@ public class BrowserControl {
 	/**
 	* Otwiera link w domyślnej przeglądarce systemu operacyjnego. 
 	*
-	* @param url link do strony (musi zaczynać się od "http://" lub "file://"
+	* @param url link do strony (musi zaczynać się od "http://" lub "file://")
 	*/
 	public static void displayURL(String url) {
 		boolean windows = isWindowsPlatform();
@@ -64,7 +69,7 @@ public class BrowserControl {
 	/**
 	* Rozpoznaje system na jakim uruchomiony jest program.
 	*
-	* @return true jeśli rozpoznany system to windows, w innym przyadku false
+	* @return <code>true</code> jeśli rozpoznany system to windows, w innym przyadku </code>false</code>
 	*/
 	public static boolean isWindowsPlatform() {
 		String os = System.getProperty("os.name");

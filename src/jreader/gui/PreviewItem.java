@@ -11,8 +11,6 @@ import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -32,6 +30,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+/**
+ * Klasa obsługująca tworzenie nowych zakładek.
+ * 
+ * @author Karol
+ *
+ */
 public class PreviewItem {
 
 	private Browser browser;
@@ -137,6 +141,9 @@ public class PreviewItem {
 		browser.addFocusListener(Focus.setFocus((Preview.folderPreview)));
 		titleLink.addFocusListener(Focus.setFocus((Preview.folderPreview)));
 	}
+	/**
+	 * Odświeża zawartość zakładki.
+	 */
 	public void refresh() {
 		int tabIndex = Preview.folderPreview.getSelectionIndex();
 		String titleText = JReader.getPreview(tabIndex).getCurrent().getTitle();

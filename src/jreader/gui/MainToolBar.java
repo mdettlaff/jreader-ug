@@ -23,6 +23,12 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Główny pasek narzędzi.
+ * 
+ * @author Karol
+ *
+ */
 public class MainToolBar {
 	
 	final ToolBar toolBar;
@@ -275,7 +281,9 @@ public class MainToolBar {
 		Filters.refresh();
 		
 	}
-	
+	/**
+	 * Wyświetla następną nieprzeczytaną wiadomość w zakładce.
+	 */
 	public static void showNextUnread() {
 		int tabIndex = Preview.folderPreview.getSelectionIndex();
 

@@ -21,13 +21,28 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+/**
+ * Okno filtrów
+ * 
+ * @author Karol
+ *
+ */
 public class Filters {
 
+	/**
+	 * Kontener filtrów
+	 */
 	public static CTabFolder folderFilter;
+	/**
+	 * Przycisk do wyświetlania wszystkich itemów.
+	 */
 	public static Button allButton;
+	/**
+	 * Przycisk do wyświetlania nieprzeczytanych itemów.
+	 */
 	public static Button unreadButton;
-	public static String allButtonLabel = "All items ";
-	public static String unreadButtonLabel = "Unread items ";
+	private static String allButtonLabel = "All items ";
+	private static String unreadButtonLabel = "Unread items ";
 
 	public Filters(final Composite shell) {
 		
@@ -115,16 +130,37 @@ public class Filters {
 			}
 		});
 	}
-	
+	/**
+	 * Ustawia rozmiar konteneru.
+	 * 
+	 * @param rect Rozmiar podany jakor typ <code>rectangle</code>
+	 */
 	public void setBounds(Rectangle rect) {
 		folderFilter.setBounds(rect);
 	}
+	/**
+	 * Ustawia rozmiar konteneru.
+	 * 
+	 * @param x Położenie na osi x
+	 * @param y Położenie na osi y
+	 * @param width Szerokość
+	 * @param height Wysokość
+	 */
 	public void setBounds(int x, int y, int width, int height) {
 		folderFilter.setBounds(x, y, width, height);
 	}
+	/**
+	 * Ustawia czy widget ma być widoczny lub nie.
+	 * 
+	 * @param bol Zmienna logiczna. <code>true</code> jeśli widget ma być widoczny, 
+	 * w innym przypadku <code>false</code>
+	 */
 	public void setVisible(boolean bol) {
 		folderFilter.setVisible(bol);
 	}
+	/**
+	 * Odśiweża zawartośc kontenera.
+	 */
 	public static void refresh() {
 		GUI.display.asyncExec(new Runnable() {
 			public void run() {

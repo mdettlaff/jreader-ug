@@ -20,6 +20,12 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Okno opcji.
+ * 
+ * @author Karol
+ *
+ */
 public class OptionsShell {
 
 	private static Shell optionsShell;
@@ -127,6 +133,9 @@ public class OptionsShell {
 		optionsShell.pack();
 	}
 	
+	/**
+	 * Otwiera okno opcji.
+	 */
 	public void open() {
 		optionsShell.open();
 	}
