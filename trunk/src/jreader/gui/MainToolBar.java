@@ -57,20 +57,17 @@ public class MainToolBar {
       //Synchronizuj
         final ToolItem syncToolItem = new ToolItem(toolBar, SWT.PUSH);
         syncToolItem.setImage(syncIcon);
-        //syncToolItem.setText("Synch");
-        syncToolItem.setToolTipText("Synchronize");
+        syncToolItem.setToolTipText("Synchronize (R)");
         
       //Dodaj subskrypcje 
         final ToolItem addSubToolItem = new ToolItem(toolBar, SWT.PUSH);
         addSubToolItem.setImage(addIcon);
-        //addSubToolItem.setText("Add");
-        addSubToolItem.setToolTipText("Add Subscription");
+        addSubToolItem.setToolTipText("Add Subscription (CTRL+A)");
         
       //nastepna nieprzeczytana wiadomsoc
         final ToolItem unreadToolItem = new ToolItem(toolBar, SWT.PUSH);
         unreadToolItem.setImage(unreadIcon);
-        //unreadToolItem.setText("Next msg");
-        unreadToolItem.setToolTipText("Next unread item");
+        unreadToolItem.setToolTipText("Next unread item (N)");
        
         //separator 1
         new ToolItem(toolBar, SWT.SEPARATOR );
@@ -78,20 +75,17 @@ public class MainToolBar {
       //Back
         final ToolItem backToolItem = new ToolItem(toolBar, SWT.PUSH);
         backToolItem.setImage(backIcon);
-        //backToolItem.setText("Back");
         backToolItem.setToolTipText("Previous item");
         
       //Forward
         final ToolItem forwardToolItem = new ToolItem(toolBar, SWT.PUSH);
         forwardToolItem.setImage(forwardIcon);
-        //forwardToolItem.setText("Forward");
         forwardToolItem.setToolTipText("Next item");
         
       //New Tab
         final ToolItem newTabItem = new ToolItem(toolBar, SWT.PUSH);
         newTabItem.setImage(newTabIcon);
-        //forwardToolItem.setText("Forward");
-        newTabItem.setToolTipText("New tab");
+        newTabItem.setToolTipText("New tab (CTR+T)");
         
         //separator 2
         new ToolItem(toolBar, SWT.SEPARATOR);
@@ -99,13 +93,11 @@ public class MainToolBar {
       //Szukaj
         final ToolItem searchToolItem = new ToolItem(toolBar, SWT.PUSH);
         searchToolItem.setImage(searchIcon);
-        //searchToolItem.setText("Search");
-        searchToolItem.setToolTipText("Search");
+        searchToolItem.setToolTipText("Search (CTRL+F)");
         
       //Opcje
         final ToolItem optionsToolItem = new ToolItem(toolBar, SWT.PUSH);
         optionsToolItem.setImage(optionsIcon);
-        //optionsToolItem.setText("Options");
         optionsToolItem.setToolTipText("Preferences");
         
     
@@ -298,5 +290,6 @@ public class MainToolBar {
 		SubsList.refresh();
 		Filters.refresh();
 		ItemsTable.refresh();
+		Preview.folderPreview.setFocus();
 	}
 }

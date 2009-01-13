@@ -110,13 +110,6 @@ public class GUI {
 		shell.open();
 
 		//Listenery do skrótów klawiaturówych
-		/*shell.getDisplay().addFilter(SWT.KeyUp, new Listener() {
-			public void handleEvent(Event event) {
-				System.out.println(event.keyCode);
-				
-				}
-			}
-		});*/
 		shell.getDisplay().addFilter(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event event) {
 				//search
@@ -159,7 +152,7 @@ public class GUI {
 			new UpdateDaemon();
 		}
 		
-		Items.folderItem.setFocus();
+		Preview.folderPreview.setFocus();
 		
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
