@@ -167,7 +167,8 @@ public class MenuBar {
         //Help Menu Listeners
         helpMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                System.out.println("Help");
+                HelpShell help = new HelpShell();
+                help.open();
           }
             public void widgetDefaultSelected(SelectionEvent e) {                
             }
