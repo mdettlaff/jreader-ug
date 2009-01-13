@@ -2,14 +2,23 @@ package jreader.gui;
 
 import jreader.JReader;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.SWT;
 
+/**
+ * Tworzy listę tagów.
+ * 
+ * @author Karol
+ *
+ */
 public class TagList {
+	/**
+	 * Lista tagów.
+	 */
 	static Table tagList;
 	 
 	public TagList(Composite comp) {
@@ -33,7 +42,9 @@ public class TagList {
 		});
 		tagList.addFocusListener(Focus.setFocus((Tags.folderTag)));
 	}
-	
+	/**
+	 * Odświeża listę tagów.
+	 */
 	public static void refresh() {
 		tagList.removeAll();
 		TableItem all = new TableItem(tagList, SWT.NONE);

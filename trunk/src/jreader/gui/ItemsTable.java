@@ -1,6 +1,7 @@
 package jreader.gui;
 
 import java.io.File;
+
 import jreader.Item;
 import jreader.JReader;
 
@@ -49,7 +50,7 @@ public class ItemsTable {
 	static Image read;
 	
 	/**
-	 * Konstruktor umieszczający tabelę w kompozycie podanym jako parametr.
+	 * Umieszcza tabelę w kompozycie podanym jako parametr.
 	 * 
 	 * @param comp Kompozyt służący jako <i>parent</i>, w którym ma być umieszczona tabela.  
 	 */
@@ -77,7 +78,7 @@ public class ItemsTable {
 	    
 	    /** Listeners**/
 	    
-	    /**
+	    /*
 	     * Dopasowuje szerokość kolumn tabeli wzgędem wielkości okna.
 	     */
 	    comp.addControlListener(new ControlAdapter() {
@@ -104,7 +105,7 @@ public class ItemsTable {
 	        }
 	      });
 	
-		/**
+		/*
 		 * Oznacza wiersz jako przeczytany i wyświetla wiadomość w aktualnej zakładce. 
 		 */
 		itemsTable.addListener(SWT.Selection, new Listener() {
@@ -136,7 +137,7 @@ public class ItemsTable {
 			}
         });
 		
-		/**
+		/*
 		 * Podświetla kolorowym gradientem wybrany wiersz tabeli.
 		 */
 		itemsTable.addListener(SWT.EraseItem, new Listener() {
@@ -172,7 +173,7 @@ public class ItemsTable {
 		      }
 		    });
 		
-		/**
+		/*
 		 * Podwójne kliknięcie myszą na wiersz tabeli owtiera nową zakładkę w Preview.
 		 */
 		MouseListener openListener = new MouseListener(){
@@ -184,7 +185,7 @@ public class ItemsTable {
 		};
 		itemsTable.addMouseListener(openListener);
 		
-		/**
+		/*
 		 * Obługuje menuItem 'Open item in a new tab' w menu pod prawym przyciskiem myszy.
 		 */
 		openNewTab.addSelectionListener(new SelectionListener() {
@@ -195,7 +196,7 @@ public class ItemsTable {
            }
         });
 		
-		/**
+		/*
 		 * Obsługuje menuItem "Delete" w menu pod RMB
 		 */
 		deleteItem.addSelectionListener(new SelectionListener() {
@@ -213,7 +214,7 @@ public class ItemsTable {
 	}
 	
 	/**
-	 * Odświeża tabelę itemsTable
+	 * Odświeża tabelę itemsTable.
 	 */
 	public static void refresh() {
 		GUI.display.asyncExec(new Runnable() {

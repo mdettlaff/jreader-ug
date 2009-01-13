@@ -22,19 +22,48 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Klasa główna GUI. Zbiera wszystkie widgety wyświetlając je w shellu.
+ * Klasa główna GUI. Zbiera wszystkie widgety wyświetlając je w głównym shellu.
  */
 public class GUI {
 
 	public static final Display display = new Display();
+	/**
+	 * Kolor szary.
+	 */
 	public static Color gray = new Color (display, 240, 250, 250);
+	/**
+	 * Kolor biały.
+	 */
 	public static Color white = new Color (display, 255, 255, 254);
+	/**
+	 * Belka dolna. Wyświetla komunikaty wątków, opisy komponentów njechanych kursorem itd.
+	 */
 	public static Label statusLine;
+	/**
+	 * Przechowuje akutalną wersję programu.
+	 */
 	public static String version = "JReader 1.0";
+	/**
+	 * Określa wygląd okien w programie.<br />
+	 * <code>true</code> - okna będą kanciate<br />
+	 * <code>false</code> - okna opływowe
+	 */
 	public static boolean issimple = false;
+	/**
+	 * Okno główne programu. Zawiera wszystkie pozostałe elementy.
+	 */
 	public static Shell shell;
+	/**
+	 * Ikona Jreadera
+	 */
 	public static Image jreader = new Image(display, "data" + File.separator + "icons" + File.separator + "small" + File.separator + "jreader2.png");
+	/**
+	 * Ikona na zakładce
+	 */
 	public static Image preview = new Image(display, "data" + File.separator + "icons" + File.separator + "preview" + File.separator + "previewTab.png");
+	/**
+	 * Pasek postępu. Wyświetla postęp ładowania strony w przeglądarce podglądu.
+	 */
 	public static ProgressBar progressBar;
 	public static final DateFormat shortDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -49,6 +78,7 @@ public class GUI {
 		shell.setText(version);
 		shell.setImage(jreader);
 		shell.setLayout(new GridLayout());
+		
 		/* Wyśrodkowanie shella */
 		Monitor primary = display.getPrimaryMonitor();
 		Rectangle bounds = primary.getBounds();
@@ -129,6 +159,8 @@ public class GUI {
 			new UpdateDaemon();
 		}
 		
+		Items.folderItem.setFocus();
+		
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
 		}
@@ -137,7 +169,7 @@ public class GUI {
 	}
 	
 	/**
-	 * Tworzy nową zakładkę w Preview
+	 * Tworzy nową zakładkę w Preview.
 	 * 
 	 * @param title Tytuł zakładki.
 	 * @return Obiekt PreviewItem.

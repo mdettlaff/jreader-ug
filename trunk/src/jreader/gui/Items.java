@@ -4,22 +4,26 @@ import java.io.File;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * Okno zawierające tabelę wiadomości.
+ * 
+ * @author Karol
+ *
+ */
 public class Items {
 
+	/**
+	 * kontener dla tabeli itemów.
+	 */
 	public static CTabFolder folderItem;
 	ItemsTable itemsTable;
 	public static Composite tableComposite;
@@ -73,13 +77,23 @@ public class Items {
 			}
 	    });
 	}
-	
-	public void setBounds(Rectangle rect) {
-		folderItem.setBounds(rect);
-	}
+	/**
+	 * Ustawia rozmiar okna 'Items'.
+	 * 
+	 * @param x Położenie na osi x
+	 * @param y Położenie na osi y
+	 * @param width Szerokość
+	 * @param height Wysokośc
+	 */
 	public void setBounds(int x, int y, int width, int height) {
 		folderItem.setBounds(x, y, width, height);
 	}
+	/**
+	 * Ustawia czy widget ma być widoczny lub nie.
+	 * 
+	 * @param bol Zmienna logiczna. <code>true</code> jeśli widget ma być widoczny, 
+	 * w innym przypadku <code>false</code>
+	 */
 	public void setVisible(boolean bol) {
 		folderItem.setVisible(bol);
 	}

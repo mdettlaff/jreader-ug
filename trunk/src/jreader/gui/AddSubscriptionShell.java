@@ -26,6 +26,12 @@ import org.eclipse.swt.widgets.Text;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Okno dodawania nowej subskrypcji.
+ * 
+ * @author Karol
+ *
+ */
 public class AddSubscriptionShell {
 
 	private static Shell addShell;
@@ -109,6 +115,9 @@ public class AddSubscriptionShell {
 	    addShell.pack();
 	}
 
+	/**
+	 * Dodaje nową subskrypcje na podstawie argumentu wpisanego w polu tekstowym.
+	 */
 	public static void addUrl() {
 		try {
 			JReader.addChannel(url.getText(), tag.getText());
@@ -148,7 +157,9 @@ public class AddSubscriptionShell {
 		TagList.refresh();
     	addShell.dispose();
 	}
-	
+	/**
+	 * Otwiera okno dodawania subskrypcji.
+	 */
 	public void open() {
 		addShell.open();
 	}

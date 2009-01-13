@@ -7,16 +7,23 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * Kontener na listę tagów.
+ * 
+ * @author Karol
+ *
+ */
 public class Tags {
+	/**
+	 * Kontener tagów.
+	 */
 	public static CTabFolder folderTag;
 	TagList tagList;
 
@@ -70,16 +77,38 @@ public class Tags {
 			}
 	    });
 	}
-	
+	/**
+	 * Ustawia rozmiar konteneru.
+	 * 
+	 * @param rect Rozmiar podany jakor typ <code>rectangle</code>
+	 */
 	public void setBounds(Rectangle rect) {
 		folderTag.setBounds(rect);
 	}
+	/**
+	 * Ustawia rozmiar kontenera 'Tags'.
+	 * 
+	 * @param x Położenie na osi x
+	 * @param y Położenie na osi y
+	 * @param width Szerokość
+	 * @param height Wysokośc
+	 */
 	public void setBounds(int x, int y, int width, int height) {
 		folderTag.setBounds(x, y, width, height);
 	}
+	/**
+	 * Ustawia czy widget ma być widoczny lub nie.
+	 * 
+	 * @param bol Zmienna logiczna. <code>true</code> jeśli widget ma być widoczny, 
+	 * w innym przypadku <code>false</code>
+	 */
 	public void setVisible(boolean bol) {
 		folderTag.setVisible(bol);
 	}
+	/**
+	 * Zwraca rozmiar konteneru.
+	 * @return Rectangle rozmiar konteneru.
+	 */
 	public Rectangle getBounds() {
 		return folderTag.getBounds();
 	}

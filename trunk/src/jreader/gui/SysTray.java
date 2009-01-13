@@ -8,8 +8,18 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 
+/**
+ * Tworzy ikonę programu w systemowym tray'u. 
+ * Dodaje menu kontekstowe do ikony.
+ *   
+ * @author Karol
+ *
+ */
 public class SysTray {
 
+	/**
+	 * Element tray.
+	 */
 	public static TrayItem trayItem;
 	private Menu popupMenu;
 	

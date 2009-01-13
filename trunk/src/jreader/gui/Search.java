@@ -21,9 +21,18 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Tworzy okno 'Search'.
+ * 
+ * @author Karol
+ *
+ */
 public class Search {
 
-private static Shell searchShell;
+	/**
+	 * Okno 'Search'.
+	 */
+	private static Shell searchShell;
 	
 	public Search() {
 		final Image jreader = new Image(GUI.shell.getDisplay(), "data" + File.separator + "icons" + File.separator + "small" + File.separator + "search.png");
@@ -91,7 +100,7 @@ private static Shell searchShell;
 	    cancelButton.setLayoutData(gData2);
 	    cancelButton.setText(" &Cancel ");
 	
-	//	Action Listeners (do wypelnienia pozniej)
+	//	Action Listeners
 	    
 	    Listener phrazeListener = new Listener() {
 			public void handleEvent(Event event) {
@@ -130,6 +139,9 @@ private static Shell searchShell;
 		searchShell.pack();
 	}
 	
+	/**
+	 * Otwiera okno 'Search'.
+	 */
 	public void open() {
 		searchShell.open();
 	}

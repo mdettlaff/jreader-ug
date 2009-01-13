@@ -7,17 +7,24 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * Kontener zawierający listę subskrypcji.
+ * 
+ * @author Karol
+ *
+ */
 public class Subscriptions {
 	
+	/**
+	 * Kontener subskrypcji.
+	 */
 	public static CTabFolder folderSubs;
 	SubsList lista;
 	static Composite subComposite;
@@ -65,16 +72,38 @@ public class Subscriptions {
 			}
 	    });
 	}
-	
+	/**
+	 * Ustawia rozmiar konteneru.
+	 * 
+	 * @param rect Rozmiar podany jakor typ <code>rectangle</code>
+	 */
 	public void setBounds(Rectangle rect) {
 		folderSubs.setBounds(rect);
 	}
+	/**
+	 * Ustawia rozmiar kontenera 'Subscriptions'.
+	 * 
+	 * @param x Położenie na osi x
+	 * @param y Położenie na osi y
+	 * @param width Szerokość
+	 * @param height Wysokośc
+	 */
 	public void setBounds(int x, int y, int width, int height) {
 		folderSubs.setBounds(x, y, width, height);
 	}
+	/**
+	 * Ustawia czy widget ma być widoczny lub nie.
+	 * 
+	 * @param bol Zmienna logiczna. <code>true</code> jeśli widget ma być widoczny, 
+	 * w innym przypadku <code>false</code>
+	 */
 	public void setVisible(boolean bol) {
 		folderSubs.setVisible(bol);
 	}
+	/**
+	 * Zwraca rozmiar konteneru.
+	 * @return Rectangle rozmiar konteneru.
+	 */
 	public Rectangle getBounds() {
 		return folderSubs.getBounds();
 	}
