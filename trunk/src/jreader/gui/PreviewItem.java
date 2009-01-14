@@ -208,5 +208,12 @@ public class PreviewItem {
 				}
 			}
 		});
+		titleLink.addListener(SWT.KeyUp, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.character == 'm') {
+					browser.setUrl(url);
+				}
+			}
+		});
 	}
 }

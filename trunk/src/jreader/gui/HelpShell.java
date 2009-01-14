@@ -58,7 +58,7 @@ public class HelpShell {
 		} else {
 			helpBrowser = new Browser(helpComp, SWT.NONE);
 		}
-		helpBrowser.setUrl(homeUrl);
+		//helpBrowser.setUrl(homeUrl);
 		helpItem.setControl(helpComp);
 		
 		helpFolder.setSelection(helpItem);	
