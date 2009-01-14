@@ -34,8 +34,8 @@ public class HelpShell {
         final String homeUrl = "file://" + System.getProperty("user.dir") 
 		+ File.separator + "data" + File.separator + "help" + File.separator + "index.html";
 		
-		helpShell = new Shell(GUI.display);
-		helpShell.setSize(700, 600);
+		helpShell = new Shell(GUI.display, SWT.DIALOG_TRIM);
+		helpShell.setSize(700, 598);
 		helpShell.setImage(GUI.jreader);
 		helpShell.setText("Help - Jreader");
 		helpShell.setLayout(new FillLayout());
