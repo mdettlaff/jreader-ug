@@ -52,13 +52,16 @@ public class HelpShell {
 		
 		CTabItem helpItem = new CTabItem(helpFolder, SWT.NONE);
 		Composite helpComp = new Composite(helpFolder, SWT.NONE);
-		helpComp.setLayout(new FillLayout());
+		FillLayout layout = new FillLayout();
+	    layout.marginHeight = -2;
+	    layout.marginWidth = -2;
+		helpComp.setLayout(layout);
 		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
 			helpBrowser = new Browser(helpComp, SWT.MOZILLA);
 		} else {
 			helpBrowser = new Browser(helpComp, SWT.NONE);
 		}
-		//helpBrowser.setUrl(homeUrl);
+		helpBrowser.setUrl(homeUrl);
 		helpItem.setControl(helpComp);
 		
 		helpFolder.setSelection(helpItem);	
