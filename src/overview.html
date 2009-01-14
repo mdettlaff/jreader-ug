@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body bgcolor="white">
 JReader to wieloplatformowy czytnik kanałów RSS i Atom.
@@ -9,8 +10,25 @@ Strona domowa programu:<br>
 <a href="http://code.google.com/p/jreader-ug/" target="_blank">http://code.google.com/p/jreader-ug/</a>
 
 <h3>Instrukcja użytkowania</h3>
-
-<i>Instrukcja będzie dostępna wkrótce.</i>
+<p>
+Program JReader jest czytnikiem kanałów RSS i Atom. Na początku zacznijmy od dodania nowego kanału. Z paska menu wybieramy drugi przycisk od lewej strony pod nazwą <q>Add subscription</q>, po naciśnięciu przycisku pojawia nam się okno. W polu o nazwie <q>URL address</q> możemy podać bezpośredni adres do pliku ze subskrypcją lub adres strony na której znajduje się odnośnik do tego pliku, np.: &bdquo;slashdot.org&rdquo;. Drugie pole o nazwie <q>Name the tags</q> służy do przypisania kanałowi słów kluczowych, które będą go charakteryzować, tagi ułatwiają nawigację przy większej liczbie subskrybowanych kanałów. Kanałowi można przypisać jeden lub kilka tagów oddzielonych spacją. Po zatwierdzeniu przyciskiem <q>OK</q> przechodzimy z powrotem do okna głównego. Jeśli nie wystąpiły żadne błędy to kanał zostanie dodany do działu <q>Subscriptions</q> oraz dział <q>Items</q> zostanie uzupełniony nowymi elementami.
+</p><p>
+Dział <q>Subscriptions</q> to lista wszystkich kanałów jakie subskrybujemy. Każda pozycja charakteryzuje się własną nazwą oraz dwiema liczbami oddzielone slashem (&bdquo;/&rdquo;) . Prawa liczba mówi nam o ilości wszystkich elementów kanału. Lewa liczba mówi nam o ilości jeszcze nieprzeczytanych elementów kanału. W menu kontekstowym pod prawym przyciskiem mysz znajdują się kilka przydatnych opcji. Pierwsza opcja <q>Mark as read</q> to zaznaczenie wszystkich nieprzeczytanych elementów jak przeczytane. Druga opcja <q>Synchronize</q> jest bardzo przydatna. Służy do pobrania nowych elementów, które zostały opublikowane od naszej ostatniej aktualizacji. Za pomocą opcji <q>Edit tags</q> można zmienić, dodać lub usunąć tagi przypisane kanałowi. Ostatnia opcja <q>Delete</q> służy do usunięcia kanału ze wszystkimi elementami jakie posiada.
+</p><p>
+Dział <q>Items</q> służy do wyświetlanie wszystkich elementów zaznaczonego kanału w dziale <q>Subscriptions</q>. Elementy są wyświetlone w formie tabelki. Lewa kolumna zawiera tytuł elementu, a prawa kolumna zawiera datę opublikowania elementu.  W menu kontekstowym pod prawym przyciskiem mysz znajdują się dwie opcje, jedna służy do usunięcia elementu z kanału <q>Delete item</q>, a druga służy otwarcia zawartości elementu w nowej zakładce. Elementy mogą być posortowane według daty od najstarszego lub od najmłodszego, możliwość ustawienia w opcjach programu.
+</p><p>
+Najważniejszą częścią programu jest obszar w którym są wyświetlane zawartości zaznaczonego elementu w dziale <q>Items</q> oraz również dodatkowych informacji kanału po zaznaczeniu go w dziale <q>Subscriptions</q>, można było to zauważyć przy dodawaniu nowego kanału. Jednocześnie można przeglądać kilka elementów za pomocą zakładek. Nową zakładkę można otworzyć klikając dwukrotnie na elemencie w dziale <q>Items</q> lub wybierając z menu kontekstowego. Dowolną zakładkę można powiększyć na całą obszar programu, co ułatwia przejrzeniu zawartości niektórych elementów. Do maksymalizacji służy ikonka znajdująca się w prawym górnym rogu obszaru lub kliknięcie dwukrotnie w zakładkę.
+</p><p>
+Dział <q>Filters</q> służy do łatwiejszej nawigacji po wszystkich elementach lub tylko  nieprzeczytanych. Wystarczy zaznaczyć przycisk <q>Unread items</q> a w dziale <q>Items</q> pojawią się wszystkie nieprzeczytane  elementy ze wszystkich subskrybowanych kanałów. Przycisk <q>All items</q> działa podobnie jak poprzedni z wyjątkiem, że wyświetli wszystkie elementy ze wszystkich kanałów.
+</p><p>
+Dział <q>Tags</q> również służy do ułatwienia nawigacji ale po kanałach, które mogą być grupowane za pomocą słów kluczowych, które charakteryzują poszczególne kanały. Po wybraniu z listy dowolnego taga w dziale <q>Subscriptions</q> zostaną wyświetlone tylko kanały zawierające w swojej charakterystyce dany tag. W liście tagów znajdują się dwa zdefiniowane na stałe tagi. Tag o nazwie <q>&lt;All channels&gt;</q> służy do wyświetlenia wszystkich subskrybowanych kanałów, a tag <q>&lt;Untagged channels&gt;</q> pozwala wyświetlić kanały, które nie posiadają żadnych tagów. 
+</p><p>
+Pasek menu posiada kilka funkcjonalnych dla programu przycisków, zaczynając od lewej strony, pierwszy przycisk <q>Synchronize</q> służy do aktualizacji wszystkich subskrybowanych kanałów. Następny przycisk <q>Add subscription</q> służy do dodawania nowych kanałów, który już wcześniej został opisany, działanie kolejnego przycisku <q>Next unread item</q> to przejście do następnego nieprzeczytanego elementu. Kolejne dwa przyciski <q>Previous item</q> i <q>Next item</q> służą do nawigacji po historii przeglądanych elementów. Przycisk <q>New tab</q> tworzy nową zakładkę w której po zaznaczeniu elementu, zawartość tego elementu zostanie w nim wyświetlona. Następny przycisk <q>Search</q> szuka elemenety, które zawierają podane słowo. Po naciśnięciu przycisku pojawi się niewielkie okno. W polu <q>Find</q> wpisujemy szukane słowo, mamy jeszcze wybór zasięgu szukania. Zasięg <q>Items list</q> powoduje przeszukania jedynie z aktualnej listy elementów, zasięg <q>Subscriptions list</q> powoduje przeszukanie z listy elementów aktualnie zaznaczonego kanału, <q>All</q> służy do przeszukania wszystkich elementów ze wszystkich kanałów. Dodatkowo można wybrać opcję <q>Titles only</q>, która powoduje przeszukiwanie tylko w tytułach elementów. Druga opcja <q>Case sensitive</q> pozwala uwzględnić wielkość liter. Ostatnim przyciskiem w pasku menu jest <q>Preferences</q>, który umożliwia personalizację programu do własnych potrzeb.
+</p><p>
+Po naciśnięciu przycisku <q>Preferences</q> pojawi się nowe okno, w którym możemy ustawić kilka opcji programu. Pierwsze z nich to automatyczna aktualizacja kanałów przy starcie programu. Kolejna opcja to automatyczna aktualizacja co ileś minut, przy czym ustawienie na 0 (zero) minut wyłącza tą opcję. Następny jest wybór sortowania elementów w dziale <q>Items</q>, do wyboru jest sortowanie od najnowszego lub od najstarszego. Ostatnia opcja służy do automatycznego usuwania elementów, które są starsze niż podana ilość dni. Przy czym 0 (zero) wyłącza tą opcję. Wszelkie zmiany potwierdzamy naciskając w przycisk <q>OK</q>.
+</p><p>
+Przydatną funkcją programu jest możliwość importowania i eksportowania listy kanałów. Funkcję można znaleźć w <q>File&rarr;Import subscriptions</q> lub używając skrótu klawiszowego <q>CTRL+I</q> dla importowania oraz <q>File&rarr;Export subscriptions</q> lub używając skrótu klawiszowego <q>CTRL+E</q> dla eksportowania.
+</p>
 
 <h3>Licencja</h3>
 
@@ -26,3 +44,4 @@ JReader stanowi wolne oprogramowanie i jest dostępny na licencji GNU General Pu
 
 </body>
 </html>
+
