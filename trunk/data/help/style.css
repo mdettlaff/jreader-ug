@@ -1,0 +1,53 @@
+body {
+	border: 1px solid gray;
+	margin: 0px;
+	background-color: #f7f7f7;
+	color: #000000;
+	font-size: 12px;
+	font-family: Arial, sans-serif;
+	padding: 10px;
+}
+
+ul {
+	list-style-type: disc;
+}
+ol {
+	list-style-type: decimal;
+}
+a {
+	color: #ab6736;
+	text-decoration: none;
+}
+a:hover {
+	color: #ab6736;
+	text-decoration: underline;
+}
+p {
+
+}
+hr {
+	margin: 15px 0px;
+	color: #7093bc;
+}
+h1 {
+	text-align: left;
+}
+h2 {
+
+}
+h3 {
+
+}
+h4 {
+	margin: 15px 0px 2px 0px;
+	padding: 0px 5px;
+}
+h5 {
+	text-align: center;
+	font-size: 12px;
+}
+.roz_tresc {
+	padding: 10px 10px 10px 20px;
+	border: 1px dotted #7093bc;
+	background-color: #f0f0f0;
+}
