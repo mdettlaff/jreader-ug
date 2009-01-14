@@ -1,13 +1,5 @@
 #summary Lista rzeczy które zostały jeszcze do zrobienia.
 #labels Phase-Implementation
 
-Wspólnie:
-  * Import/Export
-  * Szukanie wiadomości
-
-Karol:
-  * Komentarz ogólny Javadoc do każdej klasy w jreader.gui
-
-Łukasz:
-  * Binarki natywne dla Windowsa i Linuksa.
-  * Instrukcja użytkowania (do okienka 'help' i dokumentacji).
+Wygląda na to, że wszystkie funkcje zostały już zaimplementowane :)
+Raporty o błędach, propozycje ulepszeń itp. należy umieszczać w dziale Issues.
