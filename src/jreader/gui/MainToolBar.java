@@ -150,8 +150,6 @@ public class MainToolBar {
             public void handleEvent(Event event) {
             	Search searchShell = new Search();
             	searchShell.open();
-                System.out.println("Search");
-                
             }
         });
         //Options

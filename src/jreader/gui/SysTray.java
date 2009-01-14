@@ -29,7 +29,7 @@ public class SysTray {
 		
 		final Tray tray = GUI.display.getSystemTray();
 	    if (tray == null) {
-	      System.out.println("The system tray is not available");
+	      System.err.println("The system tray is not available");
 	    } else {
 	      trayItem = new TrayItem(tray, SWT.NONE);
 	      trayItem.setToolTipText(GUI.version);

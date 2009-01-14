@@ -97,24 +97,6 @@ public class SubsList {
 	     */
 	    markRead.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	System.out.println("Mark as read");
-            	int indeks = subsList.getSelectionIndex();
-            	if (indeks == -1) return;
-            	JReader.markChannelAsRead(JReader.getChannel(indeks));
-            	SubsList.refresh();
-            	ItemsTable.refresh();
-            	Filters.refresh();
-           }
-            public void widgetDefaultSelected(SelectionEvent e) {                
-           }
-        });
-	    
-	    /*
-	     * Obsługuje popupMenu synchronize.
-	     */
-	    synchronize.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-            	System.out.println("Synchronize");
             	int indeks = subsList.getSelectionIndex();
             	if (indeks == -1) return;
             	try {
@@ -157,7 +139,6 @@ public class SubsList {
 	     */
 	    changeTag.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	System.out.println("Change Tag");
             	final int indeks = subsList.getSelectionIndex();
             	if (indeks == -1) return;
             	final Shell changeShell = new Shell(comp.getDisplay(), SWT.DIALOG_TRIM);
@@ -204,7 +185,6 @@ public class SubsList {
 	     */
 	    delete.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	System.out.println("Delete channel");
             	int indeks = subsList.getSelectionIndex();
             	if (indeks == -1) return;
             	JReader.removeChannel(indeks);

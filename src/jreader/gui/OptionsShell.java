@@ -118,7 +118,7 @@ public class OptionsShell {
 				JReader.getConfig().setSortByNewest(newest.getSelection());
 				JReader.getConfig().setDeleteOlderThanDays(Integer.parseInt(remove.getText()));
 				if (!JReader.getConfig().write()) {
-					System.out.println("Write error");
+					System.err.println("Write error");
 				}
 				optionsShell.dispose();
 			}

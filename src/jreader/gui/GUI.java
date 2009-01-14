@@ -142,7 +142,6 @@ public class GUI {
 		shell.addControlListener(new ControlListener() {
 
 			public void controlMoved(ControlEvent arg0) {
-				// TODO Auto-generated method stub	
 			}
 
 			public void controlResized(ControlEvent arg0) {
