@@ -84,10 +84,12 @@ public class MenuBar {
     			String result = dialog.open();
     			
     			try {
-					JReader.importChannelList(result);
-					SubsList.refresh();
-					Filters.refresh();
-					TagList.refresh();
+    				if (result != null) {
+    					JReader.importChannelList(result);
+    					SubsList.refresh();
+    					Filters.refresh();
+    					TagList.refresh();
+    				}
 				} catch (IOException e1) {
 					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
 					error.setText("Import");
@@ -118,8 +120,10 @@ public class MenuBar {
     			String result = dialog.open();
     			
     			try {
-					JReader.exportChannelList(result);
-					GUI.statusLine.setText("Channels list exported to " + result + ".xml");
+    				if (result != null) {
+    					JReader.exportChannelList(result);
+    					GUI.statusLine.setText("Channels list exported to " + result + ".xml");
+    				}
 				} catch (IOException e1) {
 					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
 					error.setText("Export");
