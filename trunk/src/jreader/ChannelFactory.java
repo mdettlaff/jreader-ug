@@ -324,6 +324,112 @@ public class ChannelFactory extends DefaultHandler {
 		return channel;
 	}
 
+	/**
+	 * Szuka adresu ikony w źródle strony HTML znajdującej się pod podanym
+	 * adresem. Jeśli znajdzie, zapisuje ją na dysku.
+	 *
+	 * @return Znaleziony adres ikony.
+	 * @throws IOException jeśli pobieranie pliku nie powiodło się.
+	 */
+	public static String extractIconPath(String siteURL) throws IOException {
+		siteURL = siteURL.trim();
+		// dopisujemy na początku protokół (http), jeśli go nie ma
+		if (!siteURL.startsWith("http://")) {
+			siteURL = "http://" + siteURL;
+		}
+		URL url = new URL(siteURL);
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(url.openStream()));
+
+		String iconURL = null;
+		String iconPath = null; // zmienna która zostanie zwrócona przez metodę
+
+		String inputLine;
+		// czytamy plik HTML dopóki nie znajdziemy odnośnika do ikony
+		while ((inputLine = in.readLine()) != null) {
+			// szukamy adresu URL ikony strony (tej którą widać na pasku adresu)
+			if (inputLine.contains("type=\"image/x-icon\"")
+					|| inputLine.toLowerCase().contains("rel=\"shortcut icon\"")) {
+				// rozbijamy na mniejsze linie, mniej problematyczne
+				String tmp = new String(inputLine); // żeby nie nadpisać inputLine
+				String[] smallLines = inputLine.replace(">", ">\n").split("\n");
+				for (String smallLine : smallLines) {
+					if (smallLine.contains("type=\"image/x-icon\"")
+							|| smallLine.toLowerCase().contains("rel=\"shortcut icon\"")) {
+						tmp = smallLine;
+						break;
+					}
+				}
+				iconURL = tmp.replaceAll("^.*href=\"", "");
+				iconURL = iconURL.replaceAll("\".*", "");
+				tmp = null;
+				String originalSiteURL = new String(siteURL);
+				siteURL = getHome(siteURL);
+				// sklejemy link strony i ikony w razie potrzeby
+				if (iconURL.charAt(0) == '/') {
+					if (siteURL.charAt(siteURL.length()-1) == '/') {
+						iconURL = siteURL + iconURL.substring(1);
+					} else {
+						iconURL = siteURL + iconURL;
+					}
+				} else if (!iconURL.startsWith("http://")) {
+					if (siteURL.charAt(siteURL.length()-1) == '/') {
+						iconURL = siteURL + iconURL;
+					} else {
+						iconURL = siteURL + "/" + iconURL;
+					}
+				}
+				siteURL = originalSiteURL; // przywracamy URL po okrojeniu
+				break;
+			}
+			// nie szukamy już dalej odnośnika do źródła lub ikony jeśli minęliśmy
+			// sekcję head
+			if (inputLine.contains("</head>".toLowerCase())) {
+				break;
+			}
+		}
+		in.close();
+
+		// ściągamy ikonę kanału, zapisujemy ją na dysk i dodajemy ścieżkę do niej
+		// do kanału
+		// jeśli nie znaleźliśmy linka do ikony w źródle HTML, dajemy domyślny
+		siteURL = getHome(siteURL);
+		if (iconURL == null || "".equals(iconURL.trim())) {
+			iconURL = "favicon.ico";
+			if (siteURL.charAt(siteURL.length()-1) == '/') {
+				iconURL = siteURL + iconURL;
+			} else {
+				iconURL = siteURL + "/" + iconURL;
+			}
+		}
+		try {
+			// ustalamy nazwę pliku, w którym zapiszemy ikonę
+			String iconFileName = siteURL;
+			if (iconFileName.startsWith("http://")) {
+				iconFileName = iconFileName.substring(7);
+			}
+			iconFileName = iconFileName.replaceAll("\\W", " ").trim().
+					replace(" ", "_").concat(".ico");
+			iconPath = JReader.getConfig().getShortcutIconsDir()
+				+ File.separator + iconFileName;
+
+			// zapisujemy ikonę na dysk
+			InputStream inIcon = new URL(iconURL).openStream();
+			OutputStream outIcon = new FileOutputStream(iconPath);
+			// przepisuje bajty z inIcon do outIcon
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = inIcon.read(buf)) > 0) {
+				outIcon.write(buf, 0, len);
+			}
+			inIcon.close();
+			outIcon.close();
+		} catch (Exception e) {
+			// nie udało się pobrać ikony (np. jest w nierozpoznanym formacie)
+		}
+		return iconPath;
+	}
+
 
 	/*
 	 * Metody obsługujące zdarzenia związane z parsowaniem XML.

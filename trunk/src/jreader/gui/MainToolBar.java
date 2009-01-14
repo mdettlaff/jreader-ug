@@ -52,7 +52,7 @@ public class MainToolBar {
       //Synchronizuj
         final ToolItem syncToolItem = new ToolItem(toolBar, SWT.PUSH);
         syncToolItem.setImage(syncIcon);
-        syncToolItem.setToolTipText("Synchronize (R)");
+        syncToolItem.setToolTipText("Synchronize (CTRL+R)");
         
       //Dodaj subskrypcje 
         final ToolItem addSubToolItem = new ToolItem(toolBar, SWT.PUSH);
@@ -62,7 +62,7 @@ public class MainToolBar {
       //nastepna nieprzeczytana wiadomsoc
         final ToolItem unreadToolItem = new ToolItem(toolBar, SWT.PUSH);
         unreadToolItem.setImage(unreadIcon);
-        unreadToolItem.setToolTipText("Next unread item (N)");
+        unreadToolItem.setToolTipText("Next unread item (CTRL+N)");
        
         //separator 1
         new ToolItem(toolBar, SWT.SEPARATOR );
@@ -203,6 +203,9 @@ public class MainToolBar {
 				if (JReader.updateChannel(channel) > 0) {
 					GUI.display.asyncExec(new Runnable() {
 						public void run() {
+							SubsList.refresh();
+							ItemsTable.refresh();
+							Filters.refresh();
 							GUI.statusLine.setText(asyncChannel.getTitle() + " updated.");
 						}
 					});
@@ -263,10 +266,6 @@ public class MainToolBar {
 				GUI.statusLine.setText("All channels have been updated.");
 			}
 		});
-		SubsList.refresh();
-		ItemsTable.refresh();
-		Filters.refresh();
-		
 	}
 	/**
 	 * Wyświetla następną nieprzeczytaną wiadomość w zakładce.

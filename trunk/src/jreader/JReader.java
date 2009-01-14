@@ -365,6 +365,16 @@ public class JReader {
 			throws SAXException, IOException {
 		Channel newChannel = ChannelFactory.getChannelFromXML(
 				channel.getChannelURL());
+		// jeśli kanał nie ma ikony, próbujemy ją dodać
+		if (channel.getIconPath() == null) {
+			String iconPath;
+			try {
+				iconPath = ChannelFactory.extractIconPath(channel.getLink());
+				channel.setIconPath(iconPath);
+			} catch (IOException ioe) {
+				// nie udało się ściągnąć ikony
+			}
+		}
 		channel.setTitle(newChannel.getTitle());
 		channel.setLink(newChannel.getLink());
 		channel.setDescription(newChannel.getDescription());
@@ -467,8 +477,8 @@ public class JReader {
 		for (Channel channel : importedChannels) {
 			if (!channels.containsChannel(channel.getId())) {
 				channels.add(channel);
+				visibleChannels.add(channel);
 			}
-			visibleChannels.add(channel);
 			// uzupełniamy listę tagów do wyświetlenia
 			for (String tag : channel.getTags()) {
 				if (!tags.contains(tag)) {
