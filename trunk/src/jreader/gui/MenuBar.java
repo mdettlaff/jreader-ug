@@ -77,7 +77,6 @@ public class MenuBar {
         //File menu listeners
         importMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                System.out.println("Import");
                 FileDialog dialog = new FileDialog (shell, SWT.OPEN);
     			dialog.setFileName("*.xml");
     			dialog.setFilterNames (new String[] {"*.xml", "*.opml", "*.txt", "All"});
@@ -131,7 +130,6 @@ public class MenuBar {
         
         exportMenuItem.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                System.out.println("Export");
                 FileDialog dialog = new FileDialog (shell, SWT.SAVE);
                 String date = new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
     			dialog.setFileName("jreader_subscriptions_" + date + ".xml");

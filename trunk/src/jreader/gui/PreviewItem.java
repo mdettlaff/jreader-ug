@@ -102,7 +102,6 @@ public class PreviewItem {
 			public void handleEvent(Event event) {
 				if (event.keyCode == 16777230) {
 					browser.refresh();
-					System.out.println("browser refresh");
 				}
 			}
 		});
