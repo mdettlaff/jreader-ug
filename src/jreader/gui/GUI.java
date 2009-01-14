@@ -130,23 +130,21 @@ public class GUI {
 			   		addShell.open();
 				}
 				//next unread
-				if (event.character == 'n') {
+				if (event.stateMask == SWT.CTRL && event.keyCode == 110) {
 					MainToolBar.showNextUnread();
 				}
 				//synchronize
-				if (event.character == 'r') {
+				if (event.stateMask == SWT.CTRL && event.keyCode == 114) {
 					new UpdateThread();
 				}
 			}
 		});
 		shell.addControlListener(new ControlListener() {
 
-			@Override
 			public void controlMoved(ControlEvent arg0) {
 				// TODO Auto-generated method stub	
 			}
 
-			@Override
 			public void controlResized(ControlEvent arg0) {
 				if (Preview.folderPreview.getMaximized()) {
 					Preview.folderPreview.setMaximized(false);

@@ -1,5 +1,6 @@
 package jreader.gui;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
@@ -15,6 +16,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 /**
  * Tworzy menu programu z elementami: File, Window, Help
  */
@@ -85,21 +87,40 @@ public class MenuBar {
     			
     			try {
     				if (result != null) {
-    					JReader.importChannelList(result);
-    					SubsList.refresh();
-    					Filters.refresh();
-    					TagList.refresh();
+    					if (JReader.importChannelList(result) == 0) {
+							MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
+							error.setText("Import");
+							error.setMessage("No channels to import from this file.");
+							error.open();
+						} else {
+							SubsList.refresh();
+							Filters.refresh();
+							TagList.refresh();
+						}
     				}
-				} catch (IOException e1) {
+				} catch (SAXParseException spe) {
 					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
 					error.setText("Import");
-					error.setMessage("No such file!");
-					e1.printStackTrace();
-				} catch (SAXException e1) {
+					String message = "Import failed. Source is not a valid XML file.\n";
+					message += "Error in line " + spe.getLineNumber() + ".\n";
+					message += "Details: " + spe.getLocalizedMessage();
+					error.setMessage(message);
+					error.open();
+				} catch (SAXException saxe) {
 					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
 					error.setText("Import");
-					error.setMessage("Wrong file!");
-					e1.printStackTrace();
+					error.setMessage("Import failed. XML parser error.");
+					error.open();
+				} catch (FileNotFoundException fnfe) {
+					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
+					error.setText("Import");
+					error.setMessage("Import failed. File not found.");
+					error.open();
+				} catch (IOException ioe) {
+					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
+					error.setText("Import");
+					error.setMessage("Import failed. Can't open file.");
+					error.open();
 				}
 			
     			return;
@@ -124,11 +145,11 @@ public class MenuBar {
     					JReader.exportChannelList(result);
     					GUI.statusLine.setText("Channels list exported to " + result + ".xml");
     				}
-				} catch (IOException e1) {
+				} catch (IOException ioe) {
 					MessageBox error = new MessageBox(GUI.shell, SWT.ICON_ERROR);
 					error.setText("Export");
-					error.setMessage("Could not write the file!");
-					e1.printStackTrace();
+					error.setMessage("Cannot write to the specified file.");
+					error.open();
 				}
     		
     			return;
