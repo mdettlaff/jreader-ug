@@ -31,7 +31,7 @@ public class Preview {
 	 * Kontener dla zakładek.
 	 */
 	public static CTabFolder folderPreview;
-	private Rectangle bounds;
+	public static Rectangle bounds;
 	private Rectangle tmpBounds = new Rectangle(0, 0, 0, 0);
 	/**
 	 * Przeglądarka wyśweitlająca treść wiadomości rss.
@@ -89,9 +89,7 @@ public class Preview {
 				shell.layout(true);
 			}
 			public void restore(CTabFolderEvent event) {
-				//folderPreview.setMinimized(false);
 				folderPreview.setMaximized(false);
-				
 				folderPreview.setMaximizeVisible(true);
 				
 				folderPreview.setBounds(bounds);

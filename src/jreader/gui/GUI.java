@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import jreader.JReader;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -137,7 +139,29 @@ public class GUI {
 				}
 			}
 		});
-		
+		shell.addControlListener(new ControlListener() {
+
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub	
+			}
+
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				if (Preview.folderPreview.getMaximized()) {
+					Preview.folderPreview.setMaximized(false);
+					Preview.folderPreview.setMaximizeVisible(true);
+					
+					Preview.folderPreview.setBounds(Preview.bounds);
+					MainSash.folderFilter.setVisible(true);
+					MainSash.folderItem.setVisible(true);
+					MainSash.folderSubs.setVisible(true);
+					MainSash.folderTag.setVisible(true);
+					shell.layout(true);
+				}
+			}
+			
+		});
 		
 		
 		// Aktualizowanie wszystkich kanałów przy starcie, jeśli wybrano
