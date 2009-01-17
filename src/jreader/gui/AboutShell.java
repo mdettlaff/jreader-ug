@@ -26,7 +26,7 @@ public class AboutShell {
 	private static Shell aboutShell;
 	private static String about = "<html>" + 
 			"<body>" +
-			"<div style='font-size: 11px'><h2>JReader 1.0</h2>" +
+			"<div style='font-size: 11px'><h2>JReader 1.1</h2>" +
 			"RSS and Atom feed reader<br />" +
 			"Copyright © 2009<br /><br />" +
 			"<b>Authors:</b><br />" +

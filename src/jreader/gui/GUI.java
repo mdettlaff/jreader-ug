@@ -44,7 +44,7 @@ public class GUI {
 	/**
 	 * Przechowuje akutalną wersję programu.
 	 */
-	public static String version = "JReader 1.0";
+	public static String version = "JReader 1.1";
 	/**
 	 * Określa wygląd okien w programie.<br />
 	 * <code>true</code> - okna będą kanciate<br />

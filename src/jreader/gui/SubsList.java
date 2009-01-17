@@ -139,7 +139,7 @@ public class SubsList {
 				} catch (IOException ioe) {
 					GUI.statusLine.setText("Failed to update channel.");
 					errorDialog("Failed to update channel.\n" +
-							" Unable to connect to the site.");
+							"Unable to connect to the site.");
 					JReader.getChannel(indeks).setFail(true);
 				}
             	SubsList.refresh();
