@@ -197,8 +197,8 @@ public class MainToolBar {
 		});
 		for (Channel channel : JReader.getVisibleChannels()) {
 			try {
-				asyncChannel = channel;
 				if (JReader.updateChannel(channel) > 0) {
+					asyncChannel = channel;
 					GUI.display.asyncExec(new Runnable() {
 						public void run() {
 							SubsList.refresh();
@@ -208,6 +208,7 @@ public class MainToolBar {
 						}
 					});
 				} else {
+					asyncChannel = channel;
 					GUI.display.asyncExec(new Runnable() {
 						public void run() {
 							GUI.statusLine.setText(asyncChannel.getTitle() + " has not changed.");
