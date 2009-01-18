@@ -602,7 +602,7 @@ public class ChannelFactory extends DefaultHandler {
 				date = new Date(currentUnixTime - counter);
 			}
 
-			downloadedItems.add(makeNewItem());
+			makeNewItem();
 
 		} else if (closingTag.equals("image")) {
 			insideImage = false;
@@ -670,8 +670,13 @@ public class ChannelFactory extends DefaultHandler {
 		item.setDate((Date)date.clone());
 		item.markAsUnread();
 
-		// dodajemy identyfikator tego elementu do kanału
-		channel.addItem(item.getId());
+		// dodajemy identyfikator tego elementu do kanału oraz sam element
+		// do listy ściągniętych, jeśli się on nie powtarza (zabezpieczenie
+		// przed powtarzającymi się guid)
+		if (!channel.getItems().contains(item.getId())) {
+			channel.addItem(item.getId());
+			downloadedItems.add(item);
+		}
 
 		return item;
 	}
