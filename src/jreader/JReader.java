@@ -396,12 +396,6 @@ public class JReader {
 				channel.addItem(updatedItem.getId());
 				updateItemsList(updatedItem);
 				newItemsCount++;
-			} else {
-				// jeśli istniejący element się zmienił, zapisujemy zmiany
-				if (channels.getItem(updatedItem.getId()).isRead()) {
-					updatedItem.markAsRead();
-				}
-				channels.addItem(updatedItem);
 			}
 		}
 		if (updateUnreadItemsCount(channel)) {

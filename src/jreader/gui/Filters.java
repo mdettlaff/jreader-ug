@@ -10,7 +10,6 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -51,11 +50,6 @@ public class Filters {
 		folderFilter = new CTabFolder(shell, SWT.BORDER | SWT.SINGLE );
 		folderFilter.setSimple(GUI.issimple);
 		
-		  
-		Device device = Display.getCurrent ();
-		Color bottom = new Color (device, 156, 156, 213);
-		Color middle = new Color (device, 190, 190, 213);
-		  
 		//Ctab 
 		final CTabItem item = new CTabItem(folderFilter, SWT.NONE);
 		item.setText("Filters");

@@ -34,7 +34,8 @@ public class BrowserControl {
 			if (windows) {
 				// cmd = 'rundll32 url.dll,FileProtocolHandler http://...'
 				cmd = WIN_PATH + " " + WIN_FLAG + " " + url;
-				Process p = Runtime.getRuntime().exec(cmd);
+				//Process p = Runtime.getRuntime().exec(cmd);
+				Runtime.getRuntime().exec(cmd);
 			}
 			else {
 				// Domyślnie próbuję odpalić w Firefoksie.
