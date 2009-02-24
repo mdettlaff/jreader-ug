@@ -130,7 +130,7 @@ public class GUI {
 			   		addShell.open();
 				}
 				//next unread
-				if (event.stateMask == SWT.CTRL && event.keyCode == 110) {
+				if (event.character == 'n') {
 					MainToolBar.showNextUnread();
 				}
 				//synchronize
