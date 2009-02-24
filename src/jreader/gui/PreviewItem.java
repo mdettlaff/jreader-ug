@@ -153,7 +153,10 @@ public class PreviewItem {
 		final String url = JReader.getPreview(tabIndex).getCurrent().getLink();
 
 		if (!previewItem.isDisposed())
-			previewItem.setText((titleText.length() > 20) ? titleText.substring(0,16).concat("...") : titleText);
+			if (titleText != null)
+				previewItem.setText((titleText.length() > 20) ? titleText.substring(0,16).concat("...") : titleText);
+			else
+				previewItem.setText("brak tytułu");
 		
 		titleLink.setText("<a>" + titleText + "</a>");
 		titleLink.setFont(fontBold);
