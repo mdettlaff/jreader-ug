@@ -246,7 +246,7 @@ public class ItemsTable {
 								item.setImage(unread);
 						}
 					}
-					item.setText(0, it.getTitle());
+					item.setText(0, (it.getTitle()!= null ? it.getTitle() : "brak tytułu"));
 					item.setText(1, GUI.shortDateFormat.format(it.getDate()));
 					if (!it.isRead()) {
 						item.setFont(fontBold);
