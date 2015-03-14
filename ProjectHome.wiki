@@ -1,0 +1,57 @@
+#summary JReader - RSS and Atom feed reader
+
+===I. Założenia projektowe===
+
+Celem projektu jest stworzenie konfigurowalnego, przyjaznego dla użytkownika czytnika kanałów RSS i Atom, obsługującego najczęściej stosowane standardy kanałów informacyjnych:
+  * Really Simple Syndication (RSS 2.0)
+  * Rich Site Summary (RSS 0.91/RSS 0.92/RSS 0.93)
+  * RDF Site Summary (RSS 1.x, RSS 0.90)
+  * Atom 1.0
+
+GUI programu jest podzielony na trzy zasadnicze części: listę subskrypcji do kanałów po lewej stronie, listę elementów^1^ z prawej strony na górze, oraz podgląd aktualnie przeglądanego elementu z prawej strony na dole. Rozmieszczenie części jest zrealizowanie analogicznie jak np. w większości programów do obsługi poczty elektronicznej, przykładowo Mozilla Thunderbird (gdzie z lewej mamy foldery Inbox, Outbox etc., z prawej na górze listę wiadomości, a z prawej na dole treść wiadomości).
+
+Użytkownik może dodać swoje subskrypcje poprzez podanie adresu URL interesującej go strony (wpisując np. "http://slashdot.org"). Następnie program znajdzie na podstawie jej źródła odnośnik do pliku XML z treścią kanału i na jego podstawie stworzy nową subskrypcję. Jeśli strona będzie niedostępna lub parsowanie pliku XML nie powiedzie się, użytkownik otrzyma komunikat o błędzie. Jest możliwość organizowania subskrypcji za pomocą tagów, podobnie jak ma to miejsce na wielu stronach internetowych.
+
+Użytkownik może wyświetlić listę wszystkich lub tylko nieprzeczytanych elementów posortowaną od najnowszego do najstarszego lub odwrotnie. Elementy przeczytane zawsze są wizualnie odróżnione od nieprzeczytanych. Można też wyświetlić elementy ograniczone do jednego kanału, lub grupy kanałów oznaczonych wspólnym tagiem (np. zobaczyć tylko nowości, które pojawiły się na kanałach oznaczonych jako "blog"). Listę elementów można zaktualizować przez wciśnięcie przycisku Odśwież/Synchronizuj.
+
+W treści elementów mogą znajdować się znaczniki HTML, dlatego istotne jest odpowiednie obsługiwanie ich w podglądzie elementów. Strony do których prowadzą odnośniki można przeglądać bezpośrednio w oknie podglądu, albo w domyślnej dla danego użytkownika zewnętrznej przeglądarce internetowej.
+
+Inne istotne funkcje programu:
+  * Wyświetlanie wiadomości i stron internetowych w wielu zakładkach
+  * Import/eksport listy subskrypcji za pośrednictwem pliku zapisanego w standardzie OPML
+  * Wyszukiwanie wiadomości według słów kluczowych
+  * Możliwość aktualizowania listy elementów przy uruchomieniu programu, oraz w regularnych wybranych przez użytkownika odstępach czasu
+  * Usuwanie starych wiadomości, w zakresie wybranym przez użytkownika
+
+
+^1^ _Element (wiadomość) kanału definiujemy jako część opisaną wewnątrz znacznika_ `<item>`
+
+
+===II. Technologie użyte do realizacji projektu===
+
+  * Język programowania Java, z użyciem Java API w wersji 1.6
+  * Biblioteka Standard Widget Toolkit 3.4 (do wykonania GUI)
+  * Zintegrowane środowisko programistyczne Eclipse 3.4 Ganymede
+  * System kontroli wersji Subversion
+
+
+===III. Podział pracy===
+
+Michał Dettlaff:
+  * zarządzanie subskrypcjami
+  * parsowanie XML
+Karol Domagała:
+  * graficzny interfejs użytkownika
+Łukasz Draba:
+  * zapisywanie ustawień i stanu programu
+
+
+===IV. Platformy docelowe===
+
+Program przeznaczony jest dla systemów z rodziny Windows i GNU/Linux, ze Środowiskiem Uruchomieniowym Javy (JRE) w wersji 1.5 lub nowszej.
+
+
+===V. Uwagi końcowe===
+
+Program jest dostępny na licencji GNU General Public License v3.
+Do programu dołączona jest dokumentacja wygenerowana za pomocą narzędzia Javadoc.

@@ -1,0 +1,17 @@
+#summary Konwencje stosowane przy pisaniu kodu.
+#labels Phase-Implementation
+
+Bardzo proszę o stosowanie się do poniższych praktyk:
+
+  * jedno wcięcie to jeden tabulator
+  * unikamy linii dłuższych niż 80 znaków przy szerokości tabulatora 2 spacje
+  * nie używamy znaku {{{*}}} przy importowaniu (wypisujemy wszystkie importowane klasy)
+  * w źródle używamy kodowania UTF-8
+  * wszystkie nazwy zmiennych, klas etc. piszemy po angielsku
+  * komentarze do kodu piszemy po polsku, z polskimi znakami
+  * komentarze piszemy w formacie javadoc, tam gdzie to możliwe
+  * piszemy kod tak, żeby inni mogli go łatwo przeczytać
+  * komentowanie commitów w svn jest obowiązkowe
+
+dziękuję,<br>
+- Michał

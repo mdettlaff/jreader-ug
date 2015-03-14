@@ -1,0 +1,5 @@
+#summary Lista rzeczy które zostały jeszcze do zrobienia.
+#labels Phase-Implementation
+
+Wygląda na to, że wszystkie funkcje zostały już zaimplementowane :)
+Raporty o błędach, propozycje ulepszeń itp. należy umieszczać w dziale Issues.
